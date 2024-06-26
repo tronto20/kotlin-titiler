@@ -4,6 +4,7 @@ pluginManagement {
 
     plugins {
         kotlin("jvm") version kotlinVersion
+        kotlin("plugin.serialization") version kotlinVersion
         id("org.jmailen.kotlinter") version kotlinterVersion
     }
 
@@ -20,4 +21,5 @@ plugins {
 rootProject.name = "kotlin-titler"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+include(":dependencies")
 include(":core")
