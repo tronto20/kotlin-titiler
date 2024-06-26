@@ -1,6 +1,5 @@
 package io.github.tronto20.titiler.domain
 
-import io.github.tronto20.titiler.GdalInit
 import kotlinx.serialization.Serializable
 import org.gdal.gdalconst.gdalconst
 
@@ -15,11 +14,4 @@ enum class ResamplingAlgorithm(val gdalconst: Int) {
     RMS(gdalconst.GRA_RMS),
     MODE(gdalconst.GRA_Mode),
     GAUSS(gdalconst.GRIORA_Gauss),
-    ;
-
-    companion object {
-        init {
-            GdalInit
-        }
-    }
 }

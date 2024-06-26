@@ -1,6 +1,6 @@
 package io.github.tronto20.titiler.domain
 
-import io.github.tronto20.titiler.GdalInit
+import io.github.tronto20.titiler.util.GdalUtils
 import org.gdal.gdal.Driver
 import org.gdal.gdal.gdal
 
@@ -17,7 +17,7 @@ enum class ImageType(val driver: String) {
     ;
 
     fun getDriver(): Driver {
-        GdalInit
+        GdalUtils.init()
         return gdal.GetDriverByName(driver)
     }
 }
