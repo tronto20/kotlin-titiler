@@ -3,12 +3,14 @@ package dev.tronto.titiler.spring.application.web
 import dev.tronto.titiler.core.incoming.usecase.BoundsUseCase
 import dev.tronto.titiler.core.incoming.usecase.InfoUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.spring.application.config.adaptor.WebFluxOptionParserAdaptor
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
 import dev.tronto.titiler.tile.incoming.usecase.TileUseCase
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.reactive.function.BodyInserters
@@ -17,6 +19,7 @@ import org.springframework.web.reactive.function.server.RequestPredicates
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
 import org.springframework.web.reactive.function.server.coRouter
+import java.io.ByteArrayInputStream
 
 @Controller
 class COGController(
@@ -26,6 +29,7 @@ class COGController(
     private val tileUseCase: TileUseCase,
     private val tileInfoUseCase: TileInfoUseCase,
     private val imageBBoxUseCase: ImageBBoxUseCase,
+    private val imagePreviewUseCase: ImagePreviewUseCase,
 ) {
     private suspend fun ServerRequest.options() = optionParser.parse(this)
 
@@ -59,6 +63,28 @@ class COGController(
                     .awaitSingle()
             }
 
+            val previewPaths = listOf(
+                "preview.{format}",
+                "preview"
+            )
+
+            GET(previewPaths.map(RequestPredicates::path).reduce(RequestPredicate::or)) {
+                val options = it.options()
+                val image = imagePreviewUseCase.preview(options.filter(), options.filter())
+                ByteArrayInputStream(image.data).use { stream ->
+
+                    val dataBuffers = DataBufferUtils.readInputStream(
+                        { stream },
+                        it.exchange().response.bufferFactory(),
+                        2048
+                    )
+                    ok().contentType(MediaType.parseMediaType(image.format.contentType))
+                        .contentLength(image.data.size.toLong())
+                        .body(BodyInserters.fromDataBuffers(dataBuffers))
+                        .awaitSingle()
+                }
+            }
+
             val tilesPaths = listOf(
                 "tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}",
                 "tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x",
@@ -78,7 +104,8 @@ class COGController(
                 )
 
                 ok().contentType(MediaType.parseMediaType(image.format.contentType))
-                    .bodyValueAndAwait(image.data)
+                    .body(BodyInserters.fromResource(ByteArrayResource(image.data)))
+                    .awaitSingle()
             }
 
             val tileInfoPaths = listOf(
