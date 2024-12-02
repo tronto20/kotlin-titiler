@@ -17,7 +17,9 @@ class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
         val widthString = request.parameter("width").lastOrNull() ?: return null
         val heightString = request.parameter("height").lastOrNull() ?: return null
         val width = widthString.toIntOrNull() ?: throw IllegalParameterException("width must be integer: $widthString.")
-        val height = heightString.toIntOrNull() ?: throw IllegalParameterException("height must be intege: $heightString.")
+        val height = heightString.toIntOrNull() ?: throw IllegalParameterException(
+            "height must be intege: $heightString."
+        )
         return ImageSizeOption(width, height)
     }
 }

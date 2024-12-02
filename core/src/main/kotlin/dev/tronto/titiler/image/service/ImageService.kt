@@ -141,7 +141,6 @@ class ImageService(
 
         renderImage(rescaledImageData, format)?.let { return it }
 
-
         imageDataAutoRescales.forEach {
             if (it.supports(rescaledImageData, format)) {
                 val autoRescaled = it.rescale(rescaledImageData, format)

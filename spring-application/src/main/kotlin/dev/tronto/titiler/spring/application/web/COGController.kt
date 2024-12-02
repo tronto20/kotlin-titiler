@@ -9,7 +9,6 @@ import dev.tronto.titiler.tile.incoming.usecase.TileUseCase
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.reactive.function.BodyInserters
