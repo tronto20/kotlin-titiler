@@ -1,5 +1,7 @@
 package dev.tronto.titiler.image.incoming.controller.option
 
+import dev.tronto.titiler.core.exception.IllegalParameterException
+import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
@@ -9,7 +11,7 @@ class WindowOptionParser : OptionParser<WindowOption> {
     override val type: ArgumentType<WindowOption> = ArgumentType()
 
     override fun generateMissingException(): Exception {
-        return IllegalArgumentException("minx/miny/maxx/maxy parameter required.")
+        return RequiredParameterMissingException("minx", "miny", "maxx", "maxy")
     }
 
     override suspend fun parse(request: Request): WindowOption? {
@@ -17,10 +19,10 @@ class WindowOptionParser : OptionParser<WindowOption> {
         val maxxString = request.parameter("maxx").lastOrNull() ?: return null
         val minyString = request.parameter("miny").lastOrNull() ?: return null
         val maxyString = request.parameter("maxy").lastOrNull() ?: return null
-        val minx = minxString.toIntOrNull() ?: throw IllegalArgumentException("minx must be integer.")
-        val maxx = maxxString.toIntOrNull() ?: throw IllegalArgumentException("maxx must be integer.")
-        val miny = minyString.toIntOrNull() ?: throw IllegalArgumentException("miny must be integer.")
-        val maxy = maxyString.toIntOrNull() ?: throw IllegalArgumentException("maxy must be integer.")
+        val minx = minxString.toIntOrNull() ?: throw IllegalParameterException("minx must be integer: $minxString.")
+        val maxx = maxxString.toIntOrNull() ?: throw IllegalParameterException("maxx must be integer: $maxxString.")
+        val miny = minyString.toIntOrNull() ?: throw IllegalParameterException("miny must be integer: $minyString.")
+        val maxy = maxyString.toIntOrNull() ?: throw IllegalParameterException("maxy must be integer: $maxyString.")
 
         return WindowOption(
             Window(

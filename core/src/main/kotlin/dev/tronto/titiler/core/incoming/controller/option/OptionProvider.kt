@@ -6,8 +6,12 @@ class OptionProvider<O : Option>(
     @PublishedApi
     internal val parsers: Iterable<OptionParser<*>>,
 ) {
-    inline fun <reified T : Option> filter(): OptionProvider<T> {
+    inline fun <reified T : O> filter(): OptionProvider<T> {
         return OptionProvider<T>(options.filterIsInstance<T>(), parsers)
+    }
+
+    inline fun <reified T : O> remove(): OptionProvider<O> {
+        return OptionProvider(options.filterNot { it is T }, parsers)
     }
 
     inline fun <reified T : O> list(): List<T> = options.filterIsInstance<T>()

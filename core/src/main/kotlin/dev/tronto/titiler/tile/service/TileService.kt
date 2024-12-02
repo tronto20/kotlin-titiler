@@ -17,7 +17,7 @@ import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageSizeOption
 import dev.tronto.titiler.image.incoming.controller.option.WindowOption
-import dev.tronto.titiler.image.incoming.usecase.ImageReadRasterUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.service.ImageService
 import dev.tronto.titiler.tile.domain.TileInfo
 import dev.tronto.titiler.tile.domain.TileMatrix
@@ -46,7 +46,7 @@ class TileService(
     private val tileMatrixSetFactory: TileMatrixSetFactory = ResourceTileMatrixSetFactory(),
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
     private val rasterFactory: RasterFactory = GdalRasterFactory(crsFactory),
-    private val imageReadRasterUseCase: ImageReadRasterUseCase = ImageService(crsFactory),
+    private val imageReadUseCase: ImageReadUseCase = ImageService(crsFactory),
     private val infoUseCase: InfoUseCase = CoreService(rasterFactory),
 ) : TileUseCase, TileInfoUseCase {
     companion object {
@@ -168,7 +168,7 @@ class TileService(
         val tileImageOptions = imageOptions + listOf(imageSizeOption, windowOption)
 
         return try {
-            imageReadRasterUseCase.readRaster(tileOpenOptions, tileImageOptions)
+            imageReadUseCase.read(tileOpenOptions, tileImageOptions)
         } catch (e: ImageOutOfBoundsException) {
             throw TileNotFoundException(tileCoord, e)
         }
