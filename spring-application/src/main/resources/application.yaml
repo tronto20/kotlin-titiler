@@ -1,0 +1,6 @@
+server:
+  shutdown: graceful
+
+logging:
+  level:
+    dev.tronto.titiler: trace

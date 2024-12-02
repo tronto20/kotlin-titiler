@@ -1,0 +1,23 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "\\Qtile\/matrixset\\E"
+      },
+      {
+        "pattern": "\\Qtile\/matrixset\/\\E.*\\Q.json\\E"
+      },
+      {
+        "pattern": "\\Qlib\\E"
+      },
+      {
+        "pattern": "\\Qlib\/linuxX64\\E"
+      },
+      {
+        "pattern": "\\Qlib\/linuxX64\/libmultik_jni-linuxX64.so\\E"
+      }
+    ]
+  },
+  "bundles": [
+  ]
+}

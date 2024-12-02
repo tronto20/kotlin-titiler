@@ -1,10 +1,16 @@
 pluginManagement {
-    val kotlinVersion = extra["versions.kotlin"].toString()
-    val kotlinterVersion = extra["versions.kotlinter"].toString()
+    val kotlinVersion = extra["kotlin.version"].toString()
+    val kotlinterVersion = extra["kotlinter.version"].toString()
+    val springBootVersion = extra["spring.boot.version"].toString()
+    val graalvmNativeVersion = extra["graalvm.native.version"].toString()
 
     plugins {
         kotlin("jvm") version kotlinVersion
+        kotlin("plugin.spring") version kotlinVersion
+        kotlin("plugin.serialization") version kotlinVersion
         id("org.jmailen.kotlinter") version kotlinterVersion
+        id("org.springframework.boot") version springBootVersion
+        id("org.graalvm.buildtools.native") version graalvmNativeVersion
     }
 
     repositories {
@@ -20,4 +26,6 @@ plugins {
 rootProject.name = "kotlin-titler"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+include(":dependencies")
 include(":core")
+include(":spring-application")

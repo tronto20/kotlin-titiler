@@ -1,3 +1,5 @@
+import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
+
 plugins {
     kotlin("jvm")
     id("org.jmailen.kotlinter")
@@ -7,11 +9,20 @@ repositories {
     mavenCentral()
 }
 
-tasks.prepareKotlinBuildScriptModel {
-    dependsOn(tasks.installKotlinterPrePushHook)
+allprojects {
+    group = "dev.tronto"
 }
 
+tasks.register("installKotlinterPreCommitHook", InstallPreCommitHookTask::class.java) {
+    this.group = "build setup"
+    this.description = "Installs Kotlinter Git pre-commit hook"
+}
 
-allprojects {
-    group = "io.github.tronto20"
+tasks.getByName("prepareKotlinBuildScriptModel") {
+    dependsOn(tasks.getByName("installKotlinterPrePushHook"))
+    dependsOn(tasks.getByName("installKotlinterPreCommitHook"))
+}
+
+kotlin {
+    jvmToolchain((properties["jvm.version"] as? String)?.toIntOrNull() ?: 21)
 }

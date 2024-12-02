@@ -221,3 +221,6 @@ build
 # Igonre Local files
 **/gradle.local.properties
 **/kotest.properties
+
+# kotlin daemons
+.kotlin/
