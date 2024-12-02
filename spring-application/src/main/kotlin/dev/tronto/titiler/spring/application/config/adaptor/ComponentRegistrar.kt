@@ -8,7 +8,7 @@ import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.CRSTransformFactory
 import dev.tronto.titiler.core.outgoing.port.RasterFactory
 import dev.tronto.titiler.core.service.CoreService
-import dev.tronto.titiler.image.incoming.usecase.ImageReadRasterUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
 import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
 import dev.tronto.titiler.image.service.ImageService
@@ -60,13 +60,13 @@ class ComponentRegistrar {
         tileMatrixSetFactory: TileMatrixSetFactory,
         crsFactory: CRSFactory,
         rasterFactory: RasterFactory,
-        imageReadRasterUseCase: ImageReadRasterUseCase,
+        imageReadUseCase: ImageReadUseCase,
         infoUseCase: InfoUseCase,
     ) = TileService(
         tileMatrixSetFactory,
         crsFactory,
         rasterFactory,
-        imageReadRasterUseCase,
+        imageReadUseCase,
         infoUseCase
     )
 }

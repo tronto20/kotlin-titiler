@@ -21,7 +21,8 @@ import dev.tronto.titiler.image.incoming.controller.option.MaxSizeOption
 import dev.tronto.titiler.image.incoming.controller.option.NoDataOption
 import dev.tronto.titiler.image.incoming.controller.option.RescaleOption
 import dev.tronto.titiler.image.incoming.controller.option.WindowOption
-import dev.tronto.titiler.image.incoming.usecase.ImageReadRasterUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
 import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.image.outgoing.port.ImageDataAutoRescale
@@ -42,8 +43,8 @@ class ImageService(
     private val imageDataAutoRescales: List<ImageDataAutoRescale> =
         ServiceLoader.load(ImageDataAutoRescale::class.java, Thread.currentThread().contextClassLoader)
             .sortedBy { if (it is Ordered) it.order else 0 }.toList(),
-) : ImageReadRasterUseCase {
-    override suspend fun readRaster(
+) : ImageReadUseCase, ImageBBoxUseCase {
+    override suspend fun read(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
     ): Image {
@@ -140,10 +141,10 @@ class ImageService(
 
         renderImage(rescaledImageData, format)?.let { return it }
 
+
         imageDataAutoRescales.forEach {
             if (it.supports(rescaledImageData, format)) {
                 val autoRescaled = it.rescale(rescaledImageData, format)
-
                 renderImage(autoRescaled, format)?.let {
                     logger.warn {
                         "Invalid type: ${rescaledImageData.dataType} for the $format driver. " +
