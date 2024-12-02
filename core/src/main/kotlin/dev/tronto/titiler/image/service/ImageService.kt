@@ -22,6 +22,7 @@ import dev.tronto.titiler.image.incoming.controller.option.NoDataOption
 import dev.tronto.titiler.image.incoming.controller.option.RescaleOption
 import dev.tronto.titiler.image.incoming.controller.option.WindowOption
 import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
 import dev.tronto.titiler.image.outgoing.port.ImageData
@@ -43,7 +44,7 @@ class ImageService(
     private val imageDataAutoRescales: List<ImageDataAutoRescale> =
         ServiceLoader.load(ImageDataAutoRescale::class.java, Thread.currentThread().contextClassLoader)
             .sortedBy { if (it is Ordered) it.order else 0 }.toList(),
-) : ImageReadUseCase, ImageBBoxUseCase {
+) : ImageReadUseCase, ImageBBoxUseCase, ImagePreviewUseCase {
     override suspend fun read(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
@@ -55,6 +56,7 @@ class ImageService(
 
         val featureOption = imageOptions.getOrNull<FeatureOption>()
         val maxSizeOption = imageOptions.getOrNull<MaxSizeOption>()
+        val imageSizeOption = imageOptions.getOrNull<ImageSizeOption>()
 
         val maskedImageData = readableRasterFactory.withReadableRaster(openOptions) { raster ->
 
@@ -92,15 +94,18 @@ class ImageService(
 
             /**
              *  width, height 우선순위
-             *  1. maxSize
-             *  2. imageSize
+             *  1. imageSize
+             *  2. maxSize
              */
-                val (width, height) = if (maxSizeOption != null) {
+
+                val (width, height) = if (imageSizeOption != null) {
+                imageSizeOption.width to imageSizeOption.height
+            } else if (maxSizeOption != null) {
                 val maxSize = maxSizeOption.maxSize
                 val widthRatio = maxSize.toDouble() / window.width
                 val heightRatio = maxSize.toDouble() / window.height
 
-                val ratio = if (widthRatio > heightRatio) {
+                val ratio = if (widthRatio < heightRatio) {
                     widthRatio
                 } else {
                     heightRatio
