@@ -1,10 +1,7 @@
-package dev.tronto.titiler.image.incoming.controller.option
+package dev.tronto.titiler.core.incoming.controller.option
 
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.exception.RequiredParameterMissingException
-import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
-import dev.tronto.titiler.core.incoming.controller.option.OptionParser
-import dev.tronto.titiler.core.incoming.controller.option.Request
 
 class NoDataOptionParser : OptionParser<NoDataOption> {
     companion object {

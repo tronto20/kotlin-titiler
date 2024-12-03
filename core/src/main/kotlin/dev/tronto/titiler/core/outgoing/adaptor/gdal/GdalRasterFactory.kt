@@ -4,6 +4,7 @@ import dev.tronto.titiler.core.domain.ResamplingAlgorithm
 import dev.tronto.titiler.core.exception.GdalDatasetOpenFailedException
 import dev.tronto.titiler.core.incoming.controller.option.CRSOption
 import dev.tronto.titiler.core.incoming.controller.option.EnvOption
+import dev.tronto.titiler.core.incoming.controller.option.NoDataOption
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.ResamplingOption
@@ -12,15 +13,17 @@ import dev.tronto.titiler.core.outgoing.port.CRS
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.Raster
 import dev.tronto.titiler.core.outgoing.port.RasterFactory
-import dev.tronto.titiler.image.outgoing.adaptor.gdal.gdalConst
+import dev.tronto.titiler.image.outgoing.adaptor.gdal.gdalWarpString
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.gdal.gdal.Dataset
+import org.gdal.gdal.WarpOptions
 import org.gdal.gdal.gdal
 import org.gdal.gdalconst.gdalconst
 import org.gdal.ogr.ogr
 import org.gdal.osr.osr
+import java.util.*
 import kotlin.io.path.toPath
 
 open class GdalRasterFactory(
@@ -41,18 +44,42 @@ open class GdalRasterFactory(
             )
     }
 
-    protected open fun createVRT(openOptions: OptionProvider<OpenOption>, from: CRS, dataset: Dataset): Dataset? {
+    protected open fun createVRT(openOptions: OptionProvider<OpenOption>, raster: GdalRaster): GdalBaseRaster? {
         val crsOption = openOptions.getOrNull<CRSOption>()
-        return if (crsOption != null) {
+        val noData = openOptions.getOrNull<NoDataOption>()?.noData ?: raster.noDataValue
+
+        return if (crsOption != null || noData != null) {
             val resamplingAlgorithm =
                 openOptions.getOrNull<ResamplingOption>()?.algorithm ?: ResamplingAlgorithm.NEAREST
-            val targetCRS: CRS = crsFactory.create(crsOption.crsString)
-            gdal.AutoCreateWarpedVRT(
-                dataset,
-                from.wkt,
-                targetCRS.wkt,
-                resamplingAlgorithm.gdalConst
+            val memoryFile = "/vsimem/${UUID.randomUUID()}.vrt"
+            val warpOptions = mutableMapOf(
+                "-of" to "VRT",
+                "-r" to resamplingAlgorithm.gdalWarpString,
+                "-dstalpha" to ""
             )
+            if (crsOption != null) {
+                val targetCRS: CRS = crsFactory.create(crsOption.crsString)
+                warpOptions["-t_srs"] = targetCRS.proj4
+            }
+
+            if (noData != null) {
+                warpOptions.remove("-dstalpha")
+                warpOptions["-srcnodata"] = noData.toString()
+                warpOptions["-dstnodata"] = noData.toString()
+            }
+
+            if (raster.hasAlphaBand()) {
+                warpOptions.remove("-dstalpha")
+            }
+            val options = warpOptions.flatMap { listOf(it.key, it.value) }.filter { it.isNotBlank() }
+            val dataset = gdal.Warp(
+                memoryFile,
+                arrayOf(raster.dataset),
+                WarpOptions(
+                    Vector(options)
+                )
+            )
+            GdalMemFileRaster(GdalRaster(dataset, crsFactory), memoryFile)
         } else {
             null
         }
@@ -88,16 +115,13 @@ open class GdalRasterFactory(
         }
     }
 
-    suspend fun <T> withGdalRaster(openOptions: OptionProvider<OpenOption>, block: (raster: GdalRaster) -> T): T {
+    suspend fun <T> withGdalRaster(openOptions: OptionProvider<OpenOption>, block: (raster: GdalBaseRaster) -> T): T {
         return withContext(dispatcher) {
             applyEnvs(openOptions) {
                 createDataset(openOptions).use { dataset ->
                     GdalRaster(dataset, crsFactory).use { raster ->
-                        createVRT(openOptions, raster.crs, raster.dataset)?.use {
-                            GdalRaster(
-                                it,
-                                crsFactory
-                            ).use(block)
+                        createVRT(openOptions, raster)?.use {
+                            it.use(block)
                         } ?: block(raster)
                     }
                 }

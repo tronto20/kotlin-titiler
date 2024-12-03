@@ -8,7 +8,6 @@ import dev.tronto.titiler.core.outgoing.adaptor.jts.AffineCoordinateTransform
 import dev.tronto.titiler.core.outgoing.port.CRS
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.CoordinateTransform
-import dev.tronto.titiler.core.outgoing.port.Raster
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.gdal.gdal.Band
 import org.gdal.gdal.Dataset
@@ -17,9 +16,9 @@ import org.locationtech.jts.geom.Envelope
 import org.locationtech.jts.geom.util.AffineTransformation
 
 class GdalRaster internal constructor(
-    val dataset: Dataset,
+    override val dataset: Dataset,
     val crsFactory: CRSFactory,
-) : Raster {
+) : GdalBaseRaster {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -51,10 +50,12 @@ class GdalRaster internal constructor(
     }
 
     override val noDataType: String by lazy {
-        if (noDataValue == null) {
-            "None"
-        } else {
+        if (noDataValue != null) {
             "Nodata"
+        } else if (hasAlphaBand()) {
+            "Alpha"
+        } else {
+            "None"
         }
     }
 
