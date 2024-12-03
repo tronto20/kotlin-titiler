@@ -14,6 +14,8 @@ internal class IntImageData(
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
+
+        @JvmStatic
         private val availableTypes = listOf(
             DataType.Int8,
             DataType.UInt8,

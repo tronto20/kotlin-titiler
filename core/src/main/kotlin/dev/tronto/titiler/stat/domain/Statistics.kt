@@ -1,5 +1,6 @@
-package dev.tronto.titiler.core.domain
+package dev.tronto.titiler.stat.domain
 
+import dev.tronto.titiler.core.domain.BandIndex
 import kotlinx.serialization.Serializable
 
 @Serializable

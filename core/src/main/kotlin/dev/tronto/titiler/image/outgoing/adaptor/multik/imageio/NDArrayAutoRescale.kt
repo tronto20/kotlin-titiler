@@ -1,7 +1,6 @@
 package dev.tronto.titiler.image.outgoing.adaptor.multik.imageio
 
 import dev.tronto.titiler.core.domain.DataType
-import dev.tronto.titiler.core.domain.Percentile
 import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.outgoing.adaptor.multik.IntImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NDArrayImageData
@@ -9,6 +8,7 @@ import dev.tronto.titiler.image.outgoing.adaptor.multik.NumberRange
 import dev.tronto.titiler.image.outgoing.adaptor.multik.linearRescale
 import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.image.outgoing.port.ImageDataAutoRescale
+import dev.tronto.titiler.stat.domain.Percentile
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.ndarray.data.D3
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray

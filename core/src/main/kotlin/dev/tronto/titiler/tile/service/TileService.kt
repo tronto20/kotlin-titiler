@@ -16,8 +16,11 @@ import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageSizeOption
+import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.image.incoming.controller.option.WindowOption
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
+import dev.tronto.titiler.image.service.ImageRenderService
 import dev.tronto.titiler.image.service.ImageService
 import dev.tronto.titiler.tile.domain.TileInfo
 import dev.tronto.titiler.tile.domain.TileMatrix
@@ -48,6 +51,7 @@ class TileService(
     private val rasterFactory: RasterFactory = GdalRasterFactory(crsFactory),
     private val imageReadUseCase: ImageReadUseCase = ImageService(crsFactory),
     private val infoUseCase: InfoUseCase = CoreService(rasterFactory),
+    private val imageRenderUseCase: ImageRenderUseCase = ImageRenderService(),
 ) : TileUseCase, TileInfoUseCase {
     companion object {
         @JvmStatic
@@ -134,6 +138,7 @@ class TileService(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
         tileOptions: OptionProvider<TileOption>,
+        renderOptions: OptionProvider<RenderOption>,
     ): Image {
         val tileMatrixSet = tileMatrixSet(tileOptions)
         val tileCoord = tileOptions.get<TileCoordinateOption>()
@@ -167,11 +172,12 @@ class TileService(
 
         val tileImageOptions = imageOptions + listOf(imageSizeOption, windowOption)
 
-        return try {
+        val imageData = try {
             imageReadUseCase.read(tileOpenOptions, tileImageOptions)
         } catch (e: ImageOutOfBoundsException) {
             throw TileNotFoundException(tileCoord, e)
         }
+        return imageRenderUseCase.renderImage(imageData, renderOptions)
     }
 
     private suspend fun tileMatrixSet(tileOptions: OptionProvider<TileOption>): TileMatrixSet {

@@ -4,7 +4,9 @@ import dev.tronto.titiler.core.incoming.usecase.BoundsUseCase
 import dev.tronto.titiler.core.incoming.usecase.InfoUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
+import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
 import dev.tronto.titiler.spring.application.config.adaptor.WebFluxOptionParserAdaptor
+import dev.tronto.titiler.stat.incoming.usecase.StatisticsUseCase
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
 import dev.tronto.titiler.tile.incoming.usecase.TileUseCase
 import kotlinx.coroutines.reactor.awaitSingle
@@ -30,6 +32,8 @@ class COGController(
     private val tileInfoUseCase: TileInfoUseCase,
     private val imageBBoxUseCase: ImageBBoxUseCase,
     private val imagePreviewUseCase: ImagePreviewUseCase,
+    private val imageRenderUseCase: ImageRenderUseCase,
+    private val statisticsUseCase: StatisticsUseCase,
 ) {
     private suspend fun ServerRequest.options() = optionParser.parse(this)
 
@@ -57,7 +61,8 @@ class COGController(
 
             GET(bboxPaths.map(RequestPredicates::path).reduce(RequestPredicate::or)) {
                 val options = it.options()
-                val image = imageBBoxUseCase.bbox(options.filter(), options.filter())
+                val imageData = imageBBoxUseCase.bbox(options.filter(), options.filter())
+                val image = imageRenderUseCase.renderImage(imageData, options.filter())
                 ok().contentType(MediaType.parseMediaType(image.format.contentType))
                     .body(BodyInserters.fromResource(ByteArrayResource(image.data)))
                     .awaitSingle()
@@ -70,9 +75,9 @@ class COGController(
 
             GET(previewPaths.map(RequestPredicates::path).reduce(RequestPredicate::or)) {
                 val options = it.options()
-                val image = imagePreviewUseCase.preview(options.filter(), options.filter())
+                val imageData = imagePreviewUseCase.preview(options.filter(), options.filter())
+                val image = imageRenderUseCase.renderImage(imageData, options.filter())
                 ByteArrayInputStream(image.data).use { stream ->
-
                     val dataBuffers = DataBufferUtils.readInputStream(
                         { stream },
                         it.exchange().response.bufferFactory(),
@@ -100,6 +105,7 @@ class COGController(
                 val image = tileUseCase.tile(
                     options.filter(),
                     options.filter(),
+                    options.filter(),
                     options.filter()
                 )
 
@@ -117,6 +123,12 @@ class COGController(
                 val options = it.options()
                 val tileInfo = tileInfoUseCase.tileInfo(options.filter(), options.filter())
                 ok().bodyValueAndAwait(tileInfo)
+            }
+
+            GET("statistics") {
+                val options = it.options()
+                val statistics = statisticsUseCase.statistics(options.filter(), options.filter(), options.filter())
+                ok().bodyValueAndAwait(statistics)
             }
         }
     }
