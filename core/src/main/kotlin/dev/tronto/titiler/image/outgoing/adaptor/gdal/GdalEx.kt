@@ -15,8 +15,19 @@ val ResamplingAlgorithm.gdalConst: Int
             ResamplingAlgorithm.AVERAGE -> gdalconst.GRA_Average
             ResamplingAlgorithm.RMS -> gdalconst.GRA_RMS
             ResamplingAlgorithm.MODE -> gdalconst.GRA_Mode
-            ResamplingAlgorithm.GAUSS -> gdalconst.GRIORA_Gauss
         }
+
+val ResamplingAlgorithm.gdalWarpString: String
+    get() = when (this) {
+        ResamplingAlgorithm.NEAREST -> "near"
+        ResamplingAlgorithm.BILINEAR -> "bilinear"
+        ResamplingAlgorithm.CUBIC -> "cubic"
+        ResamplingAlgorithm.CUBIC_SPLINE -> "cubicspline"
+        ResamplingAlgorithm.LANCZOS -> "lanczos"
+        ResamplingAlgorithm.AVERAGE -> "average"
+        ResamplingAlgorithm.RMS -> "rms"
+        ResamplingAlgorithm.MODE -> "mode"
+    }
 val Driver.canCreate: Boolean
     get() = GetMetadataItem(gdalconst.DCAP_CREATE)?.uppercase() in listOf("YES", "TRUE")
 val Driver.canCreateCopy: Boolean

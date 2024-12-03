@@ -4,7 +4,7 @@ dev.tronto.titiler.core.incoming.controller.option.ResamplingOptionParser
 dev.tronto.titiler.image.incoming.controller.option.RescaleOptionParser
 dev.tronto.titiler.image.incoming.controller.option.BandIndexOptionParser
 dev.tronto.titiler.image.incoming.controller.option.ImageFormatOptionParser
-dev.tronto.titiler.image.incoming.controller.option.NoDataOptionParser
+dev.tronto.titiler.core.incoming.controller.option.NoDataOptionParser
 dev.tronto.titiler.image.incoming.controller.option.ImageSizeOptionParser
 dev.tronto.titiler.image.incoming.controller.option.WindowOptionParser
 dev.tronto.titiler.image.incoming.controller.option.FeatureOptionParser

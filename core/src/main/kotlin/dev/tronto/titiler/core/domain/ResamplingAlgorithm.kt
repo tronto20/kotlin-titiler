@@ -9,7 +9,6 @@ enum class ResamplingAlgorithm {
     AVERAGE,
     RMS,
     MODE,
-    GAUSS,
     ;
 
     companion object {
