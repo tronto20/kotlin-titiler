@@ -19,7 +19,7 @@ class FeatureOptionParser : OptionParser<FeatureOption> {
     }
 
     override suspend fun parse(request: Request): FeatureOption? {
-        return request.body(polygonType)?.let {
+        return request.body("feature", polygonType)?.let {
             val crs = request.parameter("featureCrs").lastOrNull()
             FeatureOption(it, crs ?: DEFAULT_CRS)
         }

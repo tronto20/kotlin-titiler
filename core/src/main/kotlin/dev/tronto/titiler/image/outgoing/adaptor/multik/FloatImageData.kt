@@ -14,6 +14,8 @@ internal class FloatImageData(
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
+
+        @JvmStatic
         private val availableTypes = listOf(
             DataType.Float32,
             DataType.CFloat32

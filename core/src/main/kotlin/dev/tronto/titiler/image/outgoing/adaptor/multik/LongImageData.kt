@@ -14,6 +14,8 @@ internal class LongImageData(
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
+
+        @JvmStatic
         private val availableTypes = listOf(
             DataType.UInt32,
             DataType.Int64

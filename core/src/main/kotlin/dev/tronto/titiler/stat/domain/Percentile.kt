@@ -1,4 +1,4 @@
-package dev.tronto.titiler.core.domain
+package dev.tronto.titiler.stat.domain
 
 import kotlinx.serialization.Serializable
 

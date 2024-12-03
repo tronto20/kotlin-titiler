@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.server.ServerRequest
 
 class WebFluxRequestAdaptor(
     val serverRequest: ServerRequest,
+    val bodyKey: String? = null,
 ) : Request {
     private val queryParams = serverRequest.queryParams().mapKeys { it.key.lowercase() }
     private val pathParams = serverRequest.pathVariables().mapKeys { it.key.lowercase() }
@@ -27,9 +28,13 @@ class WebFluxRequestAdaptor(
         return headers[key.lowercase()] ?: emptyList()
     }
 
-    override suspend fun <T : Any> body(argumentType: ArgumentType<T>): T? {
-        return serverRequest.body(
-            BodyExtractors.toMono(ParameterizedTypeReference.forType<T>(argumentType.javaType))
-        ).awaitSingleOrNull()
+    override suspend fun <T : Any> body(key: String, argumentType: ArgumentType<T>): T? {
+        return if (bodyKey == key) {
+            serverRequest.body(
+                BodyExtractors.toMono(ParameterizedTypeReference.forType<T>(argumentType.javaType))
+            ).awaitSingleOrNull()
+        } else {
+            null
+        }
     }
 }

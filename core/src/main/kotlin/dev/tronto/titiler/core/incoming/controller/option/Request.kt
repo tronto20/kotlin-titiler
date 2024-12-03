@@ -5,5 +5,5 @@ interface Request {
 
     suspend fun option(key: String): List<String>
 
-    suspend fun <T : Any> body(argumentType: ArgumentType<T>): T?
+    suspend fun <T : Any> body(key: String, argumentType: ArgumentType<T>): T?
 }

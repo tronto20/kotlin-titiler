@@ -11,13 +11,14 @@ interface ImageData {
 
     val masked: Boolean
 
-    fun <T> rescaleToUInt8(rangeFrom: List<ClosedRange<T>>): ImageData where T : Number, T : Comparable<T> = rescale(
-        rangeFrom,
-        listOf(0..255),
-        DataType.UInt8
-    )
+    suspend fun <T> rescaleToUInt8(rangeFrom: List<ClosedRange<T>>): ImageData where T : Number, T : Comparable<T> =
+        rescale(
+            rangeFrom,
+            listOf(0..255),
+            DataType.UInt8
+        )
 
-    fun <T, R> rescale(
+    suspend fun <T, R> rescale(
         rangeFrom: List<ClosedRange<T>>,
         rangeTo: List<ClosedRange<R>>,
         dataType: DataType,

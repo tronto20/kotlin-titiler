@@ -14,6 +14,8 @@ internal class DoubleImageData(
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
+
+        @JvmStatic
         private val availableTypes = listOf(
             DataType.Float64,
             DataType.CFloat64

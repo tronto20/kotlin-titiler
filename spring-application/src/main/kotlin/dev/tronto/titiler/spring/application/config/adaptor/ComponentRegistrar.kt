@@ -8,10 +8,13 @@ import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.CRSTransformFactory
 import dev.tronto.titiler.core.outgoing.port.RasterFactory
 import dev.tronto.titiler.core.service.CoreService
+import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
 import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
+import dev.tronto.titiler.image.service.ImageRenderService
 import dev.tronto.titiler.image.service.ImageService
+import dev.tronto.titiler.stat.service.StatisticsService
 import dev.tronto.titiler.tile.outgoing.adaptor.resource.ResourceTileMatrixSetFactory
 import dev.tronto.titiler.tile.outgoing.port.TileMatrixSetFactory
 import dev.tronto.titiler.tile.service.TileService
@@ -69,4 +72,10 @@ class ComponentRegistrar {
         imageReadUseCase,
         infoUseCase
     )
+
+    @Bean
+    fun imageRenderService() = ImageRenderService()
+
+    @Bean
+    fun statisticsService(imagePreviewUseCase: ImagePreviewUseCase) = StatisticsService(imagePreviewUseCase)
 }

@@ -2,9 +2,14 @@ package dev.tronto.titiler.image.outgoing.adaptor.multik
 
 import dev.tronto.titiler.core.domain.DataType
 import dev.tronto.titiler.image.outgoing.port.ImageData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
+import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.view
 import org.jetbrains.kotlinx.multik.ndarray.operations.all
 import org.jetbrains.kotlinx.multik.ndarray.operations.mapMultiIndexed
@@ -56,9 +61,9 @@ internal sealed class NDArrayImageData<T>(
         return copy(mask = mask)
     }
 
-    protected abstract fun Number.asType(): T
+    abstract fun Number.asType(): T
 
-    override fun <I, R> rescale(
+    override suspend fun <I, R> rescale(
         rangeFrom: List<ClosedRange<I>>,
         rangeTo: List<ClosedRange<R>>,
         dataType: DataType,
@@ -114,16 +119,18 @@ internal sealed class NDArrayImageData<T>(
         }
     }
 
-    private inline fun <reified R> rescale(
+    private suspend inline fun <reified R> rescale(
         rangeFrom: List<NumberRange<T>>,
         rangeTo: List<NumberRange<R>>,
     ): D3Array<R> where R : Number, R : Comparable<R> {
         val rescaled = (0..<data.shape[0]).map { band ->
             val from = rangeFrom.getOrElse(band) { rangeFrom[0] }
             val to = rangeTo.getOrElse(band) { rangeTo[0] }
-            val bandData = data.view(band).deepCopy()
-            linearRescale<T, R>(bandData, from, to)
+            CoroutineScope(Dispatchers.Default).async {
+                val bandData = data.view(band)
+                linearRescale<T, R>(bandData, from, to)
+            }
         }
-        return mk.stack(rescaled)
+        return mk.stack(rescaled.awaitAll())
     }
 }
