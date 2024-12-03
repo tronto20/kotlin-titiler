@@ -69,6 +69,10 @@ open class GdalRasterFactory(
             }
 
             if (raster.hasAlphaBand()) {
+                /**
+                 *  TODO :: mask flag 확인 필요
+                 *   any([MaskFlags.alpha in flags for flags in src_dst.mask_flag_enums])
+                 */
                 warpOptions.remove("-dstalpha")
             }
             val options = warpOptions.flatMap { listOf(it.key, it.value) }.filter { it.isNotBlank() }
