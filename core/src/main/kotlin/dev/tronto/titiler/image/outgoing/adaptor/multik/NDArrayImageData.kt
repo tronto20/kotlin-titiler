@@ -127,6 +127,7 @@ internal sealed class NDArrayImageData<T>(
             val from = rangeFrom.getOrElse(band) { rangeFrom[0] }
             val to = rangeTo.getOrElse(band) { rangeTo[0] }
             CoroutineScope(Dispatchers.Default).async {
+                // deepCopy 하지 않으면 데이터 오염 발생.
                 val bandData = data.view(band).deepCopy()
                 linearRescale<T, R>(bandData, from, to)
             }
