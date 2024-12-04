@@ -13,7 +13,6 @@ import dev.tronto.titiler.image.incoming.controller.option.FeatureOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageSizeOption
 import dev.tronto.titiler.image.incoming.controller.option.MaxSizeOption
-import dev.tronto.titiler.image.incoming.controller.option.NoDataOption
 import dev.tronto.titiler.image.incoming.controller.option.WindowOption
 import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
@@ -35,7 +34,6 @@ class ImageService(
         imageOptions: OptionProvider<ImageOption>,
     ): ImageData {
         val bandIndexOption = imageOptions.getOrNull<BandIndexOption>()
-        val nodataOption = imageOptions.getOrNull<NoDataOption>()
 
         val featureOption = imageOptions.getOrNull<FeatureOption>()
         val maxSizeOption = imageOptions.getOrNull<MaxSizeOption>()
@@ -99,7 +97,7 @@ class ImageService(
                 imageSizeOption.width to imageSizeOption.height
             }
 
-            val imageData = raster.read(window, width, height, bandIndexOption?.bandIndexes, nodataOption?.noData)
+            val imageData = raster.read(window, width, height, bandIndexOption?.bandIndexes)
             val maskedImageData = if (pixelFeature != null) {
                 val from = pixelFeature.envelopeInternal
                 val transform = AffineTransformationFactory.createFromBaseLines(

@@ -17,33 +17,5 @@ enum class DataType(val min: Number, val max: Number) {
     CFloat64(0, Double.MAX_VALUE),
     ;
 
-    companion object {
-        val INT32 = listOf(
-            Int8,
-            UInt8,
-            UInt16,
-            Int32,
-            CInt16,
-            CInt32
-        )
-
-        val INT64 = listOf(
-            UInt32,
-            Int64
-        )
-
-        val FLOAT32 = listOf(
-            Float32,
-            CFloat32
-        )
-
-        val FLOAT64 = listOf(
-            Float64,
-            CFloat64
-        )
-
-        val UNSUPPORTED = listOf(
-            UInt64
-        )
-    }
+    companion object
 }

@@ -2,10 +2,9 @@ package dev.tronto.titiler.image.outgoing.adaptor.gdal
 
 import dev.tronto.titiler.core.domain.BandIndex
 import dev.tronto.titiler.core.domain.DataType
-import dev.tronto.titiler.core.outgoing.adaptor.gdal.GdalRaster
+import dev.tronto.titiler.core.outgoing.adaptor.gdal.GdalBaseRaster
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.gdalConst
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.handleError
-import dev.tronto.titiler.core.outgoing.port.Raster
 import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.outgoing.adaptor.multik.DoubleImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.FloatImageData
@@ -13,7 +12,6 @@ import dev.tronto.titiler.image.outgoing.adaptor.multik.IntImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.LongImageData
 import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.image.outgoing.port.ReadableRaster
-import org.gdal.gdal.Dataset
 import org.jetbrains.kotlinx.multik.api.d2arrayIndices
 import org.jetbrains.kotlinx.multik.api.d3array
 import org.jetbrains.kotlinx.multik.api.mk
@@ -26,11 +24,9 @@ import org.jetbrains.kotlinx.multik.ndarray.data.view
 import org.jetbrains.kotlinx.multik.ndarray.operations.all
 import kotlin.math.roundToInt
 
-class GdalReadableRaster(
-    private val gdalRaster: GdalRaster,
-) : ReadableRaster, Raster by gdalRaster {
-    private val dataset: Dataset
-        get() = gdalRaster.dataset
+open class GdalReadableRaster(
+    private val gdalRaster: GdalBaseRaster,
+) : ReadableRaster, GdalBaseRaster by gdalRaster {
 
     private fun <T> mask(data: D3Array<T>, noData: T?): D2Array<Byte> {
         val shape = data.shape

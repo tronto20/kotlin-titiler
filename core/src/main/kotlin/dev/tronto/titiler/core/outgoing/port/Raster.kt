@@ -2,6 +2,7 @@ package dev.tronto.titiler.core.outgoing.port
 
 import dev.tronto.titiler.core.domain.BandIndex
 import dev.tronto.titiler.core.domain.BandInfo
+import dev.tronto.titiler.core.domain.ColorInterpretation
 import dev.tronto.titiler.core.domain.DataType
 import org.locationtech.jts.geom.Envelope
 
@@ -18,4 +19,10 @@ interface Raster : AutoCloseable {
 
     fun bounds(): Envelope
     fun bandInfo(bandIndex: BandIndex): BandInfo
+
+    fun hasAlphaBand(): Boolean {
+        return (1..this.bandCount).reversed().any {
+            bandInfo(BandIndex(it)).colorInterpolation == ColorInterpretation.AlphaBand
+        }
+    }
 }
