@@ -42,7 +42,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
             CoroutineScope(Dispatchers.Default).async {
                 val doubleData = imageData.data.view(band).asDNArray().asType<Double>()
                 val data = doubleData.filterMultiIndexed { index, _ ->
-                    imageData.mask[index] == 1.toByte()
+                    imageData.mask[index] == 1
                 }.sorted()
                 val valueGroup = data.groupNDArrayBy { it }
                 val min = data.firstOrNull() ?: 0.0
@@ -92,10 +92,10 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                     majority = majorityValue,
                     minority = minorityValue,
                     unique = unique,
-                    validPercent = validPixels.toDouble() / (validPixels + maskedPixels),
+                    validPercent = validPixels.toDouble() / (validPixels + maskedPixels) * 100,
                     maskedPixels = maskedPixels,
                     validPixels = validPixels,
-                    percentile = percentileMap
+                    percentiles = percentileMap
                 )
             }
         }.awaitAll()

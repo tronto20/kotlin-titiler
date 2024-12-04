@@ -24,7 +24,7 @@ import org.locationtech.jts.geom.Location
  */
 internal sealed class NDArrayImageData<T>(
     internal val data: D3Array<T>,
-    internal val mask: D2Array<Byte>,
+    internal val mask: D2Array<Int>,
 ) : ImageData where T : Comparable<T>, T : Number {
     final override val band
         get() = data.shape[0]
@@ -45,17 +45,17 @@ internal sealed class NDArrayImageData<T>(
         }
     }
 
-    abstract fun copy(data: D3Array<T> = this.data, mask: D2Array<Byte> = this.mask): NDArrayImageData<T>
+    abstract fun copy(data: D3Array<T> = this.data, mask: D2Array<Int> = this.mask): NDArrayImageData<T>
 
     override fun mask(geom: Geometry): ImageData {
         val index = IndexedPointInAreaLocator(geom)
         val mask = mask.mapMultiIndexed { (h, w), byte ->
-            if (byte == 0.toByte()) {
+            if (byte == 0) {
                 byte
             } else if (index.locate(Coordinate(w.toDouble(), h.toDouble())) == Location.EXTERIOR) {
-                0.toByte()
+                0
             } else {
-                1.toByte()
+                1
             }
         }
         return copy(mask = mask)

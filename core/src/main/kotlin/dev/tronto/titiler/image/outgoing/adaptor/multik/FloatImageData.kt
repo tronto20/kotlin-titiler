@@ -8,7 +8,7 @@ import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
 
 internal class FloatImageData(
     data: D3Array<Float>,
-    mask: D2Array<Byte>,
+    mask: D2Array<Int>,
     override val dataType: DataType,
 ) : ImageData, NDArrayImageData<Float>(data, mask) {
     companion object {
@@ -32,7 +32,7 @@ internal class FloatImageData(
         return toFloat()
     }
 
-    override fun copy(data: D3Array<Float>, mask: D2Array<Byte>): NDArrayImageData<Float> {
+    override fun copy(data: D3Array<Float>, mask: D2Array<Int>): NDArrayImageData<Float> {
         return FloatImageData(data, mask, dataType)
     }
 }

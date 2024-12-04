@@ -17,5 +17,5 @@ data class BandStatistics(
     val validPercent: Double,
     val maskedPixels: Int,
     val validPixels: Int,
-    val percentile: Map<Percentile, Double>,
+    val percentiles: Map<Percentile, Double>,
 )
