@@ -13,6 +13,7 @@ class GdalMemFileRaster internal constructor(
     }
 
     override fun close() {
+        gdalRaster.close()
         try {
             gdal.Unlink(memFilePath)
         } catch (e: RuntimeException) {
