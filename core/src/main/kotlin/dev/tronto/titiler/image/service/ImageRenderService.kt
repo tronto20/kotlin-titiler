@@ -2,6 +2,7 @@ package dev.tronto.titiler.image.service
 
 import dev.tronto.titiler.core.domain.Ordered
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.logger
 import dev.tronto.titiler.image.domain.Image
 import dev.tronto.titiler.image.domain.ImageFormat
@@ -34,8 +35,8 @@ class ImageRenderService(
     }
 
     override suspend fun renderImage(imageData: ImageData, renderOptions: OptionProvider<RenderOption>): Image {
-        val rescaleOption = renderOptions.getOrNull<RescaleOption>()
-        val formatOption = renderOptions.getOrNull<ImageFormatOption>()
+        val rescaleOption: RescaleOption? = renderOptions.getOrNull()
+        val formatOption: ImageFormatOption? = renderOptions.getOrNull()
 
         val rescaledImageData = if (rescaleOption != null) {
             imageData.rescaleToUInt8(rescaleOption.rescale)

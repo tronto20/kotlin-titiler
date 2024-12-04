@@ -19,7 +19,7 @@ class ImageFormatOptionParser : OptionParser<ImageFormatOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): ImageFormatOption? {
+    override fun parse(request: Request): ImageFormatOption? {
         return request.parameter(PARAM).lastOrNull()?.let {
             if (it.equals(AUTO, true)) {
                 ImageFormatOption(null)

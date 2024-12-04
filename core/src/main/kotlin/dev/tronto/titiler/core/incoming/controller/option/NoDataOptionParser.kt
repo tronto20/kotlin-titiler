@@ -13,7 +13,7 @@ class NoDataOptionParser : OptionParser<NoDataOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): NoDataOption? {
+    override fun parse(request: Request): NoDataOption? {
         return request.parameter(PARAM).lastOrNull()?.let {
             val double = it.toDoubleOrNull() ?: throw IllegalParameterException("noData must be a number: $it.")
             NoDataOption(double)

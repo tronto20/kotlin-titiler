@@ -2,6 +2,8 @@ package dev.tronto.titiler.image.service
 
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.core.incoming.controller.option.get
+import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSTransformFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
@@ -33,11 +35,11 @@ class ImageService(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
     ): ImageData {
-        val bandIndexOption = imageOptions.getOrNull<BandIndexOption>()
+        val bandIndexOption: BandIndexOption? = imageOptions.getOrNull()
 
-        val featureOption = imageOptions.getOrNull<FeatureOption>()
-        val maxSizeOption = imageOptions.getOrNull<MaxSizeOption>()
-        val imageSizeOption = imageOptions.getOrNull<ImageSizeOption>()
+        val featureOption: FeatureOption? = imageOptions.getOrNull()
+        val maxSizeOption: MaxSizeOption? = imageOptions.getOrNull()
+        val imageSizeOption: ImageSizeOption? = imageOptions.getOrNull()
 
         val maskedImageData = readableRasterFactory.withReadableRaster(openOptions) { raster ->
 
@@ -64,8 +66,8 @@ class ImageService(
                 val pixelEnvelope = pixelFeature.envelopeInternal
                 Window.fromEnvelope(pixelEnvelope)
             } else {
-                imageOptions.getOrNull<WindowOption>()?.window
-                    ?: Window(0, 0, raster.width, raster.height)
+                val windowOption: WindowOption? = imageOptions.getOrNull()
+                windowOption?.window ?: Window(0, 0, raster.width, raster.height)
             }
 
             // window check
@@ -93,7 +95,7 @@ class ImageService(
                 }
                 (window.width * ratio).roundToInt() to (window.height * ratio).roundToInt()
             } else {
-                val imageSizeOption = imageOptions.get<ImageSizeOption>()
+                val imageSizeOption: ImageSizeOption = imageOptions.get()
                 imageSizeOption.width to imageSizeOption.height
             }
 

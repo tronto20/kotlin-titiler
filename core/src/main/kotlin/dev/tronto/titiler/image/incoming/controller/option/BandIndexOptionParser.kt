@@ -16,7 +16,7 @@ class BandIndexOptionParser : OptionParser<BandIndexOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): BandIndexOption? {
+    override fun parse(request: Request): BandIndexOption? {
         val indexes = request.parameter(PARAM).mapNotNull { it.toIntOrNull()?.let { BandIndex(it) } }
         return if (indexes.isNotEmpty()) BandIndexOption(indexes) else null
     }

@@ -17,7 +17,7 @@ class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
         return RequiredParameterMissingException(WIDTH, HEIGHT)
     }
 
-    override suspend fun parse(request: Request): ImageSizeOption? {
+    override fun parse(request: Request): ImageSizeOption? {
         val widthString = request.parameter(WIDTH).lastOrNull() ?: return null
         val heightString = request.parameter(HEIGHT).lastOrNull() ?: return null
         val width = widthString.toIntOrNull() ?: throw IllegalParameterException(

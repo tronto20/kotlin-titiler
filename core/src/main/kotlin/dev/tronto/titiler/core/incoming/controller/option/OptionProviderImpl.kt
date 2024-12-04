@@ -2,47 +2,53 @@ package dev.tronto.titiler.core.incoming.controller.option
 
 class OptionProviderImpl<O : Option>(
     private val request: Request,
-    private val parserMap: Map<ArgumentType<*>, List<OptionParser<*>>>,
-    private val parseCache: MutableMap<ArgumentType<*>, Option?> = mutableMapOf(),
-) : OptionProvider2<O> {
-    override fun <T : O> filter(argumentType: ArgumentType<T>): OptionProvider2<T> {
+    private val argumentType: ArgumentType<O>,
+    private val parserMap: Map<ArgumentType<out O>, List<OptionParser<out O>>>,
+    private val parseCache: MutableMap<ArgumentType<out O>, O?> = mutableMapOf(),
+) : OptionProvider<O> {
+    override fun <T : O> filter(argumentType: ArgumentType<T>): OptionProvider<T> {
         return OptionProviderImpl<T>(
             request,
-            parserMap.filter { it.key.isSubtypeOf(argumentType) },
-            parseCache
+            argumentType,
+            parserMap
+                .filter { it.key.isSubtypeOf(argumentType) }
+                .mapKeys { it.key as ArgumentType<out T> }
+                .mapValues { it.value as List<OptionParser<out T>> },
+            mutableMapOf<ArgumentType<out T>, T?>().apply {
+                putAll(
+                    parseCache.filter { it.key.isSubtypeOf(argumentType) }
+                        .mapKeys { it.key as ArgumentType<out T> }
+                        .mapValues { it.value as T? }
+                )
+            }
         )
     }
 
-    override fun <T : O> filterNot(argumentType: ArgumentType<T>): OptionProvider2<O> {
+    override fun <T : O> filterNot(argumentType: ArgumentType<T>): OptionProvider<O> {
         return OptionProviderImpl<O>(
             request,
+            this.argumentType,
             parserMap.filterNot { it.key.isSubtypeOf(argumentType) },
-            parseCache
+            parseCache.filterNot { it.key.isSubtypeOf(argumentType) }.toMutableMap()
         )
     }
 
-    override suspend fun <T : O> getAll(argumentType: ArgumentType<T>): List<T> {
-        val cachedOptions = parseCache.filter { it.key.isSubtypeOf(argumentType) }
-        val fetched = parserMap.filter {
-            it.key !in cachedOptions.keys && it.key.isSubtypeOf(argumentType)
-        }.map { (type, parsers) ->
-            type to parsers.asReversed().firstNotNullOfOrNull { it.parse(request) as T? }
-        }.toMap()
-        fetched.forEach {
-            parseCache[it.key] = it.value
+    override fun <T : O> getAll(argumentType: ArgumentType<T>): List<T> {
+        return parserMap.filter {
+            it.key.isSubtypeOf(argumentType)
+        }.mapNotNull {
+            getOrNull(it.key as ArgumentType<out T>)
         }
-        return cachedOptions.values.mapNotNull { it as T? } + fetched.values.filterNotNull()
     }
 
-    override suspend fun <T : O> get(argumentType: ArgumentType<T>): T {
-        // TODO
+    override fun <T : O> get(argumentType: ArgumentType<T>): T {
         getOrNull(argumentType)?.let { return it }
         val parser = parserMap[argumentType]?.lastOrNull()
-            ?: throw IllegalStateException("Parameter parser not defined.")
+            ?: throw IllegalStateException("Parameter parser for $argumentType not defined.")
         throw parser.generateMissingException()
     }
 
-    override suspend fun <T : O> getOrNull(argumentType: ArgumentType<T>): T? {
+    override fun <T : O> getOrNull(argumentType: ArgumentType<T>): T? {
         if (parseCache.containsKey(argumentType)) {
             return parseCache[argumentType] as T?
         }
@@ -53,8 +59,28 @@ class OptionProviderImpl<O : Option>(
         }
     }
 
-    override fun <T : O> plus(option: T, argumentType: ArgumentType<T>): OptionProvider2<O> {
+    override fun <T : O> plus(option: T, argumentType: ArgumentType<T>): OptionProvider<O> {
         parseCache[argumentType] = option
         return this
+    }
+
+    override fun <T : O> boxAll(argumentType: ArgumentType<T>): Map<String, List<String>> {
+        val targetParsers = parserMap.filter {
+            it.key.isSubtypeOf(argumentType)
+        }.mapKeys {
+            it.key as ArgumentType<T>
+        }.mapValues {
+            it.value as List<OptionParser<out T>>
+        }
+        val values = targetParsers.keys.associateWith { getOrNull(it) }
+
+        val resultMap = mutableMapOf<String, List<String>>()
+        values.forEach {
+            val boxParser = targetParsers[it.key]!!.lastOrNull()
+                ?: throw IllegalStateException("Parameter parser for $argumentType not defined.")
+            val box = (boxParser as OptionParser<Option>).box(it.value as Option)
+            resultMap.putAll(box)
+        }
+        return resultMap
     }
 }

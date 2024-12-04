@@ -16,7 +16,7 @@ class RescaleOptionParser : OptionParser<RescaleOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): RescaleOption? {
+    override fun parse(request: Request): RescaleOption? {
         val rescales = request.parameter(PARAM).map {
             val (min, max) = it.split(',').also {
                 if (it.size != 2) {

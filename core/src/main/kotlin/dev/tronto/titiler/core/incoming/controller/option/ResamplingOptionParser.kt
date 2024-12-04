@@ -14,7 +14,7 @@ class ResamplingOptionParser : OptionParser<ResamplingOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): ResamplingOption? {
+    override fun parse(request: Request): ResamplingOption? {
         return request.parameter(PARAM).lastOrNull()?.let { ResamplingOption(ResamplingAlgorithm(it)) }
     }
 

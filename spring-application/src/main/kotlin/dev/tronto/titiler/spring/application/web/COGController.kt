@@ -1,5 +1,6 @@
 package dev.tronto.titiler.spring.application.web
 
+import dev.tronto.titiler.core.incoming.controller.option.filter
 import dev.tronto.titiler.core.incoming.usecase.BoundsUseCase
 import dev.tronto.titiler.core.incoming.usecase.InfoUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
@@ -25,7 +26,7 @@ import java.io.ByteArrayInputStream
 
 @Controller
 class COGController(
-    private val optionParser: WebFluxOptionParserAdaptor = WebFluxOptionParserAdaptor(),
+    private val optionParser: WebFluxOptionParserAdaptor,
     private val boundsUseCase: BoundsUseCase,
     private val infoUseCase: InfoUseCase,
     private val tileUseCase: TileUseCase,

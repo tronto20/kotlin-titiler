@@ -1,40 +1,48 @@
 package dev.tronto.titiler.spring.application.config.adaptor
 
-import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
 import dev.tronto.titiler.core.incoming.controller.option.Request
-import kotlinx.coroutines.reactor.awaitSingleOrNull
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.web.reactive.function.BodyExtractors
 import org.springframework.web.reactive.function.server.ServerRequest
 
 class WebFluxRequestAdaptor(
     val serverRequest: ServerRequest,
     val bodyKey: String? = null,
+    val bodyValue: String? = null,
 ) : Request {
-    private val queryParams = serverRequest.queryParams().mapKeys { it.key.lowercase() }
+    private val queryParams = serverRequest.queryParams()
+        .mapKeys { it.key.lowercase() }
+        .mapValues { it.value.filter { it.isNotBlank() } }
     private val pathParams = serverRequest.pathVariables().mapKeys { it.key.lowercase() }
 
-    override suspend fun parameter(key: String): List<String> {
-        val key = key.lowercase()
-        val queryParameters = queryParams[key] ?: emptyList()
-        return pathParams[key]?.let {
-            queryParameters + it
-        } ?: queryParameters
+    private fun getFromQueryParameter(lowerKey: String): List<String>? {
+        val queryParameters = queryParams[lowerKey]
+        return queryParameters?.ifEmpty { null }
     }
 
-    private val headers = serverRequest.headers().asHttpHeaders().mapKeys { it.key.lowercase() }
-
-    override suspend fun option(key: String): List<String> {
-        return headers[key.lowercase()] ?: emptyList()
+    private fun getFromPathParameter(lowerKey: String): String? {
+        return pathParams[lowerKey]?.let { return it }
     }
 
-    override suspend fun <T : Any> body(key: String, argumentType: ArgumentType<T>): T? {
-        return if (bodyKey == key) {
-            serverRequest.body(
-                BodyExtractors.toMono(ParameterizedTypeReference.forType<T>(argumentType.javaType))
-            ).awaitSingleOrNull()
+    private fun getFromBody(lowerKey: String): List<String>? {
+        return if (bodyKey?.lowercase() == lowerKey) {
+            listOf()
         } else {
             null
         }
+    }
+
+    override fun parameter(key: String): List<String> {
+        val lowerKey = key.lowercase()
+        getFromPathParameter(lowerKey)?.let { return listOf(it) }
+        getFromQueryParameter(lowerKey)?.let { return it }
+        getFromBody(lowerKey)?.let { return it }
+        return emptyList()
+    }
+
+    private val headers = serverRequest.headers().asHttpHeaders()
+        .mapKeys { it.key.lowercase() }
+        .mapValues { it.value.filter { it.isNotBlank() } }
+
+    override fun option(key: String): List<String> {
+        return headers[key.lowercase()] ?: emptyList()
     }
 }

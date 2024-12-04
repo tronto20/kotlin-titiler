@@ -3,6 +3,7 @@ package dev.tronto.titiler.stat.service
 import dev.tronto.titiler.core.domain.BandIndex
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.image.incoming.controller.option.BandIndexOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
@@ -27,15 +28,15 @@ class StatisticsService(
         imageOptions: OptionProvider<ImageOption>,
         statisticsOptions: OptionProvider<StatisticsOption>,
     ): Statistics {
-        val percentileOption = statisticsOptions.getOrNull<PercentileOption>()
+        val percentileOption: PercentileOption = statisticsOptions.getOrNull()
             ?: PercentileOption(listOf(Percentile(2), Percentile(98)))
 
         val preview = previewUseCase.preview(openOptions, imageOptions)
         val stat = imageDataStatistics.find {
             it.supports(preview)
         } ?: throw UnsupportedOperationException()
-
-        val bandIndexes = imageOptions.getOrNull<BandIndexOption>()?.bandIndexes
+        val bandIndexOption: BandIndexOption? = imageOptions.getOrNull()
+        val bandIndexes = bandIndexOption?.bandIndexes
 
         val bandStatisticsList = stat.statistics(preview, percentileOption.percentiles)
         val statistics = if (bandIndexes == null) {
