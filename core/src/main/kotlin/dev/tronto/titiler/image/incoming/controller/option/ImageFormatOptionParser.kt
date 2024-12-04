@@ -32,4 +32,8 @@ class ImageFormatOptionParser : OptionParser<ImageFormatOption> {
             }
         }
     }
+
+    override fun box(option: ImageFormatOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.format?.name?.lowercase() ?: AUTO))
+    }
 }

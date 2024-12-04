@@ -20,4 +20,8 @@ class BandIndexOptionParser : OptionParser<BandIndexOption> {
         val indexes = request.parameter(PARAM).mapNotNull { it.toIntOrNull()?.let { BandIndex(it) } }
         return if (indexes.isNotEmpty()) BandIndexOption(indexes) else null
     }
+
+    override fun box(option: BandIndexOption): Map<String, List<String>> {
+        return mapOf(PARAM to option.bandIndexes.map { it.value.toString() })
+    }
 }

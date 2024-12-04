@@ -21,4 +21,8 @@ class TileMatrixSetOptionParser : OptionParser<TileMatrixSetOption> {
             TileMatrixSetOption(it)
         }
     }
+
+    override fun box(option: TileMatrixSetOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.tileMatrixSetId))
+    }
 }

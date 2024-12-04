@@ -20,4 +20,8 @@ class URIOptionParser : OptionParser<URIOption> {
         val uri = kotlin.runCatching { URI.create(uriString) }.getOrElse { throw InvalidURIException(uriString, it) }
         return URIOption(uri)
     }
+
+    override fun box(option: URIOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.uri.toString()))
+    }
 }

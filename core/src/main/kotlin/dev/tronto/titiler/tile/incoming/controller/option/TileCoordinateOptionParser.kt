@@ -22,4 +22,8 @@ class TileCoordinateOptionParser : OptionParser<TileCoordinateOption> {
         val z = valueZ.toIntOrNull() ?: throw InvalidTileCoordinateException("z", valueZ)
         return TileCoordinateOption(z, x, y)
     }
+
+    override fun box(option: TileCoordinateOption): Map<String, List<String>> {
+        TODO("Not yet implemented")
+    }
 }

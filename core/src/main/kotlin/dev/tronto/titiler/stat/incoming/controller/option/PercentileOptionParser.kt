@@ -36,4 +36,8 @@ class PercentileOptionParser() : OptionParser<PercentileOption> {
             )
         }
     }
+
+    override fun box(option: PercentileOption): Map<String, List<String>> {
+        return mapOf(PARAM to option.percentiles.map { it.toString() })
+    }
 }

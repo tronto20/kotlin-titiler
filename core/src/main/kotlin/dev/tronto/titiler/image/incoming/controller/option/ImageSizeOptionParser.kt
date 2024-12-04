@@ -7,19 +7,32 @@ import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
 
 class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
+    companion object {
+        private const val WIDTH = "width"
+        private const val HEIGHT = "height"
+    }
     override val type: ArgumentType<ImageSizeOption> = ArgumentType()
 
     override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException("width", "height")
+        return RequiredParameterMissingException(WIDTH, HEIGHT)
     }
 
     override suspend fun parse(request: Request): ImageSizeOption? {
-        val widthString = request.parameter("width").lastOrNull() ?: return null
-        val heightString = request.parameter("height").lastOrNull() ?: return null
-        val width = widthString.toIntOrNull() ?: throw IllegalParameterException("width must be integer: $widthString.")
+        val widthString = request.parameter(WIDTH).lastOrNull() ?: return null
+        val heightString = request.parameter(HEIGHT).lastOrNull() ?: return null
+        val width = widthString.toIntOrNull() ?: throw IllegalParameterException(
+            "$WIDTH must be an integer: $widthString."
+        )
         val height = heightString.toIntOrNull() ?: throw IllegalParameterException(
-            "height must be intege: $heightString."
+            "$HEIGHT must be an integer: $heightString."
         )
         return ImageSizeOption(width, height)
+    }
+
+    override fun box(option: ImageSizeOption): Map<String, List<String>> {
+        return mapOf(
+            WIDTH to listOf(option.width.toString()),
+            HEIGHT to listOf(option.height.toString())
+        )
     }
 }

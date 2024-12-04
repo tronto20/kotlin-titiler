@@ -19,4 +19,8 @@ class NoDataOptionParser : OptionParser<NoDataOption> {
             NoDataOption(double)
         }
     }
+
+    override fun box(option: NoDataOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.noData.toString()))
+    }
 }

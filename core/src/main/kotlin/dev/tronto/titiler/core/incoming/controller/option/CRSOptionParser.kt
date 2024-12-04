@@ -16,4 +16,8 @@ class CRSOptionParser : OptionParser<CRSOption> {
     override suspend fun parse(request: Request): CRSOption? {
         return request.parameter(PARAM).lastOrNull()?.let { CRSOption(it) }
     }
+
+    override fun box(option: CRSOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.crsString))
+    }
 }
