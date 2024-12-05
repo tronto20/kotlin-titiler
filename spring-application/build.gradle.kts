@@ -47,6 +47,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation(kotlin("reflect"))
     implementation(projects.core)
+    implementation("org.thymeleaf:thymeleaf")
 }
 
 val buildRunnerImageTask = tasks.register("buildRunnerImage", PathExec::class.java) {

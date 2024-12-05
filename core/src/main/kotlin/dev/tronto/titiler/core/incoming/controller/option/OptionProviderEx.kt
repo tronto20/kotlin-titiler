@@ -1,13 +1,13 @@
 package dev.tronto.titiler.core.incoming.controller.option
 
-inline fun <reified T : O, O : Option> OptionProvider<O>.filter(): OptionProvider<T> = filter(ArgumentType())
-inline fun <reified T : O, O : Option> OptionProvider<O>.filterNot(): OptionProvider<O> = filterNot(ArgumentType<T>())
+inline fun <O : Option, reified T : O> OptionProvider<O>.filter(): OptionProvider<T> = filter(ArgumentType<T>())
+inline fun <O : Option, reified T : O> OptionProvider<O>.filterNot(): OptionProvider<O> = filterNot(ArgumentType<T>())
 
-inline fun <reified T : O, O : Option> OptionProvider<O>.getAll(): List<T> = getAll(ArgumentType())
-inline fun <reified T : O, O : Option> OptionProvider<O>.get(): T = get(ArgumentType())
-inline fun <reified T : O, O : Option> OptionProvider<O>.getOrNull(): T? = getOrNull(ArgumentType())
+inline fun <O : Option, reified T : O> OptionProvider<O>.getAll(): List<T> = getAll(ArgumentType<T>())
+inline fun <O : Option, reified T : O> OptionProvider<O>.get(): T = get(ArgumentType<T>())
+inline fun <O : Option, reified T : O> OptionProvider<O>.getOrNull(): T? = getOrNull(ArgumentType<T>())
 
-inline operator fun <reified T : O, O : Option> OptionProvider<O>.plus(option: T): OptionProvider<O> =
+inline operator fun <O : Option, reified T : O> OptionProvider<O>.plus(option: T): OptionProvider<O> =
     plus(option, ArgumentType<T>())
 
-inline fun <reified T : O, O : Option> OptionProvider<O>.boxAll(): Map<String, List<String>> = boxAll(ArgumentType<T>())
+inline fun <O : Option, reified T : O> OptionProvider<O>.boxAll(): Map<String, List<String>> = boxAll(ArgumentType<T>())

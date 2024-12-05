@@ -72,13 +72,13 @@ class OptionProviderImpl<O : Option>(
         }.mapValues {
             it.value as List<OptionParser<out T>>
         }
-        val values = targetParsers.keys.associateWith { getOrNull(it) }
 
         val resultMap = mutableMapOf<String, List<String>>()
-        values.forEach {
-            val boxParser = targetParsers[it.key]!!.lastOrNull()
+        targetParsers.entries.forEach { (type, parsers) ->
+            val value = getOrNull(type) ?: return@forEach
+            val boxParser = parsers.lastOrNull()
                 ?: throw IllegalStateException("Parameter parser for $argumentType not defined.")
-            val box = (boxParser as OptionParser<Option>).box(it.value as Option)
+            val box = (boxParser as OptionParser<T>).box(value)
             resultMap.putAll(box)
         }
         return resultMap

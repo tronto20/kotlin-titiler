@@ -29,7 +29,6 @@ import org.jetbrains.kotlinx.multik.ndarray.data.view
 import org.jetbrains.kotlinx.multik.ndarray.operations.all
 import org.jetbrains.kotlinx.multik.ndarray.operations.and
 import org.jetbrains.kotlinx.multik.ndarray.operations.map
-import org.jetbrains.kotlinx.multik.ndarray.operations.sum
 import kotlin.math.roundToInt
 import kotlin.reflect.KClass
 
@@ -173,7 +172,6 @@ open class GdalReadableRaster(
                 val mask = mask2.map {
                     if (it.toInt() == 0) 0 else 1
                 }.squeeze().asD2Array()
-                println(mask.sum())
                 data to mask
             } else {
                 val dataAndMask = reader.readData(bandList + alphaBand, width, height, window)
@@ -182,7 +180,6 @@ open class GdalReadableRaster(
                 val mask = mask2.map {
                     if (it.toInt() == 0) 0 else 1
                 }.squeeze().asD2Array()
-                println(mask.sum())
                 data to mask
             }
             val resultMask = if (noDataValue != null) {

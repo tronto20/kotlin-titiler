@@ -5,9 +5,7 @@ import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.get
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
-import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSTransformFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
-import dev.tronto.titiler.core.outgoing.port.CRSTransformFactory
 import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
 import dev.tronto.titiler.image.incoming.controller.option.BandIndexOption
@@ -28,7 +26,6 @@ import kotlin.math.roundToInt
 
 class ImageService(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
-    private val crsTransformFactory: CRSTransformFactory = SpatialReferenceCRSTransformFactory,
     private val readableRasterFactory: ReadableRasterFactory = GdalReadableRasterFactory(crsFactory),
 ) : ImageReadUseCase, ImageBBoxUseCase, ImagePreviewUseCase {
     override suspend fun read(
@@ -49,7 +46,7 @@ class ImageService(
                  *  2. image crs -> pixel crs
                  */
                 val polygonCRS = crsFactory.create(featureOption.crsString)
-                val rasterCRSTransform = crsTransformFactory.create(polygonCRS, raster.crs)
+                val rasterCRSTransform = crsFactory.transformTo(polygonCRS, raster.crs)
                 val polygon = rasterCRSTransform.transformTo(featureOption.polygon)
                 raster.pixelCoordinateTransform.transformTo(polygon)
             }

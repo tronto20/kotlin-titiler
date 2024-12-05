@@ -55,7 +55,7 @@ open class GdalRasterFactory(
         return if (crsOption != null || noData != null) {
             val resamplingAlgorithmOption: ResamplingOption? = openOptions.getOrNull()
             val resamplingAlgorithm = resamplingAlgorithmOption?.algorithm ?: ResamplingAlgorithm.NEAREST
-            val memoryFile = "/vsimem/${UUID.randomUUID()}.vrt"
+            val memoryFile = "/vsimem/${raster.name}.vrt"
             val warpOptions = mutableMapOf(
                 "-of" to "VRT",
                 "-r" to resamplingAlgorithm.gdalWarpString,
@@ -87,13 +87,13 @@ open class GdalRasterFactory(
                     Vector(options)
                 )
             )
-            GdalMemFileRaster(GdalRaster(dataset, crsFactory), memoryFile)
+            GdalMemFileRaster(GdalRaster(dataset, crsFactory, raster.name), memoryFile)
         } else {
             null
         }
     }
 
-    protected open fun createDataset(openOptions: OptionProvider<OpenOption>): Dataset {
+    protected open fun createRaster(openOptions: OptionProvider<OpenOption>): GdalRaster {
         val uriOption: URIOption = openOptions.get()
         val uri = uriOption.uri
         val path = if (uri.scheme == null) {
@@ -107,7 +107,11 @@ open class GdalRasterFactory(
             logger.error(e) { "Failed to open dataset" }
             throw GdalDatasetOpenFailedException(path, e)
         }
-        return dataset
+        return GdalRaster(
+            dataset,
+            crsFactory,
+            path.substringAfterLast('/').substringBefore('?').substringBeforeLast('.')
+        )
     }
 
     protected open fun <T> applyEnvs(openOptions: OptionProvider<OpenOption>, block: () -> T): T {
@@ -127,12 +131,8 @@ open class GdalRasterFactory(
     suspend fun <T> withGdalRaster(openOptions: OptionProvider<OpenOption>, block: (raster: GdalBaseRaster) -> T): T {
         return withContext(dispatcher) {
             applyEnvs(openOptions) {
-                createDataset(openOptions).use { dataset ->
-                    GdalRaster(dataset, crsFactory).use { raster ->
-                        createVRT(openOptions, raster)?.use {
-                            it.use(block)
-                        } ?: block(raster)
-                    }
+                createRaster(openOptions).use { raster ->
+                    createVRT(openOptions, raster)?.use(block) ?: block(raster)
                 }
             }
         }

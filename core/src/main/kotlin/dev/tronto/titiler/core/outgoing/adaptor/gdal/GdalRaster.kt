@@ -18,6 +18,7 @@ import org.locationtech.jts.geom.util.AffineTransformation
 class GdalRaster internal constructor(
     override val dataset: Dataset,
     val crsFactory: CRSFactory,
+    override val name: String,
 ) : GdalBaseRaster {
     companion object {
         @JvmStatic

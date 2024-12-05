@@ -10,6 +10,7 @@ import dev.tronto.titiler.spring.application.config.adaptor.WebFluxOptionParserA
 import dev.tronto.titiler.stat.incoming.usecase.StatisticsUseCase
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
 import dev.tronto.titiler.tile.incoming.usecase.TileUseCase
+import dev.tronto.titiler.wmts.incoming.usecase.WMTSUseCase
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ByteArrayResource
@@ -35,6 +36,7 @@ class COGController(
     private val imagePreviewUseCase: ImagePreviewUseCase,
     private val imageRenderUseCase: ImageRenderUseCase,
     private val statisticsUseCase: StatisticsUseCase,
+    private val wmtsUseCase: WMTSUseCase,
 ) {
     private suspend fun ServerRequest.options() = optionParser.parse(this)
 
@@ -130,6 +132,23 @@ class COGController(
                 val options = it.options()
                 val statistics = statisticsUseCase.statistics(options.filter(), options.filter(), options.filter())
                 ok().bodyValueAndAwait(statistics)
+            }
+
+            val wmtsPaths = listOf(
+                "{tileMatrixSetId}/WMTSCapabilities.xml",
+                "WMTSCapabilities.xml"
+            )
+            GET(wmtsPaths.map(RequestPredicates::path).reduce(RequestPredicate::or)) {
+                val options = it.options()
+                val document = wmtsUseCase.wmts(
+                    options.filter(),
+                    options.filter(),
+                    options.filter(),
+                    options.filter(),
+                    options.filter()
+                )
+                ok().contentType(MediaType.parseMediaType(document.format.contentType))
+                    .bodyValueAndAwait(document.contents)
             }
         }
     }

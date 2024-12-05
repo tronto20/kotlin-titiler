@@ -3,9 +3,7 @@ package dev.tronto.titiler.spring.application.config.adaptor
 import dev.tronto.titiler.core.incoming.usecase.InfoUseCase
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.GdalRasterFactory
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
-import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSTransformFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
-import dev.tronto.titiler.core.outgoing.port.CRSTransformFactory
 import dev.tronto.titiler.core.outgoing.port.RasterFactory
 import dev.tronto.titiler.core.service.CoreService
 import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
@@ -15,11 +13,15 @@ import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
 import dev.tronto.titiler.image.service.ImageRenderService
 import dev.tronto.titiler.image.service.ImageService
 import dev.tronto.titiler.stat.service.StatisticsService
+import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
 import dev.tronto.titiler.tile.outgoing.adaptor.resource.ResourceTileMatrixSetFactory
 import dev.tronto.titiler.tile.outgoing.port.TileMatrixSetFactory
 import dev.tronto.titiler.tile.service.TileService
+import dev.tronto.titiler.wmts.service.TemplateString
+import dev.tronto.titiler.wmts.service.WMTSService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.thymeleaf.TemplateEngine
 
 @Configuration
 class ComponentRegistrar {
@@ -36,22 +38,14 @@ class ComponentRegistrar {
     fun coreService(rasterFactory: RasterFactory): CoreService = CoreService(rasterFactory)
 
     @Bean
-    fun crsTransformFactory(): CRSTransformFactory = SpatialReferenceCRSTransformFactory
-
-    @Bean
     fun readableRasterFactory(crsFactory: CRSFactory): GdalReadableRasterFactory = GdalReadableRasterFactory(
         crsFactory,
         GdalRasterFactory(crsFactory)
     )
 
     @Bean
-    fun imageService(
-        crsFactory: CRSFactory,
-        crsTransformFactory: CRSTransformFactory,
-        readableRasterFactory: ReadableRasterFactory,
-    ): ImageService = ImageService(
+    fun imageService(crsFactory: CRSFactory, readableRasterFactory: ReadableRasterFactory): ImageService = ImageService(
         crsFactory,
-        crsTransformFactory,
         readableRasterFactory
     )
 
@@ -78,4 +72,24 @@ class ComponentRegistrar {
 
     @Bean
     fun statisticsService(imagePreviewUseCase: ImagePreviewUseCase) = StatisticsService(imagePreviewUseCase)
+
+    @Bean
+    fun templateEngine() = TemplateEngine()
+
+    @Bean
+    fun wmtsService(
+        templateEngine: TemplateEngine,
+        crsFactory: CRSFactory,
+        tileMatrixSetFactory: TileMatrixSetFactory,
+        tileInfoUseCase: TileInfoUseCase,
+    ) = WMTSService(
+        wmtsUriTemplate = TemplateString("http://localhost:8080/cog/{tileMatrixSetId}/WMTSCapabilities.xml"),
+        tilesUriTemplate = TemplateString(
+            "http://localhost:8080/cog/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}"
+        ),
+        templateEngine = templateEngine,
+        crsFactory = crsFactory,
+        tileMatrixSetFactory = tileMatrixSetFactory,
+        tileInfoUseCase = tileInfoUseCase
+    )
 }
