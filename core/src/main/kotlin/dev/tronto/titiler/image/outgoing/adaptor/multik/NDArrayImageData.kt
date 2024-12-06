@@ -9,7 +9,6 @@ import kotlinx.coroutines.awaitAll
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
-import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.view
 import org.jetbrains.kotlinx.multik.ndarray.operations.all
 import org.jetbrains.kotlinx.multik.ndarray.operations.mapMultiIndexed

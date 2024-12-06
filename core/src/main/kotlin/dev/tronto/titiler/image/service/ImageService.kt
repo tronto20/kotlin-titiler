@@ -1,5 +1,6 @@
 package dev.tronto.titiler.image.service
 
+import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.get
@@ -94,6 +95,10 @@ class ImageService(
             } else {
                 val imageSizeOption: ImageSizeOption = imageOptions.get()
                 imageSizeOption.width to imageSizeOption.height
+            }
+
+            if (width < 10 || height < 10) {
+                throw IllegalParameterException("width or height must be greater than 10.")
             }
 
             val imageData = raster.read(window, width, height, bandIndexOption?.bandIndexes)

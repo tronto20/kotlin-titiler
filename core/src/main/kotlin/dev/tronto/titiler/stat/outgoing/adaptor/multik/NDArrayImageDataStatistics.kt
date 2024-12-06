@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import org.jetbrains.kotlinx.multik.ndarray.data.asDNArray
+import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.view
 import org.jetbrains.kotlinx.multik.ndarray.operations.filterMultiIndexed
@@ -40,7 +40,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
         val maskedPixels = imageData.mask.size - imageData.mask.sum()
         return (0..<imageData.band).map { band ->
             CoroutineScope(Dispatchers.Default).async {
-                val doubleData = imageData.data.view(band).asDNArray().asType<Double>()
+                val doubleData = (imageData.data.view(band) as D2Array<*>).asType<Double>()
                 val data = doubleData.filterMultiIndexed { index, _ ->
                     imageData.mask[index] == 1
                 }.sorted()
@@ -75,6 +75,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                         }
                     }
 
+                @Suppress("UnnecessaryVariable")
                 val validPixels = count
 
                 val percentileMap = percentiles.associateWith {

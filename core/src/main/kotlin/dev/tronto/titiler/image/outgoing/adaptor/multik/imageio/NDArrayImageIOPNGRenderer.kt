@@ -19,7 +19,7 @@ import javax.imageio.ImageIO
 
 class NDArrayImageIOPNGRenderer : ImageDataRenderer {
     companion object {
-        private val SUPPORT_DATATYPE = listOf(DataType.UInt8, DataType.UInt16)
+        private val SUPPORT_DATATYPE = listOf(DataType.UInt8)
         private val SUPPORT_BAND = intArrayOf(3, 4)
     }
 
