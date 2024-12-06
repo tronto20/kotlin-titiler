@@ -2,9 +2,8 @@ package dev.tronto.titiler.tile.incoming.usecase
 
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
-import dev.tronto.titiler.image.domain.Image
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
-import dev.tronto.titiler.image.incoming.controller.option.RenderOption
+import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
 
 interface TileUseCase {
@@ -12,6 +11,5 @@ interface TileUseCase {
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
         tileOptions: OptionProvider<TileOption>,
-        renderOptions: OptionProvider<RenderOption>,
-    ): Image
+    ): ImageData
 }

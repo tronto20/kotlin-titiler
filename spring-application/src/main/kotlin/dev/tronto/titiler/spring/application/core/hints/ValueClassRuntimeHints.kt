@@ -1,4 +1,4 @@
-package dev.tronto.titiler.spring.application.config.hints
+package dev.tronto.titiler.spring.application.core.hints
 
 import dev.tronto.titiler.ApplicationContext
 import org.springframework.aot.hint.ExecutableMode

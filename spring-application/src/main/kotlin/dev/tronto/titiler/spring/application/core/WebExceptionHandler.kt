@@ -1,4 +1,4 @@
-package dev.tronto.titiler.spring.application.web
+package dev.tronto.titiler.spring.application.core
 
 import dev.tronto.titiler.core.exception.DataNotExistsException
 import dev.tronto.titiler.core.exception.IllegalParameterException

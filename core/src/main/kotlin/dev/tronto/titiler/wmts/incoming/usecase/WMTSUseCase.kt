@@ -8,7 +8,7 @@ import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
 import dev.tronto.titiler.wmts.incoming.controller.option.WMTSOption
 
-interface WMTSUseCase {
+interface WmtsUseCase {
     suspend fun wmts(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,

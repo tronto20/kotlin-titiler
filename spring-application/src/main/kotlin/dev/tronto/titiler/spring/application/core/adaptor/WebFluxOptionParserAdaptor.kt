@@ -1,4 +1,4 @@
-package dev.tronto.titiler.spring.application.config.adaptor
+package dev.tronto.titiler.spring.application.core.adaptor
 
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
 import dev.tronto.titiler.core.incoming.controller.option.Option

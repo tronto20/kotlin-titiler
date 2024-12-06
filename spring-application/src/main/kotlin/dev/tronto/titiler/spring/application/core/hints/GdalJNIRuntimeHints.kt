@@ -1,4 +1,4 @@
-package dev.tronto.titiler.spring.application.config.hints
+package dev.tronto.titiler.spring.application.core.hints
 
 import org.springframework.aot.hint.MemberCategory
 import org.springframework.aot.hint.RuntimeHints
