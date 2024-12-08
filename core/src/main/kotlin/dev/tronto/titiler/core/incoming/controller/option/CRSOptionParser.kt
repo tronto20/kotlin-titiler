@@ -14,7 +14,7 @@ class CRSOptionParser : OptionParser<CRSOption> {
     }
 
     override fun parse(request: Request): CRSOption? {
-        return request.parameter(PARAM).lastOrNull()?.let { CRSOption(it) }
+        return request.parameter(PARAM).firstOrNull()?.let { CRSOption(it) }
     }
 
     override fun box(option: CRSOption): Map<String, List<String>> {

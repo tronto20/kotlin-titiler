@@ -4,7 +4,7 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.context.IContext
 import java.util.*
 
-class WMTSContext private constructor(
+class WmtsContext private constructor(
     val title: String,
     val requestUri: String,
     val layers: List<Layer>,

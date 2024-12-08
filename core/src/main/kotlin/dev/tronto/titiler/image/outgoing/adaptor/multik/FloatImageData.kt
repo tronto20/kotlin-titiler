@@ -1,16 +1,18 @@
 package dev.tronto.titiler.image.outgoing.adaptor.multik
 
 import dev.tronto.titiler.core.domain.DataType
-import dev.tronto.titiler.image.outgoing.port.ImageData
+import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.image.domain.ImageData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
 
-internal class FloatImageData(
+class FloatImageData(
     data: D3Array<Float>,
     mask: D2Array<Int>,
     override val dataType: DataType,
-) : ImageData, NDArrayImageData<Float>(data, mask) {
+    vararg options: OptionProvider<*>,
+) : ImageData, NDArrayImageData<Float>(data, mask, *options) {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -32,7 +34,11 @@ internal class FloatImageData(
         return toFloat()
     }
 
-    override fun copy(data: D3Array<Float>, mask: D2Array<Int>): NDArrayImageData<Float> {
-        return FloatImageData(data, mask, dataType)
+    override fun copy(
+        data: D3Array<Float>,
+        mask: D2Array<Int>,
+        vararg options: OptionProvider<*>,
+    ): NDArrayImageData<Float> {
+        return FloatImageData(data, mask, dataType, *options)
     }
 }

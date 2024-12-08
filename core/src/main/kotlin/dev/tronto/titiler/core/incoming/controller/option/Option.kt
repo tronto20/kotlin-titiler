@@ -7,7 +7,7 @@ interface Option {
         }
 
         inline fun <reified T : Option> Iterable<Option>.getSingleOrNull(): T? {
-            return this.filterIsInstance<T>().lastOrNull()
+            return this.filterIsInstance<T>().firstOrNull()
         }
     }
 }

@@ -2,7 +2,7 @@ package dev.tronto.titiler.core.incoming.controller.option
 
 class OptionProviderImpl<O : Option>(
     private val request: Request,
-    private val argumentType: ArgumentType<O>,
+    override val argumentType: ArgumentType<O>,
     private val parserMap: Map<ArgumentType<out O>, List<OptionParser<out O>>>,
     private val parseCache: MutableMap<ArgumentType<out O>, O?> = mutableMapOf(),
 ) : OptionProvider<O> {
@@ -43,7 +43,7 @@ class OptionProviderImpl<O : Option>(
 
     override fun <T : O> get(argumentType: ArgumentType<T>): T {
         getOrNull(argumentType)?.let { return it }
-        val parser = parserMap[argumentType]?.lastOrNull()
+        val parser = parserMap[argumentType]?.firstOrNull()
             ?: throw IllegalStateException("Parameter parser for $argumentType not defined.")
         throw parser.generateMissingException()
     }
@@ -60,8 +60,15 @@ class OptionProviderImpl<O : Option>(
     }
 
     override fun <T : O> plus(option: T, argumentType: ArgumentType<T>): OptionProvider<O> {
-        parseCache[argumentType] = option
-        return this
+        return OptionProviderImpl<O>(
+            request,
+            this.argumentType,
+            parserMap,
+            mutableMapOf<ArgumentType<out O>, O?>().apply {
+                putAll(parseCache)
+                put(argumentType, option)
+            }
+        )
     }
 
     override fun <T : O> boxAll(argumentType: ArgumentType<T>): Map<String, List<String>> {
@@ -76,7 +83,7 @@ class OptionProviderImpl<O : Option>(
         val resultMap = mutableMapOf<String, List<String>>()
         targetParsers.entries.forEach { (type, parsers) ->
             val value = getOrNull(type) ?: return@forEach
-            val boxParser = parsers.lastOrNull()
+            val boxParser = parsers.firstOrNull()
                 ?: throw IllegalStateException("Parameter parser for $argumentType not defined.")
             val box = (boxParser as OptionParser<T>).box(value)
             resultMap.putAll(box)

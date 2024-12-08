@@ -1,6 +1,6 @@
-package dev.tronto.titiler.stat.outgoing.port
+package dev.tronto.titiler.stat.outgoing.port.spi
 
-import dev.tronto.titiler.image.outgoing.port.ImageData
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.stat.domain.BandStatistics
 import dev.tronto.titiler.stat.domain.Percentile
 

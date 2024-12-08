@@ -1,4 +1,4 @@
-package dev.tronto.titiler.image.outgoing.port
+package dev.tronto.titiler.image.domain
 
 import dev.tronto.titiler.core.domain.DataType
 import org.locationtech.jts.geom.Geometry

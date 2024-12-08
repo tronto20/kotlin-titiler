@@ -1,5 +1,6 @@
 package dev.tronto.titiler.wmts.service
 
+import dev.tronto.titiler.core.domain.OptionContext
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.boxAll
@@ -9,8 +10,10 @@ import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.document.domain.Document
 import dev.tronto.titiler.document.domain.DocumentFormat
+import dev.tronto.titiler.document.domain.SimpleDocument
 import dev.tronto.titiler.document.template.ClasspathFileTemplateResolver
 import dev.tronto.titiler.document.template.FormatsExpressionDialect
+import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.incoming.controller.option.ImageFormatOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.RenderOption
@@ -72,7 +75,7 @@ class WmtsService(
         var newOptions = renderOptions
         val imageFormatOption: ImageFormatOption? = renderOptions.getOrNull()
         if (imageFormatOption == null) {
-            newOptions += ImageFormatOption(null)
+            newOptions += ImageFormatOption(ImageFormat.AUTO)
         }
         return newOptions
     }
@@ -134,11 +137,11 @@ class WmtsService(
             CoordinateXY(tileInfo.info.bounds[2], tileInfo.info.bounds[3])
         )
         val bounds = doubleArrayOf(upperLeft.x, upperLeft.y, lowerRight.x, lowerRight.y)
-        val context = WMTSContext(
+        val context = WmtsContext(
             tileInfo.info.name,
             wmtsUri,
             listOf(
-                WMTSContext.Layer(
+                WmtsContext.Layer(
                     tileInfo.info.name,
                     tileInfo.info.name,
                     bounds,
@@ -156,13 +159,13 @@ class WmtsService(
                 tileMatrixSetGeographicCrs.uri.toString()
             },
             mediaType,
-            WMTSContext.TileMatrixSet(
+            WmtsContext.TileMatrixSet(
                 tileMatrixSet.id,
                 if (useEPSGOption?.useEpsg == true) tileMatrixSetCrs.epsgCode.toString() else tileMatrixSetCrs.input,
                 tileMatrixSet.sortedTileMatrices.filter {
                     it.zoomLevel in zoomLevels
                 }.map {
-                    WMTSContext.TileMatrix(
+                    WmtsContext.TileMatrix(
                         it.id,
                         it.scaleDenominator,
                         it.pointOfOrigin.value,
@@ -175,7 +178,17 @@ class WmtsService(
             )
         )
         val xml = templateEngine.process("wmts", context)
-        return Document(xml, DocumentFormat.XML)
+        val document: Document = SimpleDocument(xml, DocumentFormat.XML)
+        if (document is OptionContext) {
+            document.put(
+                openOptions,
+                imageOptions,
+                renderOptions,
+                tileOptions,
+                wmtsOptions
+            )
+        }
+        return document
     }
 
     private fun buildTemplate(templateString: TemplateString, parameters: Map<String, List<String>>): String {
@@ -189,12 +202,3 @@ class WmtsService(
         }
     }
 }
-
-// fun main() {
-//    val map = mapOf(
-//        "z" to "test"
-//    )
-//     val template  =TemplateString("http://localhost:8080/{tileMatrixSetId}/WMTSCapabilities.xml")
-//    println(template.variables)
-//    println(map - template.variables)
-// }

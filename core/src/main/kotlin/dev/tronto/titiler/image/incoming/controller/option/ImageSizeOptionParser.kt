@@ -18,8 +18,8 @@ class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
     }
 
     override fun parse(request: Request): ImageSizeOption? {
-        val widthString = request.parameter(WIDTH).lastOrNull() ?: return null
-        val heightString = request.parameter(HEIGHT).lastOrNull() ?: return null
+        val widthString = request.parameter(WIDTH).firstOrNull() ?: return null
+        val heightString = request.parameter(HEIGHT).firstOrNull() ?: return null
         val width = widthString.toIntOrNull() ?: throw IllegalParameterException(
             "$WIDTH must be an integer: $widthString."
         )

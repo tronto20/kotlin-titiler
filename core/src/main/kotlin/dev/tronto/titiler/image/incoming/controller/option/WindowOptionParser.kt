@@ -22,10 +22,10 @@ class WindowOptionParser : OptionParser<WindowOption> {
     }
 
     override fun parse(request: Request): WindowOption? {
-        val minxString = request.parameter(MIN_X).lastOrNull() ?: return null
-        val maxxString = request.parameter(MAX_X).lastOrNull() ?: return null
-        val minyString = request.parameter(MIN_Y).lastOrNull() ?: return null
-        val maxyString = request.parameter(MAX_Y).lastOrNull() ?: return null
+        val minxString = request.parameter(MIN_X).firstOrNull() ?: return null
+        val maxxString = request.parameter(MAX_X).firstOrNull() ?: return null
+        val minyString = request.parameter(MIN_Y).firstOrNull() ?: return null
+        val maxyString = request.parameter(MAX_Y).firstOrNull() ?: return null
         val minx =
             minxString.toIntOrNull() ?: throw IllegalParameterException("$MIN_X must be an integer: $minxString.")
         val maxx =

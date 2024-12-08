@@ -1,5 +1,6 @@
 package dev.tronto.titiler.tile.service
 
+import dev.tronto.titiler.core.domain.OptionContext
 import dev.tronto.titiler.core.exception.UnsupportedCrsStringException
 import dev.tronto.titiler.core.incoming.controller.option.CRSOption
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
@@ -14,13 +15,13 @@ import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.Raster
 import dev.tronto.titiler.core.outgoing.port.RasterFactory
 import dev.tronto.titiler.core.service.CoreService
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageSizeOption
 import dev.tronto.titiler.image.incoming.controller.option.WindowOption
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
-import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.image.service.ImageService
 import dev.tronto.titiler.tile.domain.TileInfo
 import dev.tronto.titiler.tile.domain.TileMatrix
@@ -169,11 +170,15 @@ class TileService(
 
         val tileImageOptions = imageOptions + imageSizeOption + windowOption
 
-        return try {
+        val imageData = try {
             imageReadUseCase.read(tileOpenOptions, tileImageOptions)
         } catch (e: ImageOutOfBoundsException) {
             throw TileNotFoundException(tileCoord, e)
         }
+        if (imageData is OptionContext) {
+            imageData.put(tileOptions)
+        }
+        return imageData
     }
 
     private suspend fun tileMatrixSet(tileOptions: OptionProvider<TileOption>): TileMatrixSet {

@@ -1,7 +1,9 @@
 package dev.tronto.titiler.image.outgoing.adaptor.multik
 
 import dev.tronto.titiler.core.domain.DataType
-import dev.tronto.titiler.image.outgoing.port.ImageData
+import dev.tronto.titiler.core.domain.OptionContext
+import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.image.domain.ImageData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -21,10 +23,12 @@ import org.locationtech.jts.geom.Location
 /**
  *  mask 는 0 이 유효하지 않은 값, 1이 유효한 값.
  */
-internal sealed class NDArrayImageData<T>(
+sealed class NDArrayImageData<T>(
     internal val data: D3Array<T>,
     internal val mask: D2Array<Int>,
-) : ImageData where T : Comparable<T>, T : Number {
+    vararg options: OptionProvider<*>,
+) : OptionContext by OptionContext.wrap(*options),
+    ImageData where T : Comparable<T>, T : Number {
     final override val band
         get() = data.shape[0]
 
@@ -34,8 +38,7 @@ internal sealed class NDArrayImageData<T>(
     final override val height
         get() = data.shape[1]
 
-    final override val masked: Boolean
-        get() = mask.all { true }
+    final override val masked: Boolean by lazy { mask.all { true } }
 
     init {
         val maskShape = mask.shape
@@ -44,7 +47,11 @@ internal sealed class NDArrayImageData<T>(
         }
     }
 
-    abstract fun copy(data: D3Array<T> = this.data, mask: D2Array<Int> = this.mask): NDArrayImageData<T>
+    abstract fun copy(
+        data: D3Array<T> = this.data,
+        mask: D2Array<Int> = this.mask,
+        vararg options: OptionProvider<*> = this.getAllOptionProviders().toTypedArray(),
+    ): NDArrayImageData<T>
 
     override fun mask(geom: Geometry): ImageData {
         val index = IndexedPointInAreaLocator(geom)

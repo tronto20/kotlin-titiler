@@ -2,6 +2,7 @@ package dev.tronto.titiler.image.outgoing.port
 
 import dev.tronto.titiler.core.domain.BandIndex
 import dev.tronto.titiler.core.outgoing.port.Raster
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.Window
 
 interface ReadableRaster : Raster {

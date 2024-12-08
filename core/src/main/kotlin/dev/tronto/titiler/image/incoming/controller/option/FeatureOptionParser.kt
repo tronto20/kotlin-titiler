@@ -19,8 +19,8 @@ class FeatureOptionParser : OptionParser<FeatureOption> {
     }
 
     override fun parse(request: Request): FeatureOption? {
-        return request.parameter(PARAM).lastOrNull()?.let {
-            val crs = request.parameter("featureCrs").lastOrNull()
+        return request.parameter(PARAM).firstOrNull()?.let {
+            val crs = request.parameter("featureCrs").firstOrNull()
 //            FeatureOption(it, crs ?: DEFAULT_CRS)
             throw NotImplementedError("not implemented yet.")
         }

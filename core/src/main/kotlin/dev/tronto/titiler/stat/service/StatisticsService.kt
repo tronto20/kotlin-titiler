@@ -13,7 +13,7 @@ import dev.tronto.titiler.stat.domain.Statistics
 import dev.tronto.titiler.stat.incoming.controller.option.PercentileOption
 import dev.tronto.titiler.stat.incoming.controller.option.StatisticsOption
 import dev.tronto.titiler.stat.incoming.usecase.StatisticsUseCase
-import dev.tronto.titiler.stat.outgoing.port.ImageDataStatistics
+import dev.tronto.titiler.stat.outgoing.port.spi.ImageDataStatistics
 import java.util.*
 
 class StatisticsService(

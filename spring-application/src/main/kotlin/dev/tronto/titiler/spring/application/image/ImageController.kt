@@ -6,7 +6,6 @@ import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
 import dev.tronto.titiler.spring.application.core.GET
 import dev.tronto.titiler.spring.application.core.adaptor.WebFluxOptionParserAdaptor
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -25,16 +24,13 @@ class ImageController(
         val options = optionParser.parse(it)
         val imageData = bBoxUseCase.bbox(options.filter(), options.filter())
         val image = renderUseCase.renderImage(imageData, options.filter())
-        ok()
-            .contentType(MediaType.parseMediaType(image.format.contentType))
-            .bodyValueAndAwait(image.data)
+        ok().bodyValueAndAwait(image)
     }
 
     GET(pathProperties.preview) {
         val options = optionParser.parse(it)
         val imageData = previewUseCase.preview(options.filter(), options.filter())
         val image = renderUseCase.renderImage(imageData, options.filter())
-        ok().contentType(MediaType.parseMediaType(image.format.contentType))
-            .bodyValueAndAwait(image.data)
+        ok().bodyValueAndAwait(image)
     }
 })

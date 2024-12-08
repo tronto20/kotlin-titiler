@@ -17,7 +17,7 @@ class TileMatrixSetOptionParser : OptionParser<TileMatrixSetOption> {
     }
 
     override fun parse(request: Request): TileMatrixSetOption? {
-        return request.parameter(PARAM).lastOrNull()?.let {
+        return request.parameter(PARAM).firstOrNull()?.let {
             TileMatrixSetOption(it)
         }
     }

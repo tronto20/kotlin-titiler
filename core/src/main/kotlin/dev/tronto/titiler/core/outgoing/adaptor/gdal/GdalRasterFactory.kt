@@ -110,7 +110,9 @@ open class GdalRasterFactory(
         return GdalRaster(
             dataset,
             crsFactory,
-            path.substringAfterLast('/').substringBefore('?').substringBeforeLast('.')
+            path.substringAfterLast('/')
+                .substringBefore('?')
+                .substringBeforeLast('.')
         )
     }
 

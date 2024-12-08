@@ -1,10 +1,10 @@
 package dev.tronto.titiler.stat.outgoing.adaptor.multik
 
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NDArrayImageData
-import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.stat.domain.BandStatistics
 import dev.tronto.titiler.stat.domain.Percentile
-import dev.tronto.titiler.stat.outgoing.port.ImageDataStatistics
+import dev.tronto.titiler.stat.outgoing.port.spi.ImageDataStatistics
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +44,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                 val data = doubleData.filterMultiIndexed { index, _ ->
                     imageData.mask[index] == 1
                 }.sorted()
-                val valueGroup = data.groupNDArrayBy { it }
+                val valueGroup = if (data.isNotEmpty()) data.groupNDArrayBy { it } else emptyMap()
                 val min = data.firstOrNull() ?: 0.0
                 val max = data.lastOrNull() ?: 0.0
                 val sum = data.sum()

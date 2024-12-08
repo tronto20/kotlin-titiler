@@ -4,10 +4,10 @@ import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.incoming.controller.option.plus
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageSizeOption
 import dev.tronto.titiler.image.incoming.controller.option.MaxSizeOption
-import dev.tronto.titiler.image.outgoing.port.ImageData
 
 interface ImagePreviewUseCase : ImageReadUseCase {
     suspend fun preview(openOptions: OptionProvider<OpenOption>, imageOptions: OptionProvider<ImageOption>): ImageData {

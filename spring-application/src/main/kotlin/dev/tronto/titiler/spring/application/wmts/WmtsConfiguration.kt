@@ -7,7 +7,6 @@ import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
 import dev.tronto.titiler.tile.outgoing.port.TileMatrixSetFactory
 import dev.tronto.titiler.wmts.service.TemplateString
 import dev.tronto.titiler.wmts.service.WmtsService
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -17,10 +16,6 @@ import org.thymeleaf.TemplateEngine
 @Configuration
 @EnableConfigurationProperties(WmtsPathProperties::class)
 class WmtsConfiguration {
-
-    @Bean
-    @ConditionalOnMissingBean
-    fun templateEngine() = TemplateEngine()
 
     @Bean
     @ConditionalOnProperty("titiler.web.path.tile.tiles", "titiler.web.path.wmts.capabilities", matchIfMissing = true)

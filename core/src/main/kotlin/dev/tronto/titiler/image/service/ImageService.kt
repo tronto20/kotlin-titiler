@@ -1,5 +1,6 @@
 package dev.tronto.titiler.image.service
 
+import dev.tronto.titiler.core.domain.OptionContext
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
@@ -7,6 +8,7 @@ import dev.tronto.titiler.core.incoming.controller.option.get
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
 import dev.tronto.titiler.image.incoming.controller.option.BandIndexOption
@@ -19,7 +21,6 @@ import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
-import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
 import org.locationtech.jts.geom.CoordinateXY
 import org.locationtech.jts.geom.util.AffineTransformationFactory
@@ -115,6 +116,9 @@ class ImageService(
                 imageData
             }
             maskedImageData
+        }
+        if (maskedImageData is OptionContext) {
+            maskedImageData.put(openOptions, imageOptions)
         }
         return maskedImageData
     }

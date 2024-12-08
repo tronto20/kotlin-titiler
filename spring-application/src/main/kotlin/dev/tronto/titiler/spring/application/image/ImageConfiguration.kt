@@ -4,12 +4,10 @@ import dev.tronto.titiler.core.outgoing.adaptor.gdal.GdalRasterFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
 import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
-import dev.tronto.titiler.image.service.ImageRenderService
 import dev.tronto.titiler.image.service.ImageService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.boot.web.codec.CodecCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -38,12 +36,4 @@ class ImageConfiguration {
         crsFactory,
         readableRasterFactory
     )
-
-    @Bean
-    fun imageRenderService() = ImageRenderService()
-
-    @Bean
-    fun imageCodec() = CodecCustomizer {
-        it.customCodecs().register(ImageHttpMessageWriter(ImageEncoder()))
-    }
 }

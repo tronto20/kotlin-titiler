@@ -1,12 +1,13 @@
-package dev.tronto.titiler.image.outgoing.adaptor.multik.imageio
+package dev.tronto.titiler.image.outgoing.adaptor.imageio
 
 import dev.tronto.titiler.core.domain.DataType
+import dev.tronto.titiler.core.domain.Ordered
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.outgoing.adaptor.multik.IntImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NDArrayImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NumberRange
 import dev.tronto.titiler.image.outgoing.adaptor.multik.linearRescale
-import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.image.outgoing.port.ImageDataAutoRescale
 import dev.tronto.titiler.stat.domain.Percentile
 import org.jetbrains.kotlinx.multik.api.mk
@@ -19,7 +20,10 @@ import org.jetbrains.kotlinx.multik.ndarray.operations.stack
 
 class NDArrayAutoRescale(
     private val percentile: ClosedRange<Percentile> = Percentile(2)..Percentile(98),
-) : ImageDataAutoRescale {
+) : ImageDataAutoRescale, Ordered {
+    override fun getOrder(): Int {
+        return Int.MAX_VALUE
+    }
 
     override fun supports(imageData: ImageData, format: ImageFormat): Boolean {
         if (imageData !is NDArrayImageData<*>) return false
@@ -29,7 +33,7 @@ class NDArrayAutoRescale(
         return false
     }
 
-    override fun rescale(imageData: ImageData, format: ImageFormat): ImageData {
+    override suspend fun rescale(imageData: ImageData, format: ImageFormat): ImageData {
         val data = (imageData as NDArrayImageData<*>).data
         val size = imageData.width * imageData.height
         val start = size * percentile.start.value / 100

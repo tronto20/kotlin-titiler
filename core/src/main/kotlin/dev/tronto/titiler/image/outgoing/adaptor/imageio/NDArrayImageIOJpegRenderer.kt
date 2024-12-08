@@ -1,10 +1,11 @@
-package dev.tronto.titiler.image.outgoing.adaptor.multik.imageio
+package dev.tronto.titiler.image.outgoing.adaptor.imageio
 
 import dev.tronto.titiler.core.domain.DataType
+import dev.tronto.titiler.core.domain.Ordered
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NDArrayImageData
-import dev.tronto.titiler.image.outgoing.port.ImageData
-import dev.tronto.titiler.image.outgoing.port.ImageDataRenderer
+import dev.tronto.titiler.image.outgoing.port.ImageRenderer
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.ndarray.operations.stack
 import org.jetbrains.kotlinx.multik.ndarray.operations.times
@@ -13,10 +14,14 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
-class NDArrayImageIOJpegRenderer : ImageDataRenderer {
+class NDArrayImageIOJpegRenderer : ImageRenderer, Ordered {
     companion object {
         private val SUPPORT_DATATYPE = listOf(DataType.UInt8)
         private val SUPPORT_BAND = intArrayOf(3)
+    }
+
+    override fun getOrder(): Int {
+        return Int.MAX_VALUE
     }
 
     override fun supports(imageData: ImageData, format: ImageFormat): Boolean {

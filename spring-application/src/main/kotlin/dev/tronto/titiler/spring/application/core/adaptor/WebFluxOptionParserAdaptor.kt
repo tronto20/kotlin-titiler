@@ -1,5 +1,6 @@
 package dev.tronto.titiler.spring.application.core.adaptor
 
+import dev.tronto.titiler.core.domain.Ordered
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
 import dev.tronto.titiler.core.incoming.controller.option.Option
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
@@ -13,7 +14,14 @@ class WebFluxOptionParserAdaptor(
     private val optionParserMap: Map<ArgumentType<out Option>, List<OptionParser<out Option>>>,
 ) {
     constructor() : this(
-        ServiceLoader.load(OptionParser::class.java, Thread.currentThread().contextClassLoader).toList()
+        ServiceLoader.load(OptionParser::class.java, Thread.currentThread().contextClassLoader)
+            .toList()
+            .sortedBy {
+                when (it) {
+                    is Ordered -> it.order
+                    else -> 0
+                }
+            }
     )
 
     constructor(optionParsers: Iterable<OptionParser<out Option>>) : this(optionParsers.groupBy { it.type })

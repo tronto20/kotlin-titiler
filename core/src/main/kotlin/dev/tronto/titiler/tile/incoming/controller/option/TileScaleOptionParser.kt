@@ -18,7 +18,7 @@ class TileScaleOptionParser : OptionParser<TileScaleOption> {
     }
 
     override fun parse(request: Request): TileScaleOption? {
-        return request.parameter(PARAM).lastOrNull()?.let {
+        return request.parameter(PARAM).firstOrNull()?.let {
             val value = it.toIntOrNull() ?: throw IllegalParameterException("scale must be an integer: $it.")
             TileScaleOption(value)
         }

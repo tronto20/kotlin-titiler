@@ -15,7 +15,7 @@ class ResamplingOptionParser : OptionParser<ResamplingOption> {
     }
 
     override fun parse(request: Request): ResamplingOption? {
-        return request.parameter(PARAM).lastOrNull()?.let { ResamplingOption(ResamplingAlgorithm(it)) }
+        return request.parameter(PARAM).firstOrNull()?.let { ResamplingOption(ResamplingAlgorithm(it)) }
     }
 
     override fun box(option: ResamplingOption): Map<String, List<String>> {

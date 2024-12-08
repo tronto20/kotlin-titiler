@@ -18,7 +18,7 @@ class MaxZoomOptionParser : OptionParser<MaxZoomOption> {
     }
 
     override fun parse(request: Request): MaxZoomOption? {
-        return request.parameter(PARAM).lastOrNull()?.let {
+        return request.parameter(PARAM).firstOrNull()?.let {
             MaxZoomOption(it.toIntOrNull() ?: throw IllegalParameterException("$PARAM must be an integer."))
         }
     }
