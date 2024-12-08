@@ -91,7 +91,7 @@ sealed class NDArrayImageData<T>(
                 }
 
                 val rescaled = rescale(rangeFrom, rangeTo)
-                IntImageData(rescaled, mask, dataType)
+                IntImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
             }
 
             DataType.UInt32, DataType.Int64 -> {
@@ -100,7 +100,7 @@ sealed class NDArrayImageData<T>(
                 }
 
                 val rescaled = rescale(rangeFrom, rangeTo)
-                LongImageData(rescaled, mask, dataType)
+                LongImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
             }
 
             DataType.Float32, DataType.CFloat32 -> {
@@ -109,7 +109,7 @@ sealed class NDArrayImageData<T>(
                 }
 
                 val rescaled = rescale(rangeFrom, rangeTo)
-                FloatImageData(rescaled, mask, dataType)
+                FloatImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
             }
 
             DataType.Float64, DataType.CFloat64 -> {
@@ -118,7 +118,7 @@ sealed class NDArrayImageData<T>(
                 }
 
                 val rescaled = rescale(rangeFrom, rangeTo)
-                DoubleImageData(rescaled, mask, dataType)
+                DoubleImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
             }
 
             DataType.UInt64 -> throw UnsupportedOperationException()

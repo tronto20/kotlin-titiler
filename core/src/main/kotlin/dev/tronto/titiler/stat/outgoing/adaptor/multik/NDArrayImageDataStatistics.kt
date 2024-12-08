@@ -38,6 +38,26 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
         }
 
         val maskedPixels = imageData.mask.size - imageData.mask.sum()
+        if (maskedPixels == imageData.width * imageData.height) {
+            // 모든 필드가 마스킹되었을 때
+            val emptyStat = BandStatistics(
+                0.0,
+                0.0,
+                0.0,
+                maskedPixels,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0,
+                0.0,
+                maskedPixels,
+                0,
+                percentiles.associateWith { 0.0 }
+            )
+            return (0..<imageData.band).map { emptyStat }
+        }
         return (0..<imageData.band).map { band ->
             CoroutineScope(Dispatchers.Default).async {
                 val doubleData = (imageData.data.view(band) as D2Array<*>).asType<Double>()

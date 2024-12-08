@@ -42,6 +42,5 @@ class StatConfiguration(
 
     @Bean
     @Order(-1)
-    fun statisticsAutoRescale(statisticsUseCase: StatisticsUseCase) =
-        StatisticsAutoRescale(statisticsUseCase).also { println(it) }
+    fun statisticsAutoRescale(statisticsUseCase: StatisticsUseCase) = StatisticsAutoRescale(statisticsUseCase)
 }

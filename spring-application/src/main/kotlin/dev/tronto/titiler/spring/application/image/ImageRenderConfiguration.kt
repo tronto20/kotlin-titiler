@@ -43,7 +43,7 @@ class ImageRenderConfiguration(
         imageDataAutoRescales: List<ImageDataAutoRescale>,
     ) = ImageRenderService(
         imageRenderers.sortedByOrdered(),
-        imageDataAutoRescales.sortedByOrdered().also { println(it) }
+        imageDataAutoRescales.sortedByOrdered()
     )
 
     @Bean
