@@ -9,6 +9,9 @@ import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.ResamplingOption
 import dev.tronto.titiler.core.incoming.controller.option.URIOption
+import dev.tronto.titiler.core.incoming.controller.option.get
+import dev.tronto.titiler.core.incoming.controller.option.getAll
+import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.outgoing.port.CRS
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.Raster
@@ -45,13 +48,14 @@ open class GdalRasterFactory(
     }
 
     protected open fun createVRT(openOptions: OptionProvider<OpenOption>, raster: GdalRaster): GdalBaseRaster? {
-        val crsOption = openOptions.getOrNull<CRSOption>()
-        val noData = openOptions.getOrNull<NoDataOption>()?.noData ?: raster.noDataValue
+        val crsOption: CRSOption? = openOptions.getOrNull()
+        val noDataOption: NoDataOption? = openOptions.getOrNull()
+        val noData = noDataOption?.noData ?: raster.noDataValue
 
         return if (crsOption != null || noData != null) {
-            val resamplingAlgorithm =
-                openOptions.getOrNull<ResamplingOption>()?.algorithm ?: ResamplingAlgorithm.NEAREST
-            val memoryFile = "/vsimem/${UUID.randomUUID()}.vrt"
+            val resamplingAlgorithmOption: ResamplingOption? = openOptions.getOrNull()
+            val resamplingAlgorithm = resamplingAlgorithmOption?.algorithm ?: ResamplingAlgorithm.NEAREST
+            val memoryFile = "/vsimem/${raster.name}.vrt"
             val warpOptions = mutableMapOf(
                 "-of" to "VRT",
                 "-r" to resamplingAlgorithm.gdalWarpString,
@@ -83,14 +87,15 @@ open class GdalRasterFactory(
                     Vector(options)
                 )
             )
-            GdalMemFileRaster(GdalRaster(dataset, crsFactory), memoryFile)
+            GdalMemFileRaster(GdalRaster(dataset, crsFactory, raster.name), memoryFile)
         } else {
             null
         }
     }
 
-    protected open fun createDataset(openOptions: OptionProvider<OpenOption>): Dataset {
-        val uri = openOptions.get<URIOption>().uri
+    protected open fun createRaster(openOptions: OptionProvider<OpenOption>): GdalRaster {
+        val uriOption: URIOption = openOptions.get()
+        val uri = uriOption.uri
         val path = if (uri.scheme == null) {
             uri.toString()
         } else {
@@ -102,11 +107,17 @@ open class GdalRasterFactory(
             logger.error(e) { "Failed to open dataset" }
             throw GdalDatasetOpenFailedException(path, e)
         }
-        return dataset
+        return GdalRaster(
+            dataset,
+            crsFactory,
+            path.substringAfterLast('/')
+                .substringBefore('?')
+                .substringBeforeLast('.')
+        )
     }
 
     protected open fun <T> applyEnvs(openOptions: OptionProvider<OpenOption>, block: () -> T): T {
-        val envOptions = openOptions.list<EnvOption>()
+        val envOptions: List<EnvOption> = openOptions.getAll()
         return try {
             envOptions.forEach {
                 gdal.SetThreadLocalConfigOption(it.key, it.value)
@@ -122,12 +133,8 @@ open class GdalRasterFactory(
     suspend fun <T> withGdalRaster(openOptions: OptionProvider<OpenOption>, block: (raster: GdalBaseRaster) -> T): T {
         return withContext(dispatcher) {
             applyEnvs(openOptions) {
-                createDataset(openOptions).use { dataset ->
-                    GdalRaster(dataset, crsFactory).use { raster ->
-                        createVRT(openOptions, raster)?.use {
-                            it.use(block)
-                        } ?: block(raster)
-                    }
+                createRaster(openOptions).use { raster ->
+                    createVRT(openOptions, raster)?.use(block) ?: block(raster)
                 }
             }
         }

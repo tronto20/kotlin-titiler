@@ -1,11 +1,14 @@
 package dev.tronto.titiler.image.service
 
+import dev.tronto.titiler.core.domain.OptionContext
+import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.core.incoming.controller.option.get
+import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
-import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSTransformFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
-import dev.tronto.titiler.core.outgoing.port.CRSTransformFactory
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
 import dev.tronto.titiler.image.incoming.controller.option.BandIndexOption
@@ -18,7 +21,6 @@ import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
-import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
 import org.locationtech.jts.geom.CoordinateXY
 import org.locationtech.jts.geom.util.AffineTransformationFactory
@@ -26,18 +28,17 @@ import kotlin.math.roundToInt
 
 class ImageService(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
-    private val crsTransformFactory: CRSTransformFactory = SpatialReferenceCRSTransformFactory,
     private val readableRasterFactory: ReadableRasterFactory = GdalReadableRasterFactory(crsFactory),
 ) : ImageReadUseCase, ImageBBoxUseCase, ImagePreviewUseCase {
     override suspend fun read(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
     ): ImageData {
-        val bandIndexOption = imageOptions.getOrNull<BandIndexOption>()
+        val bandIndexOption: BandIndexOption? = imageOptions.getOrNull()
 
-        val featureOption = imageOptions.getOrNull<FeatureOption>()
-        val maxSizeOption = imageOptions.getOrNull<MaxSizeOption>()
-        val imageSizeOption = imageOptions.getOrNull<ImageSizeOption>()
+        val featureOption: FeatureOption? = imageOptions.getOrNull()
+        val maxSizeOption: MaxSizeOption? = imageOptions.getOrNull()
+        val imageSizeOption: ImageSizeOption? = imageOptions.getOrNull()
 
         val maskedImageData = readableRasterFactory.withReadableRaster(openOptions) { raster ->
 
@@ -47,7 +48,7 @@ class ImageService(
                  *  2. image crs -> pixel crs
                  */
                 val polygonCRS = crsFactory.create(featureOption.crsString)
-                val rasterCRSTransform = crsTransformFactory.create(polygonCRS, raster.crs)
+                val rasterCRSTransform = crsFactory.transformTo(polygonCRS, raster.crs)
                 val polygon = rasterCRSTransform.transformTo(featureOption.polygon)
                 raster.pixelCoordinateTransform.transformTo(polygon)
             }
@@ -64,8 +65,8 @@ class ImageService(
                 val pixelEnvelope = pixelFeature.envelopeInternal
                 Window.fromEnvelope(pixelEnvelope)
             } else {
-                imageOptions.getOrNull<WindowOption>()?.window
-                    ?: Window(0, 0, raster.width, raster.height)
+                val windowOption: WindowOption? = imageOptions.getOrNull()
+                windowOption?.window ?: Window(0, 0, raster.width, raster.height)
             }
 
             // window check
@@ -93,8 +94,12 @@ class ImageService(
                 }
                 (window.width * ratio).roundToInt() to (window.height * ratio).roundToInt()
             } else {
-                val imageSizeOption = imageOptions.get<ImageSizeOption>()
+                val imageSizeOption: ImageSizeOption = imageOptions.get()
                 imageSizeOption.width to imageSizeOption.height
+            }
+
+            if (width < 10 || height < 10) {
+                throw IllegalParameterException("width or height must be greater than 10.")
             }
 
             val imageData = raster.read(window, width, height, bandIndexOption?.bandIndexes)
@@ -111,6 +116,9 @@ class ImageService(
                 imageData
             }
             maskedImageData
+        }
+        if (maskedImageData is OptionContext) {
+            maskedImageData.put(openOptions, imageOptions)
         }
         return maskedImageData
     }

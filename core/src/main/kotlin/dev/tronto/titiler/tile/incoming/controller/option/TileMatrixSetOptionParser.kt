@@ -16,9 +16,13 @@ class TileMatrixSetOptionParser : OptionParser<TileMatrixSetOption> {
         return IllegalParameterException(PARAM)
     }
 
-    override suspend fun parse(request: Request): TileMatrixSetOption? {
-        return request.parameter(PARAM).lastOrNull()?.let {
+    override fun parse(request: Request): TileMatrixSetOption? {
+        return request.parameter(PARAM).firstOrNull()?.let {
             TileMatrixSetOption(it)
         }
+    }
+
+    override fun box(option: TileMatrixSetOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.tileMatrixSetId))
     }
 }

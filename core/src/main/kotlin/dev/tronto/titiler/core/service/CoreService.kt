@@ -28,6 +28,7 @@ class CoreService(
     override suspend fun getInfo(openOptions: OptionProvider<OpenOption>): Info {
         return rasterFactory.withRaster(openOptions) { raster ->
             Info(
+                raster.name,
                 raster.bounds().toArray(),
                 raster.dataType,
                 raster.driver,

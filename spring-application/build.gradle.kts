@@ -31,6 +31,25 @@ if (properties["image.native.enabled"].toString().toBoolean()) {
 
 }
 
+if (properties["image.debug.enabled"].toString().toBoolean()) {
+    afterEvaluate {
+        tasks.bootBuildImage {
+            val envs = environment.get().toMutableMap()
+            val javaOps = envs["BPE_APPEND_JAVA_TOOL_OPTIONS"]?.split(' ') ?: emptyList()
+
+            val debugPort = properties["image.debug.port"]?.toString()?.toIntOrNull() ?: 5005
+            val suspend = properties["image.debug.suspend"]?.toString()?.toBoolean() ?: false
+            val suspendString = if (suspend) "y" else "n"
+
+            envs["BPE_DELIM_JAVA_TOOL_OPTIONS"] = " "
+            envs["BPE_APPEND_JAVA_TOOL_OPTIONS"] =
+                (javaOps + "-agentlib:jdwp=transport=dt_socket,server=y,suspend=$suspendString,address=*:$debugPort")
+                    .joinToString(separator = " ")
+            environment.set(envs)
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -47,6 +66,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation(kotlin("reflect"))
     implementation(projects.core)
+    implementation("org.thymeleaf:thymeleaf")
 }
 
 val buildRunnerImageTask = tasks.register("buildRunnerImage", PathExec::class.java) {

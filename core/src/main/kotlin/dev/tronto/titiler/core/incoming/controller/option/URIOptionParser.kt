@@ -15,9 +15,13 @@ class URIOptionParser : OptionParser<URIOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): URIOption? {
-        val uriString = request.parameter(PARAM).lastOrNull() ?: return null
+    override fun parse(request: Request): URIOption? {
+        val uriString = request.parameter(PARAM).firstOrNull() ?: return null
         val uri = kotlin.runCatching { URI.create(uriString) }.getOrElse { throw InvalidURIException(uriString, it) }
         return URIOption(uri)
+    }
+
+    override fun box(option: URIOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.uri.toString()))
     }
 }

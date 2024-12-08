@@ -1,9 +1,12 @@
 package dev.tronto.titiler.core.incoming.controller.option
 
 interface Request {
-    suspend fun parameter(key: String): List<String>
+    companion object Empty : Request {
+        override fun parameter(key: String): List<String> = emptyList()
 
-    suspend fun option(key: String): List<String>
+        override fun option(key: String): List<String> = emptyList()
+    }
+    fun parameter(key: String): List<String>
 
-    suspend fun <T : Any> body(key: String, argumentType: ArgumentType<T>): T?
+    fun option(key: String): List<String>
 }

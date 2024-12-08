@@ -14,7 +14,11 @@ class ResamplingOptionParser : OptionParser<ResamplingOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): ResamplingOption? {
-        return request.parameter(PARAM).lastOrNull()?.let { ResamplingOption(ResamplingAlgorithm(it)) }
+    override fun parse(request: Request): ResamplingOption? {
+        return request.parameter(PARAM).firstOrNull()?.let { ResamplingOption(ResamplingAlgorithm(it)) }
+    }
+
+    override fun box(option: ResamplingOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.algorithm.name.lowercase()))
     }
 }

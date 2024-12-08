@@ -16,10 +16,14 @@ class MaxSizeOptionParser : OptionParser<MaxSizeOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override suspend fun parse(request: Request): MaxSizeOption? {
-        return request.parameter(PARAM).lastOrNull()?.let {
-            val value = it.toIntOrNull() ?: throw IllegalParameterException("maxSize must be a integer: $it.")
+    override fun parse(request: Request): MaxSizeOption? {
+        return request.parameter(PARAM).firstOrNull()?.let {
+            val value = it.toIntOrNull() ?: throw IllegalParameterException("maxSize must be an integer: $it.")
             MaxSizeOption(value)
         }
+    }
+
+    override fun box(option: MaxSizeOption): Map<String, List<String>> {
+        return mapOf(PARAM to listOf(option.maxSize.toString()))
     }
 }

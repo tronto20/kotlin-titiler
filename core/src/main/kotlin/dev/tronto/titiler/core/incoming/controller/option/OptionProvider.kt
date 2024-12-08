@@ -1,39 +1,22 @@
 package dev.tronto.titiler.core.incoming.controller.option
 
-class OptionProvider<O : Option>(
-    @PublishedApi
-    internal val options: List<O>,
-    @PublishedApi
-    internal val parsers: Iterable<OptionParser<*>>,
-) {
-    inline fun <reified T : O> filter(): OptionProvider<T> {
-        return OptionProvider<T>(options.filterIsInstance<T>(), parsers)
-    }
-
-    inline fun <reified T : O> remove(): OptionProvider<O> {
-        return OptionProvider(options.filterNot { it is T }, parsers)
-    }
-
-    inline fun <reified T : O> list(): List<T> = options.filterIsInstance<T>()
-
-    inline fun <reified T : O> getOrNull(): T? {
-        return options.filterIsInstance<T>().lastOrNull()
-    }
-
-    inline fun <reified T : O> get(): T {
-        return getOrNull<T>() ?: run {
-            val resultType = ArgumentType<T>()
-            val exception = parsers.find { it.type == resultType }?.generateMissingException()
-                ?: IllegalArgumentException("Required option ${T::class.simpleName} not found")
-            throw exception
+interface OptionProvider<O : Option> {
+    companion object {
+        inline fun <reified T : Option> empty(): OptionProvider<T> {
+            return OptionProviderImpl(Request.Empty, ArgumentType<T>(), emptyMap())
         }
     }
+    val argumentType: ArgumentType<O>
 
-    operator fun plus(option: O): OptionProvider<O> {
-        return OptionProvider(options + option, parsers)
-    }
+    fun <T : O> filter(argumentType: ArgumentType<T>): OptionProvider<T>
+    fun <T : O> filterNot(argumentType: ArgumentType<T>): OptionProvider<O>
+    fun <T : O> getAll(argumentType: ArgumentType<T>): List<T>
 
-    operator fun plus(options: Iterable<O>): OptionProvider<O> {
-        return OptionProvider(this.options + options, parsers)
-    }
+    fun <T : O> get(argumentType: ArgumentType<T>): T
+    fun <T : O> getOrNull(argumentType: ArgumentType<T>): T?
+    fun <T : O> contains(argumentType: ArgumentType<T>): Boolean = getOrNull(argumentType) != null
+
+    fun <T : O> plus(option: T, argumentType: ArgumentType<T>): OptionProvider<O>
+
+    fun <T : O> boxAll(argumentType: ArgumentType<T>): Map<String, List<String>>
 }

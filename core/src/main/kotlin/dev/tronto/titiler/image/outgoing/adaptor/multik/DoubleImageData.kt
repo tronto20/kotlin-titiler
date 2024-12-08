@@ -1,16 +1,18 @@
 package dev.tronto.titiler.image.outgoing.adaptor.multik
 
 import dev.tronto.titiler.core.domain.DataType
-import dev.tronto.titiler.image.outgoing.port.ImageData
+import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.image.domain.ImageData
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
 
-internal class DoubleImageData(
+class DoubleImageData(
     data: D3Array<Double>,
     mask: D2Array<Int>,
     override val dataType: DataType,
-) : ImageData, NDArrayImageData<Double>(data, mask) {
+    vararg options: OptionProvider<*>,
+) : ImageData, NDArrayImageData<Double>(data, mask, *options) {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -32,7 +34,11 @@ internal class DoubleImageData(
         return toDouble()
     }
 
-    override fun copy(data: D3Array<Double>, mask: D2Array<Int>): NDArrayImageData<Double> {
-        return DoubleImageData(data, mask, dataType)
+    override fun copy(
+        data: D3Array<Double>,
+        mask: D2Array<Int>,
+        vararg options: OptionProvider<*>,
+    ): NDArrayImageData<Double> {
+        return DoubleImageData(data, mask, dataType, *options)
     }
 }

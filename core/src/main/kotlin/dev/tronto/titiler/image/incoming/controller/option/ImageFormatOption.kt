@@ -4,5 +4,5 @@ import dev.tronto.titiler.image.domain.ImageFormat
 
 @JvmInline
 value class ImageFormatOption(
-    val format: ImageFormat?,
+    val format: ImageFormat,
 ) : RenderOption

@@ -7,6 +7,7 @@ import dev.tronto.titiler.core.domain.DataType
 import org.locationtech.jts.geom.Envelope
 
 interface Raster : AutoCloseable {
+    val name: String
     val width: Int
     val height: Int
     val bandCount: Int

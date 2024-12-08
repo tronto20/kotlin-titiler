@@ -1,9 +1,13 @@
 package dev.tronto.titiler.tile.service
 
+import dev.tronto.titiler.core.domain.OptionContext
 import dev.tronto.titiler.core.exception.UnsupportedCrsStringException
 import dev.tronto.titiler.core.incoming.controller.option.CRSOption
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.core.incoming.controller.option.get
+import dev.tronto.titiler.core.incoming.controller.option.getOrNull
+import dev.tronto.titiler.core.incoming.controller.option.plus
 import dev.tronto.titiler.core.incoming.usecase.InfoUseCase
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.GdalRasterFactory
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
@@ -11,16 +15,13 @@ import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.Raster
 import dev.tronto.titiler.core.outgoing.port.RasterFactory
 import dev.tronto.titiler.core.service.CoreService
-import dev.tronto.titiler.image.domain.Image
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
 import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.ImageSizeOption
-import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.image.incoming.controller.option.WindowOption
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
-import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
-import dev.tronto.titiler.image.service.ImageRenderService
 import dev.tronto.titiler.image.service.ImageService
 import dev.tronto.titiler.tile.domain.TileInfo
 import dev.tronto.titiler.tile.domain.TileMatrix
@@ -51,7 +52,6 @@ class TileService(
     private val rasterFactory: RasterFactory = GdalRasterFactory(crsFactory),
     private val imageReadUseCase: ImageReadUseCase = ImageService(crsFactory),
     private val infoUseCase: InfoUseCase = CoreService(rasterFactory),
-    private val imageRenderUseCase: ImageRenderUseCase = ImageRenderService(),
 ) : TileUseCase, TileInfoUseCase {
     companion object {
         @JvmStatic
@@ -138,10 +138,9 @@ class TileService(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
         tileOptions: OptionProvider<TileOption>,
-        renderOptions: OptionProvider<RenderOption>,
-    ): Image {
+    ): ImageData {
         val tileMatrixSet = tileMatrixSet(tileOptions)
-        val tileCoord = tileOptions.get<TileCoordinateOption>()
+        val tileCoord: TileCoordinateOption = tileOptions.get()
         val tileMatrix = tileMatrixSet[tileCoord.z]
         if (tileCoord.x !in 0..<tileMatrix.matrixWidth) {
             throw TileCoordinateOutOfBoundsException("x", tileCoord.x, 0..<tileMatrix.matrixWidth)
@@ -152,14 +151,13 @@ class TileService(
         val crsTileMatrixSet = crsTileMatrixSet(tileMatrixSet)
 
         val tileBounds = tileBounds(crsTileMatrixSet, tileMatrix, tileCoord)
-        val scale = tileOptions.getOrNull<TileScaleOption>()?.scale
+        val scaleOption: TileScaleOption? = tileOptions.getOrNull()
+        val scale = scaleOption?.scale
         val tileWidth = if (scale == null) tileMatrix.tileWidth else tileMatrix.tileWidth * scale
         val tileHeight = if (scale == null) tileMatrix.tileHeight else tileMatrix.tileHeight * scale
 
-        val crsOption = CRSOption(
-            crsTileMatrixSet.crs.wkt
-        )
-        val tileOpenOptions = openOptions + listOf(crsOption)
+        val crsOption = CRSOption(crsTileMatrixSet.crs.wkt)
+        val tileOpenOptions = openOptions + crsOption
 
         val imageSizeOption = ImageSizeOption(
             tileWidth,
@@ -170,18 +168,22 @@ class TileService(
         }
         val windowOption = WindowOption(window)
 
-        val tileImageOptions = imageOptions + listOf(imageSizeOption, windowOption)
+        val tileImageOptions = imageOptions + imageSizeOption + windowOption
 
         val imageData = try {
             imageReadUseCase.read(tileOpenOptions, tileImageOptions)
         } catch (e: ImageOutOfBoundsException) {
             throw TileNotFoundException(tileCoord, e)
         }
-        return imageRenderUseCase.renderImage(imageData, renderOptions)
+        if (imageData is OptionContext) {
+            imageData.put(tileOptions)
+        }
+        return imageData
     }
 
     private suspend fun tileMatrixSet(tileOptions: OptionProvider<TileOption>): TileMatrixSet {
-        val tileMatrixSetId = tileOptions.getOrNull<TileMatrixSetOption>()?.tileMatrixSetId
+        val option: TileMatrixSetOption? = tileOptions.getOrNull()
+        val tileMatrixSetId = option?.tileMatrixSetId
         val tileMatrixSet = tileMatrixSetId?.let { tileMatrixSetFactory.fromId(it) } ?: tileMatrixSetFactory.default()
         return tileMatrixSet
     }
@@ -215,10 +217,8 @@ class TileService(
     ): TileInfo {
         val tileMatrixSet = tileMatrixSet(tileOptions)
         val crsTileMatrixSet = crsTileMatrixSet(tileMatrixSet)
-        val crsOption = CRSOption(
-            crsTileMatrixSet.crs.wkt
-        )
-        val tileOpenOptions = openOptions + listOf(crsOption)
+        val crsOption = CRSOption(crsTileMatrixSet.crs.wkt)
+        val tileOpenOptions = openOptions + crsOption
 
         val (minZoom, maxZoom) = rasterFactory.withRaster(tileOpenOptions) {
             getMinMaxZoom(crsTileMatrixSet, it)

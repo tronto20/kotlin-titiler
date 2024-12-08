@@ -19,9 +19,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
     implementation("org.springframework:spring-core")
+    implementation("org.springframework:spring-expression")
 
     implementation("org.jetbrains.kotlinx:multik-core")
     implementation("org.jetbrains.kotlinx:multik-default")
+
+    implementation("org.thymeleaf:thymeleaf")
 }
 
 kotlin {

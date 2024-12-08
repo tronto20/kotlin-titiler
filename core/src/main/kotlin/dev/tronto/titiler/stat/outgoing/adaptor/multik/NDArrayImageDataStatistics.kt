@@ -1,16 +1,16 @@
 package dev.tronto.titiler.stat.outgoing.adaptor.multik
 
+import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NDArrayImageData
-import dev.tronto.titiler.image.outgoing.port.ImageData
 import dev.tronto.titiler.stat.domain.BandStatistics
 import dev.tronto.titiler.stat.domain.Percentile
-import dev.tronto.titiler.stat.outgoing.port.ImageDataStatistics
+import dev.tronto.titiler.stat.outgoing.port.spi.ImageDataStatistics
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import org.jetbrains.kotlinx.multik.ndarray.data.asDNArray
+import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.view
 import org.jetbrains.kotlinx.multik.ndarray.operations.filterMultiIndexed
@@ -38,13 +38,33 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
         }
 
         val maskedPixels = imageData.mask.size - imageData.mask.sum()
+        if (maskedPixels == imageData.width * imageData.height) {
+            // 모든 필드가 마스킹되었을 때
+            val emptyStat = BandStatistics(
+                0.0,
+                0.0,
+                0.0,
+                maskedPixels,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0,
+                0.0,
+                maskedPixels,
+                0,
+                percentiles.associateWith { 0.0 }
+            )
+            return (0..<imageData.band).map { emptyStat }
+        }
         return (0..<imageData.band).map { band ->
             CoroutineScope(Dispatchers.Default).async {
-                val doubleData = imageData.data.view(band).asDNArray().asType<Double>()
+                val doubleData = (imageData.data.view(band) as D2Array<*>).asType<Double>()
                 val data = doubleData.filterMultiIndexed { index, _ ->
                     imageData.mask[index] == 1
                 }.sorted()
-                val valueGroup = data.groupNDArrayBy { it }
+                val valueGroup = if (data.isNotEmpty()) data.groupNDArrayBy { it } else emptyMap()
                 val min = data.firstOrNull() ?: 0.0
                 val max = data.lastOrNull() ?: 0.0
                 val sum = data.sum()
@@ -75,6 +95,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                         }
                     }
 
+                @Suppress("UnnecessaryVariable")
                 val validPixels = count
 
                 val percentileMap = percentiles.associateWith {
