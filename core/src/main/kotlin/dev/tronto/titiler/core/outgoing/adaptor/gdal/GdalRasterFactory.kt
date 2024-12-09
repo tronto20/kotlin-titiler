@@ -80,13 +80,19 @@ open class GdalRasterFactory(
                 warpOptions.remove("-dstalpha")
             }
             val options = warpOptions.flatMap { listOf(it.key, it.value) }.filter { it.isNotBlank() }
-            val dataset = gdal.Warp(
-                memoryFile,
-                arrayOf(raster.dataset),
-                WarpOptions(
-                    Vector(options)
+            val warpOption = WarpOptions(Vector(options))
+            val dataset = try {
+                gdal.Warp(
+                    memoryFile,
+                    arrayOf(raster.dataset),
+                    warpOption
                 )
-            )
+            } finally {
+                kotlin.runCatching { warpOption.delete() }.onFailure {
+                    logger.warn(it) { "cannot delete WarpOption." }
+                }
+            }
+
             GdalMemFileRaster(GdalRaster(dataset, crsFactory, raster.name), memoryFile)
         } else {
             null

@@ -67,6 +67,9 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(projects.core)
     implementation("org.thymeleaf:thymeleaf")
+
+    // temp
+    implementation("org.gdal:gdal")
 }
 
 val buildRunnerImageTask = tasks.register("buildRunnerImage", PathExec::class.java) {
