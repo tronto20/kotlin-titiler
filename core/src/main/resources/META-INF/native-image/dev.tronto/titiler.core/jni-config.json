@@ -1,0 +1,149 @@
+[
+  {
+    "name": "java.awt.Color",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.io.IOException",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.ArithmeticException",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.Double",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.IllegalArgumentException",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.IllegalStateException",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.IndexOutOfBoundsException",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.NullPointerException",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.Object",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.OutOfMemoryError",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.RuntimeException",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.String",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.lang.UnknownError",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.math.BigInteger",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.util.Enumeration",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.util.Hashtable",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "java.util.Vector",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "org.gdal.gdal.Band",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "org.gdal.gdal.Dataset",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "org.gdal.gdal.GCP",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "org.gdal.gdal.ProgressCallback",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allDeclaredClasses": true
+  }
+]

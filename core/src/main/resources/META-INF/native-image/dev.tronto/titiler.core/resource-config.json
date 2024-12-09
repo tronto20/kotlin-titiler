@@ -15,6 +15,18 @@
       },
       {
         "pattern": "\\Qlib\/linuxX64\/libmultik_jni-linuxX64.so\\E"
+      },
+      {
+        "pattern": "\\Qtemplates\\E"
+      },
+      {
+        "pattern": "\\Qtemplates\/wmts\\E"
+      },
+      {
+        "pattern": "\\Qtemplates\/wmts\/\\E.*\\Q.xml\\E"
+      },
+      {
+        "pattern": "\\Qtemplates\/wmts\/\\E.*\\Q.html\\E"
       }
     ]
   },
