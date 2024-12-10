@@ -1,7 +1,6 @@
 package dev.tronto.titiler.image.domain
 
 import org.locationtech.jts.geom.Envelope
-import kotlin.math.roundToInt
 
 data class Window(
     val xOffset: Int,
@@ -21,10 +20,10 @@ data class Window(
     companion object {
         fun fromEnvelope(envelope: Envelope): Window {
             return Window(
-                envelope.minX.roundToInt(),
-                envelope.minY.roundToInt(),
-                (envelope.maxX - envelope.minX).roundToInt(),
-                (envelope.maxY - envelope.minY).roundToInt()
+                envelope.minX.toInt(),
+                envelope.minY.toInt(),
+                (envelope.maxX - envelope.minX).toInt(),
+                (envelope.maxY - envelope.minY).toInt()
             )
         }
     }

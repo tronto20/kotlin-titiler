@@ -32,7 +32,6 @@ import org.jetbrains.kotlinx.multik.ndarray.operations.toDoubleArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.toFloatArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.toIntArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.toLongArray
-import kotlin.math.roundToInt
 import kotlin.reflect.KClass
 
 open class GdalReadableRaster(
@@ -321,10 +320,10 @@ open class GdalReadableRaster(
         val widthRatio = width.toDouble() / window.width
         val heightRatio = height.toDouble() / window.height
 
-        val leftPad = if (leftOver > 0) (leftOver * widthRatio).roundToInt() else 0
-        val rightPad = if (rightOver > 0) (rightOver * widthRatio).roundToInt() else 0
-        val upperPad = if (upperOver > 0) (upperOver * heightRatio).roundToInt() else 0
-        val lowerPad = if (lowerOver > 0) (lowerOver * heightRatio).roundToInt() else 0
+        val leftPad = if (leftOver > 0) (leftOver * widthRatio).toInt() else 0
+        val rightPad = if (rightOver > 0) (rightOver * widthRatio).toInt() else 0
+        val upperPad = if (upperOver > 0) (upperOver * heightRatio).toInt() else 0
+        val lowerPad = if (lowerOver > 0) (lowerOver * heightRatio).toInt() else 0
 
         val newWindow = Window(
             window.xOffset + leftOver,

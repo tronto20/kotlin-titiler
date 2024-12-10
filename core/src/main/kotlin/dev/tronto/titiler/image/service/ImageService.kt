@@ -26,7 +26,6 @@ import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.locationtech.jts.geom.CoordinateXY
 import org.locationtech.jts.geom.util.AffineTransformationFactory
-import kotlin.math.roundToInt
 
 class ImageService(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
@@ -93,12 +92,11 @@ class ImageService(
                 val widthRatio = maxSize.toDouble() / window.width
                 val heightRatio = maxSize.toDouble() / window.height
 
-                val ratio = if (widthRatio < heightRatio) {
-                    widthRatio
+                if (widthRatio < heightRatio) {
+                    maxSize to (window.height * widthRatio).toInt() + 1
                 } else {
-                    heightRatio
+                    (window.width * heightRatio).toInt() + 1 to maxSize
                 }
-                (window.width * ratio).roundToInt() to (window.height * ratio).roundToInt()
             } else {
                 val imageSizeOption: ImageSizeOption = imageOptions.get()
                 imageSizeOption.width to imageSizeOption.height

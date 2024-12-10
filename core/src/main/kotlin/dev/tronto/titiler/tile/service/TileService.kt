@@ -44,7 +44,6 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.roundToInt
 
 class TileService(
     private val tileMatrixSetFactory: TileMatrixSetFactory = ResourceTileMatrixSetFactory(),
@@ -124,8 +123,8 @@ class TileService(
             raster.pixelCoordinateTransform.transformTo(it)
         }
 
-        val rangeX = coords.minOf { it.x }.roundToInt()..coords.maxOf { it.x }.roundToInt()
-        val rangeY = coords.minOf { it.y }.roundToInt()..coords.maxOf { it.y }.roundToInt()
+        val rangeX = coords.minOf { it.x }.toInt()..coords.maxOf { it.x }.toInt() + 1
+        val rangeY = coords.minOf { it.y }.toInt()..coords.maxOf { it.y }.toInt() + 1
         return Window(
             rangeX.first,
             rangeY.first,
