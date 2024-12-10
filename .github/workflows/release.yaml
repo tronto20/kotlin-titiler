@@ -1,0 +1,39 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+
+
+jobs:
+  deploy-spring:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - uses: gradle/actions/setup-gradle@v3
+        name: setup gradle
+
+      - name: build Image with gradle
+        run: |
+          ./gradlew :spring-application:buildImage \
+            --parallel \
+            --continue \
+            -Pimage.native.enabled=false \
+            -Pimage.registry.publish.username=${{github.actor}} \
+            -Pimage.registry.publish.password=${{secrets.GITHUB_TOKEN}} \
+            -Pimage.name=ghcr.io/tronto20/kotlin-titiler \
+            -Pimage.tags=${{ inputs.version }}-spring \
+            -Pversion=${{ inputs.version }}
+
+
+
