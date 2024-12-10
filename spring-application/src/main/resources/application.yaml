@@ -3,4 +3,4 @@ server:
 
 logging:
   level:
-    dev.tronto.titiler: trace
+    dev.tronto.titiler: info
