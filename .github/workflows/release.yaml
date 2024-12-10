@@ -1,16 +1,11 @@
 name: release
 on:
   push:
-    tags:
-      - [0-9]+.[0-9]+.[0-9]+
-  workflow_dispatch:
-    inputs:
-      version:
-        required: true
-        type: string
+    branches:
+      - main
 
 env:
-  version: ${{ inputs.version || github.ref_name }}
+  version: ${{ github.ref_name }}
 
 jobs:
   deploy-spring:
@@ -38,8 +33,7 @@ jobs:
             -Pimage.registry.publish.username=${{github.actor}} \
             -Pimage.registry.publish.password=${{secrets.GITHUB_TOKEN}} \
             -Pimage.name=ghcr.io/tronto20/kotlin-titiler \
-            -Pimage.tags=${{ env.version }}-spring \
-            -Pversion=${{ env.version }} \
+            -Pimage.version-tags=spring \
             -Pimage.push=true
 
   deploy-spring-native:
@@ -66,6 +60,7 @@ jobs:
             -Pimage.registry.publish.username=${{github.actor}} \
             -Pimage.registry.publish.password=${{secrets.GITHUB_TOKEN}} \
             -Pimage.name=ghcr.io/tronto20/kotlin-titiler \
-            -Pimage.tags=${{ env.version }}-spring-native, ${{ env.version }}, latest \
-            -Pversion=${{ env.version }} \
+            -Pimage.tags=latest \
+            -Pimage.version-tags=spring-native \
+            -Pimage.default-tags=true \
             -Pimage.push=true
