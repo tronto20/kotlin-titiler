@@ -14,7 +14,7 @@ interface ImagePreviewUseCase : ImageReadUseCase {
         val imageSizeOption: ImageSizeOption? = imageOptions.getOrNull()
         val maxSizeOption: MaxSizeOption? = imageOptions.getOrNull()
         val overrideImageOptions = if (imageSizeOption == null && maxSizeOption == null) {
-            imageOptions + MaxSizeOption(4096)
+            imageOptions + MaxSizeOption(1024)
         } else {
             imageOptions
         }

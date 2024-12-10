@@ -3,12 +3,15 @@ package dev.tronto.titiler.image.outgoing.adaptor.multik
 import dev.tronto.titiler.core.domain.DataType
 import dev.tronto.titiler.core.domain.OptionContext
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
+import dev.tronto.titiler.core.utils.logTrace
 import dev.tronto.titiler.image.domain.ImageData
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import org.jetbrains.kotlinx.multik.api.mk
+import org.jetbrains.kotlinx.multik.ndarray.data.D2
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
 import org.jetbrains.kotlinx.multik.ndarray.data.view
@@ -28,7 +31,12 @@ sealed class NDArrayImageData<T>(
     internal val mask: D2Array<Int>,
     vararg options: OptionProvider<*>,
 ) : OptionContext by OptionContext.wrap(*options),
-    ImageData where T : Comparable<T>, T : Number {
+    ImageData where T : Number, T : Comparable<T> {
+    companion object {
+        @JvmStatic
+        private val logger = KotlinLogging.logger { }
+    }
+
     final override val band
         get() = data.shape[0]
 
@@ -77,65 +85,42 @@ sealed class NDArrayImageData<T>(
         val rangeFrom = rangeFrom.map {
             NumberRange(it.start.asType()..it.endInclusive.asType())
         }
-        return when (dataType) {
-            DataType.Int8,
-            DataType.UInt8,
-            DataType.UInt16,
-            DataType.Int16,
-            DataType.Int32,
-            DataType.CInt16,
-            DataType.CInt32,
-            -> {
-                val rangeTo = rangeTo.map {
-                    NumberRange(it.start.toInt()..it.endInclusive.toInt())
+        return logger.logTrace("rescale") {
+            when (dataType) {
+                DataType.Int8,
+                DataType.UInt8,
+                DataType.UInt16,
+                DataType.Int16,
+                DataType.Int32,
+                DataType.CInt16,
+                DataType.CInt32,
+                -> {
+                    val rangeTo = rangeTo.map {
+                        it.start.toInt()..it.endInclusive.toInt()
+                    }
+
+                    val rescaled = rescaleToInt(rangeFrom, rangeTo)
+                    IntImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
                 }
 
-                val rescaled = rescale(rangeFrom, rangeTo)
-                IntImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
+                DataType.UInt32,
+                DataType.Int64,
+                DataType.Float32,
+                DataType.CFloat32,
+                DataType.Float64,
+                DataType.CFloat64,
+                DataType.UInt64,
+                -> throw UnsupportedOperationException()
             }
-
-            DataType.UInt32, DataType.Int64 -> {
-                val rangeTo = rangeTo.map {
-                    NumberRange(it.start.toLong()..it.endInclusive.toLong())
-                }
-
-                val rescaled = rescale(rangeFrom, rangeTo)
-                LongImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
-            }
-
-            DataType.Float32, DataType.CFloat32 -> {
-                val rangeTo = rangeTo.map {
-                    NumberRange(it.start.toFloat()..it.endInclusive.toFloat())
-                }
-
-                val rescaled = rescale(rangeFrom, rangeTo)
-                FloatImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
-            }
-
-            DataType.Float64, DataType.CFloat64 -> {
-                val rangeTo = rangeTo.map {
-                    NumberRange(it.start.toDouble()..it.endInclusive.toDouble())
-                }
-
-                val rescaled = rescale(rangeFrom, rangeTo)
-                DoubleImageData(rescaled, mask, dataType, *getAllOptionProviders().toTypedArray())
-            }
-
-            DataType.UInt64 -> throw UnsupportedOperationException()
         }
     }
 
-    private suspend inline fun <reified R> rescale(
-        rangeFrom: List<NumberRange<T>>,
-        rangeTo: List<NumberRange<R>>,
-    ): D3Array<R> where R : Number, R : Comparable<R> {
+    private suspend inline fun rescaleToInt(rangeFrom: List<NumberRange<T>>, rangeTo: List<IntRange>): D3Array<Int> {
         val rescaled = (0..<data.shape[0]).map { band ->
             val from = rangeFrom.getOrElse(band) { rangeFrom[0] }
             val to = rangeTo.getOrElse(band) { rangeTo[0] }
             CoroutineScope(Dispatchers.Default).async {
-                // deepCopy 하지 않으면 데이터 오염 발생.
-                val bandData = data.view(band).deepCopy()
-                linearRescale<T, R>(bandData, from, to)
+                linearRescale<T, D2>(data.view(band), from, to)
             }
         }
         return mk.stack(rescaled.awaitAll())

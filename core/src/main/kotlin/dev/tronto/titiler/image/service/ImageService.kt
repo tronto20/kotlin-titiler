@@ -8,6 +8,7 @@ import dev.tronto.titiler.core.incoming.controller.option.get
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
+import dev.tronto.titiler.core.utils.logTrace
 import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.Window
 import dev.tronto.titiler.image.exception.ImageOutOfBoundsException
@@ -22,18 +23,22 @@ import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.image.outgoing.adaptor.gdal.GdalReadableRasterFactory
 import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.locationtech.jts.geom.CoordinateXY
 import org.locationtech.jts.geom.util.AffineTransformationFactory
-import kotlin.math.roundToInt
 
 class ImageService(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
     private val readableRasterFactory: ReadableRasterFactory = GdalReadableRasterFactory(crsFactory),
 ) : ImageReadUseCase, ImageBBoxUseCase, ImagePreviewUseCase {
+    companion object {
+        @JvmStatic
+        private val logger = KotlinLogging.logger { }
+    }
     override suspend fun read(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
-    ): ImageData {
+    ): ImageData = logger.logTrace("image read") {
         val bandIndexOption: BandIndexOption? = imageOptions.getOrNull()
 
         val featureOption: FeatureOption? = imageOptions.getOrNull()
@@ -87,12 +92,11 @@ class ImageService(
                 val widthRatio = maxSize.toDouble() / window.width
                 val heightRatio = maxSize.toDouble() / window.height
 
-                val ratio = if (widthRatio < heightRatio) {
-                    widthRatio
+                if (widthRatio < heightRatio) {
+                    maxSize to (window.height * widthRatio).toInt() + 1
                 } else {
-                    heightRatio
+                    (window.width * heightRatio).toInt() + 1 to maxSize
                 }
-                (window.width * ratio).roundToInt() to (window.height * ratio).roundToInt()
             } else {
                 val imageSizeOption: ImageSizeOption = imageOptions.get()
                 imageSizeOption.width to imageSizeOption.height
@@ -120,6 +124,6 @@ class ImageService(
         if (maskedImageData is OptionContext) {
             maskedImageData.put(openOptions, imageOptions)
         }
-        return maskedImageData
+        maskedImageData
     }
 }

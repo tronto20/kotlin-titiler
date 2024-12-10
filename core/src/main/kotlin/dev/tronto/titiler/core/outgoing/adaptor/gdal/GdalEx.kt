@@ -22,7 +22,13 @@ import org.gdal.gdal.gdal
 import org.gdal.gdalconst.gdalconst
 
 @PublishedApi
-internal val logger = KotlinLogging.logger { }
+internal object GdalEx {
+    @JvmStatic
+    val logger = KotlinLogging.logger { }
+
+    @JvmStatic
+    val errorCodes = listOf(gdalconst.CE_Failure, gdalconst.CE_Fatal)
+}
 
 inline fun <O : MajorObject, T> O.use(block: (O) -> T): T {
     return try {
@@ -32,17 +38,14 @@ inline fun <O : MajorObject, T> O.use(block: (O) -> T): T {
             this.delete()
         } catch (e: RuntimeException) {
             // ignore
-            logger.warn(e) { "Failed to delete ${this::class.simpleName}." }
+            GdalEx.logger.warn(e) { "Failed to delete ${this::class.simpleName}." }
         }
     }
 }
 
-@PublishedApi
-internal val errors = listOf(gdalconst.CE_Failure, gdalconst.CE_Fatal)
-
 inline fun <O : MajorObject> O.handleError(block: O.() -> Int) {
     val result = block()
-    if (result in errors) {
+    if (result in GdalEx.errorCodes) {
         throw IllegalStateException(gdal.GetLastErrorMsg())
     }
 }
