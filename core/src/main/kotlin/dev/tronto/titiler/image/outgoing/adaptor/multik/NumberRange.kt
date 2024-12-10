@@ -1,6 +1,7 @@
 package dev.tronto.titiler.image.outgoing.adaptor.multik
 
-class NumberRange<T>(
+@JvmInline
+value class NumberRange<T>(
     private val delegate: ClosedRange<T>,
 ) : ClosedRange<T> where T : Comparable<T>, T : Number {
     val gap: Double
