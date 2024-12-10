@@ -109,15 +109,27 @@ tasks.bootBuildImage {
         builderRegistry.configure("builder")
     }
 
-    val baseName = (properties["image.name"] as? String?)?.trimEnd('/') ?: "docker.io"
+    val baseName = (properties["image.name"] as? String?)?.trimEnd('/') ?: "docker.io/kotlin-titiler"
     val tags = (properties["image.tags"] as? String?)
         ?.split(',')
         ?.map { it.trim() }
         ?.ifEmpty { null }
-        ?: listOf(project.version)
+        ?: emptyList()
+    val versionTags = (properties["image.version-tags"] as? String?)
+        ?.split(',')
+        ?.map { "$version-${it.trim()}" }
+        ?.ifEmpty { null }
+        ?: emptyList()
 
-    this.imageName.set("$baseName:${tags.first()}")
-    this.tags.set((1 until tags.size).map { "$baseName:$it" })
+    val defaultTags = if ((properties["image.default-tags"] as? String?).toBoolean()) {
+        listOf(version.toString(), "latest")
+    } else {
+        emptyList()
+    }
+
+    this.tags.set((tags + versionTags + defaultTags).map { "$baseName:$it" })
+    this.imageName.set(this.tags.get().firstOrNull() ?: "$baseName:$version")
+
 
     (properties["image.push"] as? String?)?.let { publish.set(it.toBoolean()) }
 }
