@@ -9,5 +9,5 @@ import dev.tronto.titiler.image.domain.ImageFormat
 interface ImageRenderer {
     fun supports(imageData: ImageData, format: ImageFormat): Boolean
 
-    fun render(imageData: ImageData, format: ImageFormat): ByteArray
+    suspend fun render(imageData: ImageData, format: ImageFormat): ByteArray
 }

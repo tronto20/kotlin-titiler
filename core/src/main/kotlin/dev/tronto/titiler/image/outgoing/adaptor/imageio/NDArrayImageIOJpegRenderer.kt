@@ -2,10 +2,12 @@ package dev.tronto.titiler.image.outgoing.adaptor.imageio
 
 import dev.tronto.titiler.core.domain.DataType
 import dev.tronto.titiler.core.domain.Ordered
+import dev.tronto.titiler.core.utils.logTrace
 import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NDArrayImageData
 import dev.tronto.titiler.image.outgoing.port.ImageRenderer
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.kotlinx.multik.api.mk
 import org.jetbrains.kotlinx.multik.ndarray.operations.stack
 import org.jetbrains.kotlinx.multik.ndarray.operations.times
@@ -16,8 +18,14 @@ import javax.imageio.ImageIO
 
 class NDArrayImageIOJpegRenderer : ImageRenderer, Ordered {
     companion object {
+        @JvmStatic
         private val SUPPORT_DATATYPE = listOf(DataType.UInt8)
+
+        @JvmStatic
         private val SUPPORT_BAND = intArrayOf(3)
+
+        @JvmStatic
+        private val logger = KotlinLogging.logger { }
     }
 
     override fun getOrder(): Int {
@@ -31,21 +39,24 @@ class NDArrayImageIOJpegRenderer : ImageRenderer, Ordered {
             imageData.band in SUPPORT_BAND
     }
 
-    override fun render(imageData: ImageData, format: ImageFormat): ByteArray {
+    override suspend fun render(imageData: ImageData, format: ImageFormat): ByteArray {
         require(supports(imageData, format))
-        val data = (imageData as NDArrayImageData<*>).data.asType<Int>()
+        val data = (imageData as NDArrayImageData<Int>).data
         val mask = imageData.mask
         val shape = data.shape
         val width = shape[2]
         val height = shape[1]
-
         val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-        val d3 = mk.stack(mask, mask, mask)
-        val arr = data.times(d3.asType<Int>()).transpose(1, 2, 0).flatten().toIntArray()
-        image.raster.setPixels(0, 0, width, height, arr)
-        return ByteArrayOutputStream().use {
-            ImageIO.write(image, "JPEG", it)
-            it.toByteArray()
+        logger.logTrace("write image jpeg") {
+            val d3 = mk.stack(mask, mask, mask)
+            val arr = data.times(d3).transpose(1, 2, 0).flatten().toIntArray()
+            image.raster.setPixels(0, 0, width, height, arr)
+        }
+        return logger.logTrace("toByteArray()") {
+            ByteArrayOutputStream().use {
+                ImageIO.write(image, "JPEG", it)
+                it.toByteArray()
+            }
         }
     }
 }
