@@ -26,7 +26,6 @@ import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
 import org.jetbrains.kotlinx.multik.ndarray.data.get
 import org.jetbrains.kotlinx.multik.ndarray.data.initMemoryView
-import org.jetbrains.kotlinx.multik.ndarray.data.view
 import org.jetbrains.kotlinx.multik.ndarray.operations.and
 import org.jetbrains.kotlinx.multik.ndarray.operations.map
 import org.jetbrains.kotlinx.multik.ndarray.operations.toDoubleArray
@@ -78,7 +77,7 @@ open class GdalReadableRaster(
                     val array = (data as D3Array<Int>).toIntArray()
                     val noData = noData.toInt()
                     for (h in 0..<dataHeight) {
-                        index@for (w in 0..<dataWidth) {
+                        index@ for (w in 0..<dataWidth) {
                             for (b in 0..<dataBand) {
                                 val value = array[getIndex(b, h, w)]
                                 if (value != noData) {
@@ -94,7 +93,7 @@ open class GdalReadableRaster(
                     val array = (data as D3Array<Long>).toLongArray()
                     val noData = noData.toLong()
                     for (h in 0..<dataHeight) {
-                        index@for (w in 0..<dataWidth) {
+                        index@ for (w in 0..<dataWidth) {
                             for (b in 0..<dataBand) {
                                 val value = array[getIndex(b, h, w)]
                                 if (value != noData) {
@@ -110,7 +109,7 @@ open class GdalReadableRaster(
                     val array = (data as D3Array<Float>).toFloatArray()
                     val noData = noData.toFloat()
                     for (h in 0..<dataHeight) {
-                        index@for (w in 0..<dataWidth) {
+                        index@ for (w in 0..<dataWidth) {
                             for (b in 0..<dataBand) {
                                 val value = array[getIndex(b, h, w)]
                                 if (value != noData) {
@@ -121,11 +120,12 @@ open class GdalReadableRaster(
                         }
                     }
                 }
+
                 org.jetbrains.kotlinx.multik.ndarray.data.DataType.DoubleDataType -> {
                     val array = (data as D3Array<Double>).toDoubleArray()
                     val noData = noData.toDouble()
                     for (h in 0..<dataHeight) {
-                        index@for (w in 0..<dataWidth) {
+                        index@ for (w in 0..<dataWidth) {
                             for (b in 0..<dataBand) {
                                 val value = array[getIndex(b, h, w)]
                                 if (value != noData) {
@@ -136,6 +136,7 @@ open class GdalReadableRaster(
                         }
                     }
                 }
+
                 else -> throw UnsupportedOperationException("$dataType is not supported.")
             }
             mk.ndarray(maskArray, dataHeight, dataWidth)
@@ -391,24 +392,23 @@ open class GdalReadableRaster(
 
     private inner class IntDataReader : Reader<Int>() {
 
-        private fun readIntData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Int> =
-            logger.logTrace("gdal Read") {
-                val arr = IntArray(bandList.size * width * height)
-                dataset.handleError {
-                    ReadRaster(
-                        window.xOffset,
-                        window.yOffset,
-                        window.width,
-                        window.height,
-                        width,
-                        height,
-                        DataType.Int32.gdalConst,
-                        arr,
-                        bandList
-                    )
-                }
-                mk.ndarray(arr, bandList.size, height, width)
+        private fun readIntData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Int> {
+            val arr = IntArray(bandList.size * width * height)
+            dataset.handleError {
+                ReadRaster(
+                    window.xOffset,
+                    window.yOffset,
+                    window.width,
+                    window.height,
+                    width,
+                    height,
+                    DataType.Int32.gdalConst,
+                    arr,
+                    bandList
+                )
             }
+            return mk.ndarray(arr, bandList.size, height, width)
+        }
 
         override fun readData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Int> {
             return readIntData(bandList, width, height, window)
