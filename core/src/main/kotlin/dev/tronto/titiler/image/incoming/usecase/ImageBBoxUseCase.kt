@@ -19,7 +19,7 @@ interface ImageBBoxUseCase : ImageReadUseCase {
         val imageSizeOption: ImageSizeOption? = imageOptions.getOrNull()
         val maxSizeOption: MaxSizeOption? = imageOptions.getOrNull()
         val overrideImageOptions = if (imageSizeOption == null && maxSizeOption == null) {
-            imageOptions.filterNot(ArgumentType<FeatureOption>()) + MaxSizeOption(4096)
+            imageOptions.filterNot(ArgumentType<FeatureOption>()) + MaxSizeOption(1024)
         } else {
             imageOptions.filterNot(ArgumentType<FeatureOption>())
         }
