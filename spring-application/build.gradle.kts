@@ -1,5 +1,6 @@
 import dev.tronto.titiler.buildsrc.tasks.PathExec
 import org.springframework.boot.buildpack.platform.build.PullPolicy
+import org.springframework.boot.gradle.tasks.bundling.DockerSpec.DockerRegistrySpec
 
 plugins {
     kotlin("jvm")
@@ -92,8 +93,31 @@ val buildRunnerImageTask = tasks.register("buildRunnerImage", PathExec::class.ja
 
 tasks.bootBuildImage {
     dependsOn(buildRunnerImageTask)
-    this.pullPolicy.set(PullPolicy.IF_NOT_PRESENT)
     this.runImage.set("docker.io/library/spring-application-runner:latest")
+    this.pullPolicy.set(PullPolicy.IF_NOT_PRESENT)
+
+    fun DockerRegistrySpec.configure(name: String) {
+        properties["image.registry.$name.url"]?.let { url.set(it as String) }
+        properties["image.registry.$name.username"]?.let { username.set(it as String) }
+        properties["image.registry.$name.password"]?.let { password.set(it as String) }
+        properties["image.registry.$name.email"]?.let { email.set(it as String) }
+        properties["image.registry.$name.token"]?.let { token.set(it as String) }
+    }
+
+    docker {
+        publishRegistry.configure("publish")
+        builderRegistry.configure("builder")
+    }
+
+    val baseName = (properties["image.name"] as? String?)?.trimEnd('/') ?: "docker.io"
+    val tags = (properties["image.tags"] as? String?)
+        ?.split(',')
+        ?.map { it.trim() }
+        ?.ifEmpty { null }
+        ?: listOf(project.version)
+
+    this.imageName.set("$baseName:${tags.first()}")
+    this.tags.set((1 until tags.size).map { "$baseName:$it" })
 }
 
 kotlin {
