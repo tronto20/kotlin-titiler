@@ -1,30 +1,24 @@
 package dev.tronto.titiler.image.outgoing.adaptor.multik
 
-import dev.tronto.titiler.core.utils.logTrace
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.kotlinx.multik.ndarray.data.DataType
 import org.jetbrains.kotlinx.multik.ndarray.data.Dimension
 import org.jetbrains.kotlinx.multik.ndarray.data.MemoryViewIntArray
 import org.jetbrains.kotlinx.multik.ndarray.data.MultiArray
 import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
-import org.jetbrains.kotlinx.multik.ndarray.operations.minus
-import org.jetbrains.kotlinx.multik.ndarray.operations.plus
-import org.jetbrains.kotlinx.multik.ndarray.operations.times
 import org.jetbrains.kotlinx.multik.ndarray.operations.toDoubleArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.toFloatArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.toIntArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.toLongArray
 
-val logger = KotlinLogging.logger {}
-inline fun <T, D> linearRescale(
+fun <T, D> linearRescale(
     data: MultiArray<T, D>,
     from: NumberRange<T>,
-    to: NumberRange<Int>,
-): NDArray<Int, D> where T : Number, T : Comparable<T>, D : Dimension = logger.logTrace("linear rescale") {
+    to: IntRange,
+): NDArray<Int, D> where T : Number, T : Comparable<T>, D : Dimension {
     val dimension = data.dim
     val shape = data.shape
 
-    val ratio = to.gap / from.gap
+    val ratio = (to.last - to.first).toDouble() / from.gap
 
     val toStart = to.start
     val toEnd = to.endInclusive
@@ -45,6 +39,7 @@ inline fun <T, D> linearRescale(
             }
             targetArray
         }
+
         DataType.LongDataType -> {
             val array = (data as MultiArray<Long, D>).toLongArray()
             val targetArray = IntArray(array.size)
@@ -61,6 +56,7 @@ inline fun <T, D> linearRescale(
             }
             targetArray
         }
+
         DataType.FloatDataType -> {
             val array = (data as MultiArray<Float, D>).toFloatArray()
             val targetArray = IntArray(array.size)
@@ -77,6 +73,7 @@ inline fun <T, D> linearRescale(
             }
             targetArray
         }
+
         DataType.DoubleDataType -> {
             val array = (data as MultiArray<Double, D>).toDoubleArray()
             val targetArray = IntArray(array.size)
@@ -93,8 +90,9 @@ inline fun <T, D> linearRescale(
             }
             targetArray
         }
+
         else -> throw UnsupportedOperationException()
     }
 
-    NDArray(MemoryViewIntArray(targetArray), shape = shape, dim = dimension)
+    return NDArray(MemoryViewIntArray(targetArray), shape = shape, dim = dimension)
 }

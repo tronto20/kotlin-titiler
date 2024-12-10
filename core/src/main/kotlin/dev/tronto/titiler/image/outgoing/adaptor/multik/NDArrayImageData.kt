@@ -96,7 +96,7 @@ sealed class NDArrayImageData<T>(
                 DataType.CInt32,
                 -> {
                     val rangeTo = rangeTo.map {
-                        NumberRange(it.start.toInt()..it.endInclusive.toInt())
+                        it.start.toInt()..it.endInclusive.toInt()
                     }
 
                     val rescaled = rescaleToInt(rangeFrom, rangeTo)
@@ -105,16 +105,17 @@ sealed class NDArrayImageData<T>(
 
                 DataType.UInt32,
                 DataType.Int64,
-                DataType.Float32, DataType.CFloat32, DataType.Float64, DataType.CFloat64, DataType.UInt64,
+                DataType.Float32,
+                DataType.CFloat32,
+                DataType.Float64,
+                DataType.CFloat64,
+                DataType.UInt64,
                 -> throw UnsupportedOperationException()
             }
         }
     }
 
-    private suspend inline fun rescaleToInt(
-        rangeFrom: List<NumberRange<T>>,
-        rangeTo: List<NumberRange<Int>>,
-    ): D3Array<Int> {
+    private suspend inline fun rescaleToInt(rangeFrom: List<NumberRange<T>>, rangeTo: List<IntRange>): D3Array<Int> {
         val rescaled = (0..<data.shape[0]).map { band ->
             val from = rangeFrom.getOrElse(band) { rangeFrom[0] }
             val to = rangeTo.getOrElse(band) { rangeTo[0] }
