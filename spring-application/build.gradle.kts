@@ -118,6 +118,8 @@ tasks.bootBuildImage {
 
     this.imageName.set("$baseName:${tags.first()}")
     this.tags.set((1 until tags.size).map { "$baseName:$it" })
+
+    (properties["image.push"] as? String?)?.let { publish.set(it.toBoolean()) }
 }
 
 kotlin {
