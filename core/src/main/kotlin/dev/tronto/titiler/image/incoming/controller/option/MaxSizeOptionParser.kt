@@ -3,13 +3,15 @@ package dev.tronto.titiler.image.incoming.controller.option
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
+import dev.tronto.titiler.core.incoming.controller.option.OptionDescription
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
 
 class MaxSizeOptionParser : OptionParser<MaxSizeOption> {
     companion object {
-        const val PARAM = "maxSize"
+        private const val PARAM = "maxSize"
     }
+
     override val type: ArgumentType<MaxSizeOption> = ArgumentType()
 
     override fun generateMissingException(): Exception {
@@ -25,5 +27,9 @@ class MaxSizeOptionParser : OptionParser<MaxSizeOption> {
 
     override fun box(option: MaxSizeOption): Map<String, List<String>> {
         return mapOf(PARAM to listOf(option.maxSize.toString()))
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(OptionDescription<Int>(PARAM, default = 1024))
     }
 }

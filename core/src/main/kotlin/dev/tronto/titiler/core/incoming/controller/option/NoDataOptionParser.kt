@@ -5,7 +5,7 @@ import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 
 class NoDataOptionParser : OptionParser<NoDataOption> {
     companion object {
-        const val PARAM = "noData"
+        private const val PARAM = "noData"
     }
     override val type: ArgumentType<NoDataOption> = ArgumentType()
 
@@ -22,5 +22,11 @@ class NoDataOptionParser : OptionParser<NoDataOption> {
 
     override fun box(option: NoDataOption): Map<String, List<String>> {
         return mapOf(PARAM to listOf(option.noData.toString()))
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(
+            OptionDescription<Double>(PARAM, "Overwrite internal Nodata value.")
+        )
     }
 }

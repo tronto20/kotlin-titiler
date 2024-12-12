@@ -3,6 +3,7 @@ package dev.tronto.titiler.image.incoming.controller.option
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
+import dev.tronto.titiler.core.incoming.controller.option.OptionDescription
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
 import dev.tronto.titiler.image.domain.Window
@@ -51,6 +52,15 @@ class WindowOptionParser : OptionParser<WindowOption> {
             MIN_Y to listOf((option.window.yOffset).toString()),
             MAX_X to listOf((option.window.xOffset + option.window.width).toString()),
             MAX_Y to listOf((option.window.yOffset + option.window.height).toString())
+        )
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(
+            OptionDescription<Double>(MIN_X, "Bounding box min X."),
+            OptionDescription<Double>(MIN_Y, "Bounding box min Y."),
+            OptionDescription<Double>(MAX_X, "Bounding box max X."),
+            OptionDescription<Double>(MAX_Y, "Bounding box max Y.")
         )
     }
 }

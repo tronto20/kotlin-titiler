@@ -3,13 +3,14 @@ package dev.tronto.titiler.stat.incoming.controller.option
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
+import dev.tronto.titiler.core.incoming.controller.option.OptionDescription
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
 import dev.tronto.titiler.stat.domain.Percentile
 
 class PercentileOptionParser() : OptionParser<PercentileOption> {
     companion object {
-        const val PARAM = "percentile"
+        private const val PARAM = "percentile"
     }
 
     override val type: ArgumentType<PercentileOption> = ArgumentType()
@@ -39,5 +40,9 @@ class PercentileOptionParser() : OptionParser<PercentileOption> {
 
     override fun box(option: PercentileOption): Map<String, List<String>> {
         return mapOf(PARAM to option.percentiles.map { it.toString() })
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(OptionDescription(PARAM, "List of percentile values", default = arrayOf(2, 98)))
     }
 }

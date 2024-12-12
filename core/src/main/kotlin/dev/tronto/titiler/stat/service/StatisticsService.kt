@@ -38,7 +38,7 @@ class StatisticsService(
         val stat = imageDataStatistics.find {
             it.supports(preview)
         } ?: throw UnsupportedOperationException()
-        val bandIndexOption: BandIndexOption? = imageOptions.getOrNull()
+        val bandIndexOption: BandIndexOption? = openOptions.getOrNull()
         val bandIndexes = bandIndexOption?.bandIndexes
 
         val bandStatisticsList = stat.statistics(preview, percentileOption.percentiles)

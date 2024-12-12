@@ -4,7 +4,7 @@ import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 
 class CRSOptionParser : OptionParser<CRSOption> {
     companion object {
-        const val PARAM = "dstCrs"
+        private const val PARAM = "dstCrs"
     }
 
     override val type: ArgumentType<CRSOption> = ArgumentType()
@@ -19,5 +19,11 @@ class CRSOptionParser : OptionParser<CRSOption> {
 
     override fun box(option: CRSOption): Map<String, List<String>> {
         return mapOf(PARAM to listOf(option.crsString))
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(
+            OptionDescription<String>(PARAM, "target crs.")
+        )
     }
 }

@@ -28,7 +28,7 @@ class TileController(
 
     GET(pathProperties.tiles) {
         val options = optionParser.parse(it)
-        val tile = tileUseCase.tile(options.filter(), options.filter(), options.filter())
+        val tile = tileUseCase.tile(options.filter(), options.filter())
         val image = renderUseCase.renderImage(tile, options.filter())
         ok().bodyValueAndAwait(image)
     }
