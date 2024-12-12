@@ -34,11 +34,15 @@ class OptionProviderImpl<O : Option>(
     }
 
     override fun <T : O> getAll(argumentType: ArgumentType<T>): List<T> {
-        return parserMap.filter {
-            it.key.isSubtypeOf(argumentType)
-        }.mapNotNull {
-            getOrNull(it.key as ArgumentType<out T>)
-        }
+        val cachedType = mutableSetOf<ArgumentType<out T>>()
+        val cachedValues = parseCache.entries
+            .filter { it.key.isSubtypeOf(argumentType) }
+            .onEach { cachedType.add(it.key as ArgumentType<out T>) }
+            .mapNotNull { it.value as T? }
+        return cachedValues + parserMap
+            .filterNot { it.key in cachedType }
+            .filter { it.key.isSubtypeOf(argumentType) }
+            .mapNotNull { getOrNull(it.key as ArgumentType<out T>) }
     }
 
     override fun <T : O> get(argumentType: ArgumentType<T>): T {
@@ -69,6 +73,10 @@ class OptionProviderImpl<O : Option>(
                 put(argumentType, option)
             }
         )
+    }
+
+    override fun plus(other: OptionProvider<O>): OptionProvider<O> {
+        return CombinedOptionProvider(listOf(this, other), argumentType)
     }
 
     override fun <T : O> boxAll(argumentType: ArgumentType<T>): Map<String, List<String>> {
