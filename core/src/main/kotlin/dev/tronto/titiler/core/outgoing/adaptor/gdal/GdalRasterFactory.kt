@@ -1,6 +1,5 @@
 package dev.tronto.titiler.core.outgoing.adaptor.gdal
 
-import dev.tronto.titiler.core.domain.ResamplingAlgorithm
 import dev.tronto.titiler.core.exception.GdalDatasetOpenFailedException
 import dev.tronto.titiler.core.incoming.controller.option.CRSOption
 import dev.tronto.titiler.core.incoming.controller.option.EnvOption
@@ -34,13 +33,6 @@ class GdalRasterFactory(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
 ) : RasterFactory {
     companion object {
-        init {
-            gdal.AllRegister()
-            gdal.UseExceptions()
-            ogr.UseExceptions()
-            osr.UseExceptions()
-        }
-
         @JvmStatic
         private val logger = KotlinLogging.logger { }
 
@@ -50,6 +42,14 @@ class GdalRasterFactory(
                 maxOf(4, Runtime.getRuntime().availableProcessors() * 2 - 1)
             )
     }
+    private object GdalInit {
+        init {
+            gdal.AllRegister()
+            gdal.UseExceptions()
+            ogr.UseExceptions()
+            osr.UseExceptions()
+        }
+    }
 
     private fun createVRT(openOptions: OptionProvider<OpenOption>, raster: GdalRaster): GdalBaseRaster? {
         val crsOption: CRSOption? = openOptions.getOrNull()
@@ -57,8 +57,8 @@ class GdalRasterFactory(
         val noData = noDataOption?.noData ?: raster.noDataValue
 
         return if (crsOption != null || noData != null) {
-            val resamplingAlgorithmOption: ResamplingOption? = openOptions.getOrNull()
-            val resamplingAlgorithm = resamplingAlgorithmOption?.algorithm ?: ResamplingAlgorithm.NEAREST
+            val resamplingAlgorithmOption: ResamplingOption = openOptions.get()
+            val resamplingAlgorithm = resamplingAlgorithmOption.algorithm
             val memoryFile = "/vsimem/${raster.name}.vrt"
             val warpOptions = mutableMapOf(
                 "-of" to "VRT",
@@ -145,6 +145,7 @@ class GdalRasterFactory(
     }
 
     suspend fun <T> withGdalRaster(openOptions: OptionProvider<OpenOption>, block: (raster: GdalBaseRaster) -> T): T {
+        GdalInit
         val uriOption: URIOption = openOptions.get()
         val uri = uriOption.uri
         val gdalPath = uri.tryToGdalPath()

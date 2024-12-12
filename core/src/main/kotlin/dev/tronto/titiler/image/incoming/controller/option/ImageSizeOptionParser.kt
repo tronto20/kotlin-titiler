@@ -3,6 +3,7 @@ package dev.tronto.titiler.image.incoming.controller.option
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
+import dev.tronto.titiler.core.incoming.controller.option.OptionDescription
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
 
@@ -33,6 +34,13 @@ class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
         return mapOf(
             WIDTH to listOf(option.width.toString()),
             HEIGHT to listOf(option.height.toString())
+        )
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(
+            OptionDescription<Int>(WIDTH),
+            OptionDescription<Int>(HEIGHT)
         )
     }
 }

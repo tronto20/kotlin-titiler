@@ -39,7 +39,7 @@ class ImageService(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
     ): ImageData = logger.logTrace("image read") {
-        val bandIndexOption: BandIndexOption? = imageOptions.getOrNull()
+        val bandIndexOption: BandIndexOption? = openOptions.getOrNull()
 
         val featureOption: FeatureOption? = imageOptions.getOrNull()
         val maxSizeOption: MaxSizeOption? = imageOptions.getOrNull()

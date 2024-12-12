@@ -59,7 +59,7 @@ class StatisticsAutoRescale(
             )
         }
 
-        val bandIndexOption: BandIndexOption? = imageOptions.getOrNull()
+        val bandIndexOption: BandIndexOption? = openOptions.getOrNull()
         val bandIndexes = bandIndexOption?.bandIndexes ?: (1..imageData.band).map { BandIndex(it) }
 
         val rangeFrom = bandIndexes.map { bandIndex ->
