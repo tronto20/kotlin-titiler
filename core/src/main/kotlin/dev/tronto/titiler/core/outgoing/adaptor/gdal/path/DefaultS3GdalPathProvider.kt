@@ -9,7 +9,7 @@ class DefaultS3GdalPathProvider : GdalPathProvider, Ordered {
             System.getenv().run {
                 !(get("TITILER_DISABLE_GDAL_PATH_S3_DEFAULT")?.equals("YES", ignoreCase = true) ?: false) ||
                     (containsKey("AWS_SECRET_ACCESS_KEY") && containsKey("AWS_ACCESS_KEY_ID")) ||
-                        (containsKey("AWS_ROLE_ARN") && containsKey("AWS_WEB_IDENTITY_TOKEN_FILE"))
+                    (containsKey("AWS_ROLE_ARN") && containsKey("AWS_WEB_IDENTITY_TOKEN_FILE"))
             }
         }
     }
