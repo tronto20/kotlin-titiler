@@ -20,10 +20,7 @@ import java.util.*
 
 class StatisticsService(
     private val previewUseCase: ImagePreviewUseCase = ImageService(),
-    private val imageDataStatistics: List<ImageDataStatistics> = ServiceLoader.load(
-        ImageDataStatistics::class.java,
-        Thread.currentThread().contextClassLoader
-    ).toList(),
+    private val imageDataStatistics: List<ImageDataStatistics> = ImageDataStatistics.services,
 ) : StatisticsUseCase {
     companion object {
         @JvmStatic

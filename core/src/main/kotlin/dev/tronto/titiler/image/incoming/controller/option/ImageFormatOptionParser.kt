@@ -1,6 +1,5 @@
 package dev.tronto.titiler.image.incoming.controller.option
 
-import dev.tronto.titiler.core.domain.Ordered
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
@@ -15,9 +14,7 @@ class ImageFormatOptionParser(
 ) : OptionParser<ImageFormatOption> {
 
     constructor() : this(
-        ServiceLoader.load(ImageFormatRegistrar::class.java, Thread.currentThread().contextClassLoader)
-            .flatMap { it.imageFormats() }
-            .sortedBy { if (it is Ordered) it.order else 0 }.toList()
+        ImageFormatRegistrar.services.flatMap { it.imageFormats() }
     )
 
     companion object {

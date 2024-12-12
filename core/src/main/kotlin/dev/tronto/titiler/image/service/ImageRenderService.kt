@@ -1,7 +1,6 @@
 package dev.tronto.titiler.image.service
 
 import dev.tronto.titiler.core.domain.OptionContext
-import dev.tronto.titiler.core.domain.Ordered
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.utils.logTrace
@@ -19,12 +18,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.*
 
 class ImageRenderService(
-    private val imageRenderers: List<ImageRenderer> =
-        ServiceLoader.load(ImageRenderer::class.java, Thread.currentThread().contextClassLoader)
-            .sortedBy { if (it is Ordered) it.order else 0 }.toList(),
-    private val imageDataAutoRescales: List<ImageDataAutoRescale> =
-        ServiceLoader.load(ImageDataAutoRescale::class.java, Thread.currentThread().contextClassLoader)
-            .sortedBy { if (it is Ordered) it.order else 0 }.toList(),
+    private val imageRenderers: List<ImageRenderer> = ImageRenderer.services,
+    private val imageDataAutoRescales: List<ImageDataAutoRescale> = ImageDataAutoRescale.services,
 ) : ImageRenderUseCase {
     companion object {
         @JvmStatic
