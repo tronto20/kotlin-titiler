@@ -142,3 +142,20 @@ tasks.register("buildImage") {
     group = "build"
     dependsOn(tasks.bootBuildImage)
 }
+
+
+val disableLintSourceSets = listOf("aot", "aotTest")
+
+afterEvaluate {
+    disableLintSourceSets.forEach {
+        val sourceSet = kotlin.sourceSets.findByName(it) ?: return@forEach
+        tasks.findByName("lintKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")?.apply {
+            dependsOn(emptyList<Task>())
+            enabled = false
+        }
+        tasks.findByName("formatKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")?.apply {
+            dependsOn(emptyList<Task>())
+            enabled = false
+        }
+    }
+}
