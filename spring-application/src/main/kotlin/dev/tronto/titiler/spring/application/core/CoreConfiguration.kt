@@ -21,7 +21,7 @@ class CoreConfiguration(
     applicationContext: GenericApplicationContext,
 ) {
     init {
-        ServiceLoader.load(OptionParser::class.java, Thread.currentThread().contextClassLoader).forEach {
+        OptionParser.services.forEach {
             applicationContext.defaultListableBeanFactory.registerBeanDefinition(
                 it::class.qualifiedName ?: it.toString(),
                 GenericBeanDefinition().apply {
