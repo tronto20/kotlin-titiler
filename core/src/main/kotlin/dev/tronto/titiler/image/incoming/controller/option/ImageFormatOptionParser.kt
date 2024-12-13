@@ -1,23 +1,20 @@
 package dev.tronto.titiler.image.incoming.controller.option
 
-import dev.tronto.titiler.core.domain.Ordered
 import dev.tronto.titiler.core.exception.IllegalParameterException
 import dev.tronto.titiler.core.exception.RequiredParameterMissingException
 import dev.tronto.titiler.core.incoming.controller.option.ArgumentType
+import dev.tronto.titiler.core.incoming.controller.option.OptionDescription
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
 import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.spi.ImageFormatRegistrar
-import java.util.*
 
 class ImageFormatOptionParser(
     imageFormats: Iterable<ImageFormat>,
 ) : OptionParser<ImageFormatOption> {
 
     constructor() : this(
-        ServiceLoader.load(ImageFormatRegistrar::class.java, Thread.currentThread().contextClassLoader)
-            .flatMap { it.imageFormats() }
-            .sortedBy { if (it is Ordered) it.order else 0 }.toList()
+        ImageFormatRegistrar.services.flatMap { it.imageFormats() }
     )
 
     companion object {
@@ -57,5 +54,16 @@ class ImageFormatOptionParser(
 
     override fun box(option: ImageFormatOption): Map<String, List<String>> {
         return mapOf(PARAM to listOf(option.format.name))
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(
+            OptionDescription<String>(
+                PARAM,
+                "image formats.",
+                ImageFormat.PNG.name,
+                enums = imageFormatMap.keys
+            )
+        )
     }
 }

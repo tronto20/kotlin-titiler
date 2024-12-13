@@ -1,6 +1,5 @@
 package dev.tronto.titiler.core.outgoing.adaptor.gdal
 
-import dev.tronto.titiler.core.domain.ResamplingAlgorithm
 import dev.tronto.titiler.core.exception.GdalDatasetOpenFailedException
 import dev.tronto.titiler.core.incoming.controller.option.CRSOption
 import dev.tronto.titiler.core.incoming.controller.option.EnvOption
@@ -12,6 +11,7 @@ import dev.tronto.titiler.core.incoming.controller.option.URIOption
 import dev.tronto.titiler.core.incoming.controller.option.get
 import dev.tronto.titiler.core.incoming.controller.option.getAll
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
+import dev.tronto.titiler.core.outgoing.adaptor.gdal.path.tryToGdalPath
 import dev.tronto.titiler.core.outgoing.port.CRS
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.core.outgoing.port.Raster
@@ -29,32 +29,36 @@ import org.gdal.osr.osr
 import java.util.*
 import kotlin.io.path.toPath
 
-open class GdalRasterFactory(
+class GdalRasterFactory(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
 ) : RasterFactory {
     companion object {
+        @JvmStatic
+        private val logger = KotlinLogging.logger { }
+
+        @JvmStatic
+        private val dispatcher =
+            Dispatchers.IO.limitedParallelism(
+                maxOf(4, Runtime.getRuntime().availableProcessors() * 2 - 1)
+            )
+    }
+    private object GdalInit {
         init {
             gdal.AllRegister()
             gdal.UseExceptions()
             ogr.UseExceptions()
             osr.UseExceptions()
         }
-
-        protected val logger = KotlinLogging.logger { }
-        private val dispatcher =
-            Dispatchers.IO.limitedParallelism(
-                maxOf(4, Runtime.getRuntime().availableProcessors() * 2 - 1)
-            )
     }
 
-    protected open fun createVRT(openOptions: OptionProvider<OpenOption>, raster: GdalRaster): GdalBaseRaster? {
+    private fun createVRT(openOptions: OptionProvider<OpenOption>, raster: GdalRaster): GdalBaseRaster? {
         val crsOption: CRSOption? = openOptions.getOrNull()
         val noDataOption: NoDataOption? = openOptions.getOrNull()
         val noData = noDataOption?.noData ?: raster.noDataValue
 
         return if (crsOption != null || noData != null) {
-            val resamplingAlgorithmOption: ResamplingOption? = openOptions.getOrNull()
-            val resamplingAlgorithm = resamplingAlgorithmOption?.algorithm ?: ResamplingAlgorithm.NEAREST
+            val resamplingAlgorithmOption: ResamplingOption = openOptions.get()
+            val resamplingAlgorithm = resamplingAlgorithmOption.algorithm
             val memoryFile = "/vsimem/${raster.name}.vrt"
             val warpOptions = mutableMapOf(
                 "-of" to "VRT",
@@ -99,18 +103,22 @@ open class GdalRasterFactory(
         }
     }
 
-    protected open fun createRaster(openOptions: OptionProvider<OpenOption>): GdalRaster {
-        val uriOption: URIOption = openOptions.get()
-        val uri = uriOption.uri
-        val path = if (uri.scheme == null) {
-            uri.toString()
-        } else {
-            uri.toPath().toString()
-        }
+    private fun createRaster(path: String, openOptions: OptionProvider<OpenOption>): GdalRaster {
         val dataset: Dataset = try {
-            gdal.Open(path, gdalconst.GA_ReadOnly)
+            val dataset: Dataset? = gdal.Open(path, gdalconst.GA_ReadOnly)
+            dataset!!
+        } catch (e: NullPointerException) {
+            throw GdalDatasetOpenFailedException(
+                path,
+                RuntimeException(
+                    if (path.startsWith("/vsi")) {
+                        gdal.VSIGetLastErrorMsg()
+                    } else {
+                        gdal.GetLastErrorMsg()
+                    }
+                )
+            )
         } catch (e: RuntimeException) {
-            logger.error(e) { "Failed to open dataset" }
             throw GdalDatasetOpenFailedException(path, e)
         }
         return GdalRaster(
@@ -122,7 +130,7 @@ open class GdalRasterFactory(
         )
     }
 
-    protected open fun <T> applyEnvs(openOptions: OptionProvider<OpenOption>, block: () -> T): T {
+    private fun <T> applyEnvs(openOptions: OptionProvider<OpenOption>, block: () -> T): T {
         val envOptions: List<EnvOption> = openOptions.getAll()
         return try {
             envOptions.forEach {
@@ -137,10 +145,28 @@ open class GdalRasterFactory(
     }
 
     suspend fun <T> withGdalRaster(openOptions: OptionProvider<OpenOption>, block: (raster: GdalBaseRaster) -> T): T {
+        GdalInit
+        val uriOption: URIOption = openOptions.get()
+        val uri = uriOption.uri
+        val gdalPath = uri.tryToGdalPath()
+
+        val newOpenOptions = if (gdalPath != null) {
+            openOptions + gdalPath.openOptions
+        } else {
+            openOptions
+        }
+
+        val path = if (gdalPath != null) {
+            gdalPath.toPathString()
+        } else if (uri.scheme == null) {
+            uri.toString()
+        } else {
+            uri.toPath().toString()
+        }
         return withContext(dispatcher) {
-            applyEnvs(openOptions) {
-                createRaster(openOptions).use { raster ->
-                    createVRT(openOptions, raster)?.use(block) ?: block(raster)
+            applyEnvs(newOpenOptions) {
+                createRaster(path, newOpenOptions).use { raster ->
+                    createVRT(newOpenOptions, raster)?.use(block) ?: block(raster)
                 }
             }
         }

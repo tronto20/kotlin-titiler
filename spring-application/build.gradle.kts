@@ -1,5 +1,7 @@
 import dev.tronto.titiler.buildsrc.tasks.PathExec
+import org.jetbrains.kotlin.incremental.createDirectory
 import org.springframework.boot.buildpack.platform.build.PullPolicy
+import org.springframework.boot.gradle.tasks.bundling.BootArchive
 import org.springframework.boot.gradle.tasks.bundling.DockerSpec.DockerRegistrySpec
 
 plugins {
@@ -9,6 +11,7 @@ plugins {
     id("org.springframework.boot")
     id("org.graalvm.buildtools.native") apply false
     id("org.jmailen.kotlinter")
+    id("com.epages.restdocs-api-spec")
 }
 
 
@@ -68,9 +71,21 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(projects.core)
     implementation("org.thymeleaf:thymeleaf")
+    implementation("io.swagger.parser.v3:swagger-parser")
 
-    // temp
-    implementation("org.gdal:gdal")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "mockito-core")
+    }
+
+    testImplementation("io.kotest:kotest-runner-junit5")
+    testImplementation("io.kotest:kotest-extensions-junit5")
+    testImplementation("io.kotest:kotest-assertions-core")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring")
+    testImplementation("io.mockk:mockk")
+    testImplementation("org.springframework.restdocs:spring-restdocs-webtestclient")
+    testImplementation("com.ninja-squad:springmockk")
+    testImplementation("com.epages:restdocs-api-spec")
+    testImplementation("com.epages:restdocs-api-spec-webtestclient")
 }
 
 val buildRunnerImageTask = tasks.register("buildRunnerImage", PathExec::class.java) {
@@ -141,4 +156,67 @@ kotlin {
 tasks.register("buildImage") {
     group = "build"
     dependsOn(tasks.bootBuildImage)
+}
+
+val generatedResourceDir = layout.buildDirectory.dir("generated").map { it.dir("generatedResources") }
+val generatedSourceSet = sourceSets.create("generated") {
+    resources.srcDir(generatedResourceDir)
+}
+
+val createGeneratedResourceDirTask = tasks.create("createGeneratedResourceDir") {
+    this.actions = listOf(Action {
+        generatedResourceDir.get().asFile.mkdirs()
+    })
+}
+
+val disableLintSourceSets = listOf("aot", "aotTest", generatedSourceSet.name)
+
+afterEvaluate {
+    val disableFormatTasks = disableLintSourceSets.mapNotNull {
+        val sourceSet = kotlin.sourceSets.findByName(it) ?: return@mapNotNull null
+        tasks.findByName("formatKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")
+    }
+    val disableLintTasks = disableLintSourceSets.mapNotNull {
+        val sourceSet = kotlin.sourceSets.findByName(it) ?: return@mapNotNull null
+        tasks.findByName("lintKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")
+    }
+    tasks.formatKotlin {
+        setDependsOn(
+            dependsOn.filterIsInstance<Provider<Task>>()
+                .filter { it.get().name !in disableFormatTasks.map { it.name } })
+    }
+    tasks.lintKotlin {
+        setDependsOn(
+            dependsOn.filterIsInstance<Provider<Task>>().filter { it.get().name !in disableLintTasks.map { it.name } })
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+val buildDocsTask = tasks.create("buildDocs") {
+    dependsOn("openapi3")
+    group = "documentation"
+}
+
+afterEvaluate {
+    tasks.getByName("openapi3") {
+        dependsOn(createGeneratedResourceDirTask)
+    }
+}
+
+openapi3 {
+    title = "titiler"
+    description = "dynamic tile server."
+    outputDirectory = generatedResourceDir.get().asFile.resolve("swagger").absolutePath
+}
+
+tasks.getByName(generatedSourceSet.processResourcesTaskName) {
+    dependsOn(buildDocsTask)
+}
+
+tasks.withType<BootArchive>() {
+    dependsOn(generatedSourceSet.classesTaskName)
+    this.classpath(generatedSourceSet.runtimeClasspath)
 }

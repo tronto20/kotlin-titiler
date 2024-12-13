@@ -17,7 +17,7 @@ class ImageRenderConfiguration(
     applicationContext: GenericApplicationContext,
 ) {
     init {
-        ServiceLoader.load(ImageDataAutoRescale::class.java, Thread.currentThread().contextClassLoader).forEach {
+        ImageDataAutoRescale.services.forEach {
             applicationContext.defaultListableBeanFactory.registerBeanDefinition(
                 it::class.qualifiedName ?: it.toString(),
                 GenericBeanDefinition().apply {
@@ -26,7 +26,7 @@ class ImageRenderConfiguration(
                 }
             )
         }
-        ServiceLoader.load(ImageRenderer::class.java, Thread.currentThread().contextClassLoader).forEach {
+        ImageRenderer.services.forEach {
             applicationContext.defaultListableBeanFactory.registerBeanDefinition(
                 it::class.qualifiedName ?: it.toString(),
                 GenericBeanDefinition().apply {

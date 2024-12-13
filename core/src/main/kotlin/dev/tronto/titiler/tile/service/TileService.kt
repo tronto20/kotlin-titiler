@@ -135,7 +135,6 @@ class TileService(
 
     override suspend fun tile(
         openOptions: OptionProvider<OpenOption>,
-        imageOptions: OptionProvider<ImageOption>,
         tileOptions: OptionProvider<TileOption>,
     ): ImageData {
         val tileMatrixSet = tileMatrixSet(tileOptions)
@@ -167,7 +166,8 @@ class TileService(
         }
         val windowOption = WindowOption(window)
 
-        val tileImageOptions = imageOptions + imageSizeOption + windowOption
+        val tileImageOptions =
+            OptionProvider.empty<ImageOption>() + imageSizeOption + windowOption
 
         val imageData = try {
             imageReadUseCase.read(tileOpenOptions, tileImageOptions)
@@ -181,10 +181,8 @@ class TileService(
     }
 
     private suspend fun tileMatrixSet(tileOptions: OptionProvider<TileOption>): TileMatrixSet {
-        val option: TileMatrixSetOption? = tileOptions.getOrNull()
-        val tileMatrixSetId = option?.tileMatrixSetId
-        val tileMatrixSet = tileMatrixSetId?.let { tileMatrixSetFactory.fromId(it) } ?: tileMatrixSetFactory.default()
-        return tileMatrixSet
+        val option: TileMatrixSetOption = tileOptions.get()
+        return tileMatrixSetFactory.fromId(option.tileMatrixSetId)
     }
 
     private fun getMinMaxZoom(tileMatrixSet: CRSTileMatrixSet, raster: Raster): Pair<Int, Int> {

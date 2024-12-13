@@ -1,4 +1,5 @@
 org.springframework.aot.hint.RuntimeHintsRegistrar=\
   dev.tronto.titiler.spring.application.core.hints.KotlinSerializableRuntimeHints,\
   dev.tronto.titiler.spring.application.core.hints.ReactorRuntimeHints,\
-  dev.tronto.titiler.spring.application.core.hints.ValueClassRuntimeHints
+  dev.tronto.titiler.spring.application.core.hints.ValueClassRuntimeHints,\
+  dev.tronto.titiler.spring.application.swagger.hints.SwaggerRuntimeHints

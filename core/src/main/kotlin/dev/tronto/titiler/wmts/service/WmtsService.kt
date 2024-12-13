@@ -4,6 +4,7 @@ import dev.tronto.titiler.core.domain.OptionContext
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.boxAll
+import dev.tronto.titiler.core.incoming.controller.option.get
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
 import dev.tronto.titiler.core.incoming.controller.option.plus
 import dev.tronto.titiler.core.outgoing.adaptor.gdal.SpatialReferenceCRSFactory
@@ -15,7 +16,6 @@ import dev.tronto.titiler.document.template.ClasspathFileTemplateResolver
 import dev.tronto.titiler.document.template.FormatsExpressionDialect
 import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.incoming.controller.option.ImageFormatOption
-import dev.tronto.titiler.image.incoming.controller.option.ImageOption
 import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.tile.incoming.controller.option.TileMatrixSetOption
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
@@ -27,7 +27,7 @@ import dev.tronto.titiler.tile.service.TileService
 import dev.tronto.titiler.wmts.incoming.controller.option.MaxZoomOption
 import dev.tronto.titiler.wmts.incoming.controller.option.MinZoomOption
 import dev.tronto.titiler.wmts.incoming.controller.option.UseEPSGOption
-import dev.tronto.titiler.wmts.incoming.controller.option.WMTSOption
+import dev.tronto.titiler.wmts.incoming.controller.option.WmtsOption
 import dev.tronto.titiler.wmts.incoming.usecase.WmtsUseCase
 import org.locationtech.jts.geom.CoordinateXY
 import org.thymeleaf.TemplateEngine
@@ -82,17 +82,15 @@ class WmtsService(
 
     override suspend fun wmts(
         openOptions: OptionProvider<OpenOption>,
-        imageOptions: OptionProvider<ImageOption>,
         renderOptions: OptionProvider<RenderOption>,
         tileOptions: OptionProvider<TileOption>,
-        wmtsOptions: OptionProvider<WMTSOption>,
+        wmtsOptions: OptionProvider<WmtsOption>,
     ): Document {
         val renderOptions = setDefaultRenderOptions(renderOptions)
         val tileOptions = setDefaultTileOptions(tileOptions)
 
         val boxedParameters = mutableMapOf<String, List<String>>()
         boxedParameters.putAll(openOptions.boxAll().mapKeys { it.key.lowercase() })
-        boxedParameters.putAll(imageOptions.boxAll().mapKeys { it.key.lowercase() })
         boxedParameters.putAll(renderOptions.boxAll().mapKeys { it.key.lowercase() })
         boxedParameters.putAll(tileOptions.boxAll().mapKeys { it.key.lowercase() })
 
@@ -113,9 +111,8 @@ class WmtsService(
         }
         val tilesUri = buildTemplate(tilesUriTemplate, boxedParameters)
 
-        val tileMatrixSetOption: TileMatrixSetOption? = tileOptions.getOrNull()
-        val tileMatrixSet = tileMatrixSetOption?.tileMatrixSetId?.let { tileMatrixSetFactory.fromId(it) }
-            ?: tileMatrixSetFactory.default()
+        val tileMatrixSetOption: TileMatrixSetOption = tileOptions.get()
+        val tileMatrixSet = tileMatrixSetFactory.fromId(tileMatrixSetOption.tileMatrixSetId)
         val tileMatrixSetCrs = tileMatrixSet.crs?.let { crsFactory.create(it) } ?: crsFactory.default()
         val tileMatrixSetGeographicCrs = crsFactory.createGeographicCRS(tileMatrixSetCrs)
         val tileMatrixSetGeographicCrsTransform = crsFactory.transformTo(tileMatrixSetCrs, tileMatrixSetGeographicCrs)
@@ -182,7 +179,6 @@ class WmtsService(
         if (document is OptionContext) {
             document.put(
                 openOptions,
-                imageOptions,
                 renderOptions,
                 tileOptions,
                 wmtsOptions

@@ -115,11 +115,11 @@ sealed class NDArrayImageData<T>(
         }
     }
 
-    private suspend inline fun rescaleToInt(rangeFrom: List<NumberRange<T>>, rangeTo: List<IntRange>): D3Array<Int> {
+    private suspend fun rescaleToInt(rangeFrom: List<NumberRange<T>>, rangeTo: List<IntRange>): D3Array<Int> {
         val rescaled = (0..<data.shape[0]).map { band ->
-            val from = rangeFrom.getOrElse(band) { rangeFrom[0] }
-            val to = rangeTo.getOrElse(band) { rangeTo[0] }
             CoroutineScope(Dispatchers.Default).async {
+                val from = rangeFrom.getOrElse(band) { rangeFrom[0] }
+                val to = rangeTo.getOrElse(band) { rangeTo[0] }
                 linearRescale<T, D2>(data.view(band), from, to)
             }
         }

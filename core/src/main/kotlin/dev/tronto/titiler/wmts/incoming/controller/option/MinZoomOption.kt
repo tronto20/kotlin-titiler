@@ -1,4 +1,4 @@
 package dev.tronto.titiler.wmts.incoming.controller.option
 
 @JvmInline
-value class MinZoomOption(val minZoom: Int) : WMTSOption
+value class MinZoomOption(val minZoom: Int) : WmtsOption

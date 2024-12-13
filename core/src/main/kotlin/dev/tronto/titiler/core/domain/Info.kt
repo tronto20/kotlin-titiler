@@ -13,5 +13,5 @@ data class Info(
     val nodataType: String,
     val nodataValue: Double? = null,
     val bandCount: Int,
-    val bandInfo: Map<BandIndex, BandInfo>,
+    val bandInfo: List<BandInfo>,
 )

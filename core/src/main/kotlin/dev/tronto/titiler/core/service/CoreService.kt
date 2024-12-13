@@ -37,7 +37,7 @@ class CoreService(
                 raster.noDataType,
                 raster.noDataValue,
                 raster.bandCount,
-                (1..raster.bandCount).map { BandIndex(it) }.associateWith { raster.bandInfo(it) }
+                (1..raster.bandCount).map { raster.bandInfo(BandIndex(it)) }
             )
         }
     }

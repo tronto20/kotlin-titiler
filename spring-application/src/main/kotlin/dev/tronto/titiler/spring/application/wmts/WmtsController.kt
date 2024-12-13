@@ -22,7 +22,6 @@ class WmtsController(
             options.filter(),
             options.filter(),
             options.filter(),
-            options.filter(),
             options.filter()
         )
         ok().bodyValueAndAwait(document)

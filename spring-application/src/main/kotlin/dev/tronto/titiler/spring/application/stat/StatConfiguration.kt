@@ -21,10 +21,7 @@ class StatConfiguration(
     applicationContext: GenericApplicationContext,
 ) {
     init {
-        ServiceLoader.load(
-            ImageDataStatistics::class.java,
-            Thread.currentThread().contextClassLoader
-        ).forEach {
+        ImageDataStatistics.services.forEach {
             applicationContext.defaultListableBeanFactory.registerBeanDefinition(
                 it::class.qualifiedName ?: it.toString(),
                 GenericBeanDefinition().apply {

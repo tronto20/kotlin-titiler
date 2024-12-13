@@ -6,7 +6,7 @@ import java.net.URI
 
 class URIOptionParser : OptionParser<URIOption> {
     companion object {
-        const val PARAM = "uri"
+        private const val PARAM = "uri"
     }
 
     override val type: ArgumentType<URIOption> = ArgumentType()
@@ -23,5 +23,9 @@ class URIOptionParser : OptionParser<URIOption> {
 
     override fun box(option: URIOption): Map<String, List<String>> {
         return mapOf(PARAM to listOf(option.uri.toString()))
+    }
+
+    override fun descriptions(): List<OptionDescription<*>> {
+        return listOf(OptionDescription<String>(PARAM, "target uri.", "/path/to/dataset"))
     }
 }
