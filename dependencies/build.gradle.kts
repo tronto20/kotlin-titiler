@@ -25,5 +25,6 @@ dependencies {
         api("com.epages:restdocs-api-spec-webtestclient:${properties["spring.restdocs-api-spec.version"]}")
         api("io.kotest.extensions:kotest-extensions-spring:1.3.0")
         api("com.ninja-squad:springmockk:4.0.2")
+        api("io.swagger.parser.v3:swagger-parser:2.1.18")
     }
 }
