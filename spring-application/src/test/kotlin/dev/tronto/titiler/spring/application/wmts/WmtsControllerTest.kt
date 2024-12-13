@@ -12,7 +12,7 @@ import dev.tronto.titiler.spring.application.core.sortedByOrdered
 import dev.tronto.titiler.spring.application.testAndDocument
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
 import dev.tronto.titiler.wmts.incoming.controller.option.WmtsOption
-import dev.tronto.titiler.wmts.incoming.usecase.WmtssUseCase
+import dev.tronto.titiler.wmts.incoming.usecase.WmtsUseCase
 import io.kotest.core.spec.style.FeatureSpec
 import io.mockk.coEvery
 import org.junit.jupiter.api.condition.DisabledInNativeImage
@@ -28,12 +28,12 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @DisabledInNativeImage
 @AutoConfigureRestDocs
 @WebFluxTest(controllers = [WmtsController::class])
-@MockkBean(WmtssUseCase::class)
+@MockkBean(WmtsUseCase::class)
 class WmtsControllerTest(
     private val webTestClient: WebTestClient,
     private val optionParsers: ObjectProvider<OptionParser<*>>,
     private val pathProperties: WmtsPathProperties,
-    private val wmtsUseCase: WmtssUseCase,
+    private val wmtsUseCase: WmtsUseCase,
 ) : FeatureSpec({
     val parsers = optionParsers.sortedByOrdered()
     feature("wmts capabilities") {
