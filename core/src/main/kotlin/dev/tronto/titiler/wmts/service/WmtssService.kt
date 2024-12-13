@@ -28,12 +28,12 @@ import dev.tronto.titiler.wmts.incoming.controller.option.MaxZoomOption
 import dev.tronto.titiler.wmts.incoming.controller.option.MinZoomOption
 import dev.tronto.titiler.wmts.incoming.controller.option.UseEPSGOption
 import dev.tronto.titiler.wmts.incoming.controller.option.WmtsOption
-import dev.tronto.titiler.wmts.incoming.usecase.WmtsUseCase
+import dev.tronto.titiler.wmts.incoming.usecase.WmtssUseCase
 import org.locationtech.jts.geom.CoordinateXY
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.templatemode.TemplateMode
 
-class WmtsService(
+class WmtssService(
     private val wmtsUriTemplate: TemplateString =
         TemplateString("http://localhost:8080/{tileMatrixSetId}/WMTSCapabilities.xml"),
     private val tilesUriTemplate: TemplateString = TemplateString(
@@ -43,7 +43,7 @@ class WmtsService(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
     private val tileMatrixSetFactory: TileMatrixSetFactory = ResourceTileMatrixSetFactory(),
     private val tileInfoUseCase: TileInfoUseCase = TileService(tileMatrixSetFactory, crsFactory),
-) : WmtsUseCase {
+) : WmtssUseCase {
     init {
         templateEngine.setTemplateResolver(
             ClasspathFileTemplateResolver().apply {

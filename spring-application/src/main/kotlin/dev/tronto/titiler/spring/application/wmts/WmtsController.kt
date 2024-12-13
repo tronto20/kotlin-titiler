@@ -3,7 +3,7 @@ package dev.tronto.titiler.spring.application.wmts
 import dev.tronto.titiler.core.incoming.controller.option.filter
 import dev.tronto.titiler.spring.application.core.GET
 import dev.tronto.titiler.spring.application.core.adaptor.WebFluxOptionParserAdaptor
-import dev.tronto.titiler.wmts.incoming.usecase.WmtsUseCase
+import dev.tronto.titiler.wmts.incoming.usecase.WmtssUseCase
 import org.springframework.stereotype.Controller
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.server.coRouter
 class WmtsController(
     private val optionParser: WebFluxOptionParserAdaptor,
     private val wmtsPathProperties: WmtsPathProperties,
-    private val wmtsUseCase: WmtsUseCase,
+    private val wmtsUseCase: WmtssUseCase,
 ) : RouterFunction<ServerResponse> by coRouter({
     GET(wmtsPathProperties.capabilities) {
         val options = optionParser.parse(it)

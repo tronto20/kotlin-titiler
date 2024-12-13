@@ -6,7 +6,7 @@ import dev.tronto.titiler.spring.application.tile.TilePathProperties
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
 import dev.tronto.titiler.tile.outgoing.port.TileMatrixSetFactory
 import dev.tronto.titiler.wmts.service.TemplateString
-import dev.tronto.titiler.wmts.service.WmtsService
+import dev.tronto.titiler.wmts.service.WmtssService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -27,7 +27,7 @@ class WmtsConfiguration {
         webProperties: WebProperties,
         tilePathProperties: TilePathProperties,
         wmtsPathProperties: WmtsPathProperties,
-    ) = WmtsService(
+    ) = WmtssService(
         wmtsUriTemplate = TemplateString(
             webProperties.baseUri.trimEnd('/') + '/' +
                 wmtsPathProperties.capabilities.first().trimStart('/')
