@@ -14,4 +14,3 @@ val tileInfoFields = infoFields.map {
     PayloadDocumentation.fieldWithPath("minZoom").description("Minimum zoom of dataset.").type(JsonFieldType.NUMBER),
     PayloadDocumentation.fieldWithPath("maxZoom").description("Maximum zoom of dataset.").type(JsonFieldType.NUMBER)
 )
-
