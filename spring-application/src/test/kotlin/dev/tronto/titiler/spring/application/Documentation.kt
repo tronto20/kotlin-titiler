@@ -19,12 +19,13 @@ import org.springframework.restdocs.snippet.Attributes
 import org.springframework.restdocs.snippet.Snippet
 import org.springframework.test.web.reactive.server.WebTestClient
 
-fun buildParameterDescriptors(desc: OptionDescription<*>): Pair<ParameterDescriptor, ParameterDescriptorWithType> {
+fun buildParameterDescriptors(desc: OptionDescription<*>, optional: Boolean = false): Pair<ParameterDescriptor, ParameterDescriptorWithType> {
     val parameterDescriptor = RequestDocumentation.parameterWithName(desc.name).apply {
         description(desc.description)
         attributes(Attributes.Attribute("sample", desc.sample.toString()))
         desc.default?.let { attributes(Attributes.Attribute("defaultValue", it.toString())) }
         desc.enums?.let { attributes(Attributes.Attribute("enumValues", it.map { it.toString() })) }
+        if (optional) optional()
     }
     return parameterDescriptor to ParameterDescriptorWithType.fromParameterDescriptor(parameterDescriptor).apply {
         val type = when (desc.type) {
@@ -93,11 +94,10 @@ fun WebTestClient.testAndDocument(
         }
         val queryOptions = options.filterNot { it.key in pathTemplate.variables }.values
         val pathParameters = pathOptions.map { desc ->
-            println(desc.name)
             buildParameterDescriptors(desc)
         }
         val queryParameters = queryOptions.map { desc ->
-            buildParameterDescriptors(desc)
+            buildParameterDescriptors(desc, desc.name != "uri")
         }
         val details = ResourceSnippetParameters.builder()
             .description(description)
@@ -105,6 +105,7 @@ fun WebTestClient.testAndDocument(
             .pathParameters(pathParameters.map { it.second })
             .queryParameters(queryParameters.map { it.second })
             .responseSchema(Schema.schema(responseSchema))
+            .tags(id)
         val snippets: MutableList<Snippet> = mutableListOf(
             RequestDocumentation.pathParameters(pathParameters.map { it.first }),
             RequestDocumentation.relaxedQueryParameters(queryParameters.map { it.first })
