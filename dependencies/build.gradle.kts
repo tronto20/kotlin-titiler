@@ -1,5 +1,7 @@
 plugins {
     `java-platform`
+    `maven-publish`
+    signing
 }
 
 javaPlatform {
@@ -27,4 +29,44 @@ dependencies {
         api("com.ninja-squad:springmockk:4.0.2")
         api("io.swagger.parser.v3:swagger-parser:2.1.18")
     }
+}
+
+publishing {
+    this.publications {
+        create<MavenPublication>("release") {
+            from(components["javaPlatform"])
+
+            pom {
+                packaging = "jar"
+                inceptionYear.set("2024")
+                this.name.set("titiler-dependencies")
+                this.description.set("Dependencies for titiler.")
+                this.url.set("http://github.com/tronto20/kotlin-titiler")
+                licenses {
+                    license {
+                        this.name.set("MIT License")
+                        this.url.set("http://www.opensource.org/licenses/mit-license.php")
+                    }
+                }
+                developers {
+                    developer {
+                        this.id.set("tronto20")
+                        this.name.set("HyeongJun Shin")
+                        this.email.set("tronto980@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git@github.com:tronto20/kotlin-titiler.git")
+                    developerConnection.set("scm:git:ssh://github.com/tronto20/kotlin-titiler.git")
+                    url.set("http://github.com/tronto20/kotlin-titiler/tree/main")
+                }
+            }
+        }
+    }
+}
+signing {
+    useGpgCmd()
+    val isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
+    this.isRequired = isReleaseVersion && gradle.taskGraph.hasTask("publish")
+    sign(publishing.publications["release"])
 }
