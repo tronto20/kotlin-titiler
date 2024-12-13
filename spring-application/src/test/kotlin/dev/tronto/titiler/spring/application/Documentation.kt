@@ -12,6 +12,7 @@ import dev.tronto.titiler.wmts.service.TemplateString
 import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation
+import org.springframework.restdocs.payload.SubsectionDescriptor
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.restdocs.snippet.AbstractDescriptor
@@ -143,4 +144,22 @@ fun WebTestClient.testAndDocument(
                 )
             )
     }
+}
+
+fun FieldDescriptor.copy(path: String? = null): FieldDescriptor {
+    val descriptor = if (this is SubsectionDescriptor) {
+        PayloadDocumentation.subsectionWithPath(path ?: this.path)
+    } else {
+        PayloadDocumentation.fieldWithPath(path ?: this.path)
+    }
+    descriptor.description(this.description)
+    descriptor.type(this.type)
+    if (this.isOptional) {
+        descriptor.optional()
+    }
+    if (this.isIgnored) {
+        descriptor.ignored()
+    }
+    descriptor.attributes(*this.attributes.map { Attributes.Attribute(it.key, it.value) }.toTypedArray())
+    return descriptor
 }
