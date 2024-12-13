@@ -21,5 +21,9 @@ dependencies {
         api("org.gdal:gdal:${properties["gdal.version"]}")
         api("org.jetbrains.kotlinx:multik-core:0.2.3")
         api("org.jetbrains.kotlinx:multik-default:0.2.3")
+        api("com.epages:restdocs-api-spec:${properties["spring.restdocs-api-spec.version"]}")
+        api("com.epages:restdocs-api-spec-webtestclient:${properties["spring.restdocs-api-spec.version"]}")
+        api("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+        api("com.ninja-squad:springmockk:4.0.2")
     }
 }

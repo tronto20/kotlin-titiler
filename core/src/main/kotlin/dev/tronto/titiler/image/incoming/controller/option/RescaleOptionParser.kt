@@ -38,7 +38,8 @@ class RescaleOptionParser : OptionParser<RescaleOption> {
         return listOf(
             OptionDescription<Array<String>>(
                 PARAM,
-                "comma (',') delimited Min,Max range. Can set multiple time for multiple bands."
+                "comma (',') delimited Min,Max range. Can set multiple time for multiple bands.",
+                sample = arrayOf("10,90", "30,70")
             )
         )
     }

@@ -26,7 +26,7 @@ class NoDataOptionParser : OptionParser<NoDataOption> {
 
     override fun descriptions(): List<OptionDescription<*>> {
         return listOf(
-            OptionDescription<Double>(PARAM, "Overwrite internal Nodata value.")
+            OptionDescription<Double>(PARAM, "Overwrite internal Nodata value.", 0.0)
         )
     }
 }

@@ -30,6 +30,6 @@ class TileScaleOptionParser : OptionParser<TileScaleOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription(PARAM, "", enums = listOf(1, 2, 3, 4)))
+        return listOf(OptionDescription<Int>(PARAM, "Tile Scale", 1, enums = listOf(1, 2, 3, 4)))
     }
 }

@@ -30,6 +30,6 @@ class UseEPSGOptionParser : OptionParser<UseEPSGOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Boolean>(PARAM, "force use epsg code."))
+        return listOf(OptionDescription<Boolean>(PARAM, "force use epsg code.", false))
     }
 }

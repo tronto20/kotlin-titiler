@@ -1027,12 +1027,13 @@ ij_jsp_keep_indents_on_empty_lines = false
 [{*.jspx,*.tagx}]
 ij_jspx_keep_indents_on_empty_lines = false
 
+[**/test/**/Fixtures.kt]
+# 버그 떄문인지 에러 발생.
+ktlint_standard_argument-list-wrapping = disabled
+
 [{*.kt,*.kts}]
 ktlint_code_style = intellij_idea
-ktlint_standard_string-template-indent = disabled
-ktlint_standard_multiline-expression-wrapping = disabled
-ktlint_standard_package-name = disabled
-ktlint_standard_filename = disabled
+
 
 ij_kotlin_align_in_columns_case_branch = false
 ij_kotlin_align_multiline_binary_operation = false

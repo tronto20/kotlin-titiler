@@ -43,6 +43,6 @@ class PercentileOptionParser() : OptionParser<PercentileOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription(PARAM, "List of percentile values", default = arrayOf(2, 98)))
+        return listOf(OptionDescription(PARAM, "List of percentile values", arrayOf(2, 98), default = arrayOf(2, 98)))
     }
 }

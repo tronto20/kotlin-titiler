@@ -26,6 +26,6 @@ class URIOptionParser : OptionParser<URIOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<String>(PARAM, "target uri."))
+        return listOf(OptionDescription<String>(PARAM, "target uri.", "/path/to/dataset"))
     }
 }

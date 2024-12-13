@@ -63,9 +63,9 @@ class StatisticsAutoRescale(
         val bandIndexes = bandIndexOption?.bandIndexes ?: (1..imageData.band).map { BandIndex(it) }
 
         val rangeFrom = bandIndexes.map { bandIndex ->
-            val percentiles = statistics.statistics[bandIndex]!!.percentiles
-            val start = percentiles[percentileRange.start]!!
-            val end = percentiles[percentileRange.endInclusive]!!
+            val percentiles = statistics.statistics.first { it.bandIndex == bandIndex }.percentiles
+            val start = percentiles.first { it.percentile == percentileRange.start }.value
+            val end = percentiles.first { it.percentile == percentileRange.endInclusive }.value
             start..end
         }
         return@logTrace logger.logTrace("do resclae") { imageData.rescaleToUInt8(rangeFrom) }

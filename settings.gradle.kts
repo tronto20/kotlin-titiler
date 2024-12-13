@@ -3,6 +3,7 @@ pluginManagement {
     val kotlinterVersion = extra["kotlinter.version"].toString()
     val springBootVersion = extra["spring.boot.version"].toString()
     val graalvmNativeVersion = extra["graalvm.native.version"].toString()
+    val springRestDocsApiSpecVersion = extra["spring.restdocs-api-spec.version"].toString()
 
     plugins {
         kotlin("jvm") version kotlinVersion
@@ -11,6 +12,7 @@ pluginManagement {
         id("org.jmailen.kotlinter") version kotlinterVersion
         id("org.springframework.boot") version springBootVersion
         id("org.graalvm.buildtools.native") version graalvmNativeVersion
+        id("com.epages.restdocs-api-spec") version springRestDocsApiSpecVersion
     }
 
     repositories {

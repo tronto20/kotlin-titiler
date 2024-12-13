@@ -29,6 +29,6 @@ class MinZoomOptionParser : OptionParser<MinZoomOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Int>(PARAM, "Overwrite default minzoom."))
+        return listOf(OptionDescription<Int>(PARAM, "Overwrite default minzoom.", 0))
     }
 }
