@@ -57,10 +57,10 @@ class WindowOptionParser : OptionParser<WindowOption> {
 
     override fun descriptions(): List<OptionDescription<*>> {
         return listOf(
-            OptionDescription<Double>(MIN_X, "Bounding box min X."),
-            OptionDescription<Double>(MIN_Y, "Bounding box min Y."),
-            OptionDescription<Double>(MAX_X, "Bounding box max X."),
-            OptionDescription<Double>(MAX_Y, "Bounding box max Y.")
+            OptionDescription<Int>(MIN_X, "Bounding box min X.", 0),
+            OptionDescription<Int>(MIN_Y, "Bounding box min Y.", 0),
+            OptionDescription<Int>(MAX_X, "Bounding box max X.", 3000),
+            OptionDescription<Int>(MAX_Y, "Bounding box max Y.", 3000)
         )
     }
 }

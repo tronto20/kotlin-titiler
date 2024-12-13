@@ -23,7 +23,7 @@ class CRSOptionParser : OptionParser<CRSOption> {
 
     override fun descriptions(): List<OptionDescription<*>> {
         return listOf(
-            OptionDescription<String>(PARAM, "target crs.")
+            OptionDescription<String>(PARAM, "target crs.", "EPSG:4326")
         )
     }
 }

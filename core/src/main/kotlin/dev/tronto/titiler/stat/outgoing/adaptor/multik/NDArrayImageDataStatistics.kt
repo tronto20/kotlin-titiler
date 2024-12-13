@@ -1,5 +1,6 @@
 package dev.tronto.titiler.stat.outgoing.adaptor.multik
 
+import dev.tronto.titiler.core.domain.BandIndex
 import dev.tronto.titiler.core.utils.logTrace
 import dev.tronto.titiler.image.domain.ImageData
 import dev.tronto.titiler.image.outgoing.adaptor.multik.NDArrayImageData
@@ -56,23 +57,25 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
             }
             if (validPixels == 0) {
                 // 유효한 값이 없을 경우.
-                val emptyStat = BandStatistics(
-                    0.0,
-                    0.0,
-                    0.0,
-                    0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0,
-                    0.0,
-                    maskArray.size,
-                    0,
-                    percentiles.associateWith { 0.0 }
-                )
-                (0..<imageData.band).map { emptyStat }
+                (0..<imageData.band).map {
+                    BandStatistics(
+                        BandIndex(it + 1),
+                        0.0,
+                        0.0,
+                        0.0,
+                        0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0,
+                        0.0,
+                        maskArray.size,
+                        0,
+                        percentiles.map { BandStatistics.PercentileResult(it, 0.0) }
+                    )
+                }
             } else {
                 when (imageData.data.dtype) {
                     DataType.IntDataType -> {
@@ -133,6 +136,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     }.toDouble()
                                 }
                                 BandStatistics(
+                                    bandIndex = BandIndex(band + 1),
                                     min = min,
                                     max = max,
                                     mean = mean,
@@ -146,7 +150,12 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     validPercent = validPixels.toDouble() / (maskArray.size) * 100,
                                     maskedPixels = maskArray.size - validPixels,
                                     validPixels = validPixels,
-                                    percentiles = percentileMap
+                                    percentiles = percentileMap.map {
+                                        BandStatistics.PercentileResult(
+                                            it.key,
+                                            it.value
+                                        )
+                                    }
                                 )
                             }
                         }.awaitAll()
@@ -210,6 +219,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     }.toDouble()
                                 }
                                 BandStatistics(
+                                    bandIndex = BandIndex(band + 1),
                                     min = min,
                                     max = max,
                                     mean = mean,
@@ -223,7 +233,12 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     validPercent = validPixels.toDouble() / (maskArray.size) * 100,
                                     maskedPixels = maskArray.size - validPixels,
                                     validPixels = validPixels,
-                                    percentiles = percentileMap
+                                    percentiles = percentileMap.map {
+                                        BandStatistics.PercentileResult(
+                                            it.key,
+                                            it.value
+                                        )
+                                    }
                                 )
                             }
                         }.awaitAll()
@@ -286,6 +301,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     }.toDouble()
                                 }
                                 BandStatistics(
+                                    bandIndex = BandIndex(band + 1),
                                     min = min,
                                     max = max,
                                     mean = mean,
@@ -299,7 +315,12 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     validPercent = validPixels.toDouble() / (maskArray.size) * 100,
                                     maskedPixels = maskArray.size - validPixels,
                                     validPixels = validPixels,
-                                    percentiles = percentileMap
+                                    percentiles = percentileMap.map {
+                                        BandStatistics.PercentileResult(
+                                            it.key,
+                                            it.value
+                                        )
+                                    }
                                 )
                             }
                         }.awaitAll()
@@ -362,6 +383,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     }.toDouble()
                                 }
                                 BandStatistics(
+                                    bandIndex = BandIndex(band + 1),
                                     min = min,
                                     max = max,
                                     mean = mean,
@@ -375,7 +397,12 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
                                     validPercent = validPixels.toDouble() / (maskArray.size) * 100,
                                     maskedPixels = maskArray.size - validPixels,
                                     validPixels = validPixels,
-                                    percentiles = percentileMap
+                                    percentiles = percentileMap.map {
+                                        BandStatistics.PercentileResult(
+                                            it.key,
+                                            it.value
+                                        )
+                                    }
                                 )
                             }
                         }.awaitAll()

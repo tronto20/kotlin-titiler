@@ -9,6 +9,7 @@ plugins {
     id("org.springframework.boot")
     id("org.graalvm.buildtools.native") apply false
     id("org.jmailen.kotlinter")
+    id("com.epages.restdocs-api-spec")
 }
 
 
@@ -69,8 +70,19 @@ dependencies {
     implementation(projects.core)
     implementation("org.thymeleaf:thymeleaf")
 
-    // temp
-    implementation("org.gdal:gdal")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "mockito-core")
+    }
+
+    testImplementation("io.kotest:kotest-runner-junit5")
+    testImplementation("io.kotest:kotest-extensions-junit5")
+    testImplementation("io.kotest:kotest-assertions-core")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring")
+    testImplementation("io.mockk:mockk")
+    testImplementation("org.springframework.restdocs:spring-restdocs-webtestclient")
+    testImplementation("com.ninja-squad:springmockk")
+    testImplementation("com.epages:restdocs-api-spec")
+    testImplementation("com.epages:restdocs-api-spec-webtestclient")
 }
 
 val buildRunnerImageTask = tasks.register("buildRunnerImage", PathExec::class.java) {
@@ -147,15 +159,23 @@ tasks.register("buildImage") {
 val disableLintSourceSets = listOf("aot", "aotTest")
 
 afterEvaluate {
-    disableLintSourceSets.forEach {
-        val sourceSet = kotlin.sourceSets.findByName(it) ?: return@forEach
-        tasks.findByName("lintKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")?.apply {
-            dependsOn(emptyList<Task>())
-            enabled = false
-        }
-        tasks.findByName("formatKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")?.apply {
-            dependsOn(emptyList<Task>())
-            enabled = false
-        }
+    val disableFormatTasks = disableLintSourceSets.mapNotNull {
+        val sourceSet = kotlin.sourceSets.findByName(it) ?: return@mapNotNull null
+        tasks.findByName("formatKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")
+    }
+    val disableLintTasks = disableLintSourceSets.mapNotNull {
+        val sourceSet = kotlin.sourceSets.findByName(it) ?: return@mapNotNull null
+        tasks.findByName("lintKotlin${sourceSet.name.replaceFirstChar(Char::titlecase)}")
+    }
+    tasks.formatKotlin {
+        setDependsOn(dependsOn.filterIsInstance<Provider<Task>>().filter { it.get().name !in disableFormatTasks.map { it.name } })
+    }
+    tasks.lintKotlin {
+        setDependsOn(dependsOn.filterIsInstance<Provider<Task>>().filter { it.get().name !in disableLintTasks.map { it.name } })
     }
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
+

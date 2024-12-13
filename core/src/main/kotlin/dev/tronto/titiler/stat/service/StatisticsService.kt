@@ -1,6 +1,5 @@
 package dev.tronto.titiler.stat.service
 
-import dev.tronto.titiler.core.domain.BandIndex
 import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.core.incoming.controller.option.getOrNull
@@ -16,7 +15,6 @@ import dev.tronto.titiler.stat.incoming.controller.option.StatisticsOption
 import dev.tronto.titiler.stat.incoming.usecase.StatisticsUseCase
 import dev.tronto.titiler.stat.outgoing.port.spi.ImageDataStatistics
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.util.*
 
 class StatisticsService(
     private val previewUseCase: ImagePreviewUseCase = ImageService(),
@@ -26,6 +24,7 @@ class StatisticsService(
         @JvmStatic
         private val logger = KotlinLogging.logger { }
     }
+
     override suspend fun statistics(
         openOptions: OptionProvider<OpenOption>,
         imageOptions: OptionProvider<ImageOption>,
@@ -43,14 +42,14 @@ class StatisticsService(
 
         val bandStatisticsList = stat.statistics(preview, percentileOption.percentiles)
         val statistics = if (bandIndexes == null) {
-            bandStatisticsList.mapIndexed { index, bandStatistics ->
-                BandIndex(index + 1) to bandStatistics
-            }
+            bandStatisticsList
         } else {
             bandStatisticsList.mapIndexed { index, bandStatistics ->
-                bandIndexes[index] to bandStatistics
+                bandStatistics.copy(
+                    bandIndex = bandIndexes[index]
+                )
             }
         }
-        return Statistics(statistics.toMap())
+        return Statistics(statistics)
     }
 }

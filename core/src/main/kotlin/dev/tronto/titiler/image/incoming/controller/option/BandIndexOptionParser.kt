@@ -27,6 +27,6 @@ class BandIndexOptionParser : OptionParser<BandIndexOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<IntArray>(PARAM, "band indexes"))
+        return listOf(OptionDescription<IntArray>(PARAM, "band indexes", intArrayOf(1, 2, 3)))
     }
 }

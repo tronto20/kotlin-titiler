@@ -29,6 +29,6 @@ class MaxZoomOptionParser : OptionParser<MaxZoomOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Int>(PARAM, "Overwrite default maxzoom."))
+        return listOf(OptionDescription<Int>(PARAM, "Overwrite default maxzoom.", 20))
     }
 }

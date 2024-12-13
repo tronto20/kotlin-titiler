@@ -30,6 +30,6 @@ class MaxSizeOptionParser : OptionParser<MaxSizeOption> {
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Int>(PARAM, default = 1024))
+        return listOf(OptionDescription<Int>(PARAM, "image max size", default = 1024, sample = 1024))
     }
 }

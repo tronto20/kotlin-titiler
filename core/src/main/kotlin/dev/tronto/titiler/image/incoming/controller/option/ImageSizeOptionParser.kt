@@ -39,8 +39,8 @@ class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
 
     override fun descriptions(): List<OptionDescription<*>> {
         return listOf(
-            OptionDescription<Int>(WIDTH),
-            OptionDescription<Int>(HEIGHT)
+            OptionDescription<Int>(WIDTH, "image width", sample = 256),
+            OptionDescription<Int>(HEIGHT, "image height", sample = 256)
         )
     }
 }

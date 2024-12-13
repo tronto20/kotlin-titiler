@@ -30,10 +30,11 @@ class TileMatrixSetOptionParser : OptionParser<TileMatrixSetOption> {
 
     override fun descriptions(): List<OptionDescription<*>> {
         return listOf(
-            OptionDescription(
+            OptionDescription<String>(
                 PARAM,
                 "TileMatrixSets, available values from `/tileMatrixSets`.",
-                default = listOf(DEFAULT)
+                "WebMercatorQuad",
+                default = DEFAULT
             )
         )
     }

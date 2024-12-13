@@ -95,6 +95,7 @@ class GdalRaster internal constructor(
     override fun bandInfo(bandIndex: BandIndex): BandInfo {
         return dataset.GetRasterBand(bandIndex.value).use {
             BandInfo(
+                bandIndex,
                 DataType[it.dataType],
                 it.GetDescription() ?: "",
                 ColorInterpretation[it.GetColorInterpretation()],

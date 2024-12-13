@@ -37,17 +37,20 @@ class TileCoordinateOptionParser : OptionParser<TileCoordinateOption> {
             OptionDescription<Int>(
                 "z",
                 "Identifier (Z) selecting one of the scales defined " +
-                    "in the TileMatrixSet and representing the scaleDenominator the tile."
+                    "in the TileMatrixSet and representing the scaleDenominator the tile.",
+                14
             ),
             OptionDescription<Int>(
                 "x",
                 "Column (X) index of the tile on the selected TileMatrix. " +
-                    "It cannot exceed the MatrixHeight-1 for the selected TileMatrix."
+                    "It cannot exceed the MatrixHeight-1 for the selected TileMatrix.",
+                3333
             ),
             OptionDescription<Int>(
                 "y",
                 "Row (Y) index of the tile on the selected TileMatrix. " +
-                    "It cannot exceed the MatrixWidth-1 for the selected TileMatrix."
+                    "It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
+                3333
             )
         )
     }

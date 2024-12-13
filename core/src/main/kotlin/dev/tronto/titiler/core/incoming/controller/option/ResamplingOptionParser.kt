@@ -29,6 +29,7 @@ class ResamplingOptionParser : OptionParser<ResamplingOption> {
             OptionDescription<String>(
                 PARAM,
                 "resampling algorithm.",
+                ResamplingAlgorithm.NEAREST.name,
                 enums = ResamplingAlgorithm.entries.map { it.name },
                 default = ResamplingAlgorithm.NEAREST.name
             )
