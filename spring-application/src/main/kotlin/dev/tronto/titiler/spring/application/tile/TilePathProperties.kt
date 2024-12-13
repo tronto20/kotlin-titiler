@@ -17,4 +17,10 @@ data class TilePathProperties(
         "/tiles/{z}/{x}/{y}@{scale}x",
         "/tiles/{z}/{x}/{y}"
     ),
+    val tileMatrixSets: List<String> = listOf(
+        "/tileMatrixSets"
+    ),
+    val tileMatrixSet: List<String> = listOf(
+        "/tileMatrixSets/{tileMatrixSetId}"
+    ),
 )

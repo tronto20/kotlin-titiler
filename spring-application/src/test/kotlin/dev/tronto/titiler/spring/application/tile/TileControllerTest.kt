@@ -12,8 +12,10 @@ import dev.tronto.titiler.spring.application.image.ImageRenderConfiguration
 import dev.tronto.titiler.spring.application.image.testImage
 import dev.tronto.titiler.spring.application.image.testImageData
 import dev.tronto.titiler.spring.application.testAndDocument
+import dev.tronto.titiler.tile.incoming.controller.option.TileMatrixSetOption
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
+import dev.tronto.titiler.tile.incoming.usecase.TileMatrixSetUseCase
 import dev.tronto.titiler.tile.incoming.usecase.TileUseCase
 import io.kotest.core.spec.style.FeatureSpec
 import io.mockk.coEvery
@@ -30,7 +32,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @DisabledInNativeImage
 @AutoConfigureRestDocs
 @WebFluxTest(controllers = [TileController::class])
-@MockkBean(TileInfoUseCase::class, TileUseCase::class, ImageRenderUseCase::class)
+@MockkBean(TileInfoUseCase::class, TileUseCase::class, ImageRenderUseCase::class, TileMatrixSetUseCase::class)
 class TileControllerTest(
     private val webTestClient: WebTestClient,
     private val optionParsers: ObjectProvider<OptionParser<*>>,
@@ -38,6 +40,7 @@ class TileControllerTest(
     private val infoUseCase: TileInfoUseCase,
     private val tileUseCase: TileUseCase,
     private val renderUseCase: ImageRenderUseCase,
+    private val tileMatrixSetUseCase: TileMatrixSetUseCase,
 ) : FeatureSpec({
     val parsers = optionParsers.sortedByOrdered()
 
@@ -74,6 +77,36 @@ class TileControllerTest(
                 ArgumentType<OpenOption>(),
                 ArgumentType<TileOption>(),
                 ArgumentType<RenderOption>()
+            )
+        }
+    }
+
+    feature("tileMatrixSet") {
+        scenario("List TileMatrixSets") {
+            coEvery { tileMatrixSetUseCase.tileMatrixSets() } returns listOf(testTileMatrixSet)
+
+            webTestClient.testAndDocument(
+                "tileMatrixSets",
+                "list TileMatrixSet.",
+                "TileMatrixSet",
+                "TileMatrixSetList",
+                pathProperties.tileMatrixSets,
+                parsers,
+                tags = listOf("tileMatrixSet")
+            )
+        }
+
+        scenario("Get TileMatrixSet") {
+            coEvery { tileMatrixSetUseCase.tileMatrixSet(any()) } returns testTileMatrixSet
+
+            webTestClient.testAndDocument(
+                "tileMatrixSet",
+                "Get TileMatrixSet by id.",
+                "TileMatrixSet",
+                "TileMatrixSet",
+                pathProperties.tileMatrixSet,
+                parsers,
+                ArgumentType<TileMatrixSetOption>()
             )
         }
     }
