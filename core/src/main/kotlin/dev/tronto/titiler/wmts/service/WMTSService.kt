@@ -27,7 +27,7 @@ import dev.tronto.titiler.tile.service.TileService
 import dev.tronto.titiler.wmts.incoming.controller.option.MaxZoomOption
 import dev.tronto.titiler.wmts.incoming.controller.option.MinZoomOption
 import dev.tronto.titiler.wmts.incoming.controller.option.UseEPSGOption
-import dev.tronto.titiler.wmts.incoming.controller.option.WMTSOption
+import dev.tronto.titiler.wmts.incoming.controller.option.WmtsOption
 import dev.tronto.titiler.wmts.incoming.usecase.WmtsUseCase
 import org.locationtech.jts.geom.CoordinateXY
 import org.thymeleaf.TemplateEngine
@@ -84,7 +84,7 @@ class WmtsService(
         openOptions: OptionProvider<OpenOption>,
         renderOptions: OptionProvider<RenderOption>,
         tileOptions: OptionProvider<TileOption>,
-        wmtsOptions: OptionProvider<WMTSOption>,
+        wmtsOptions: OptionProvider<WmtsOption>,
     ): Document {
         val renderOptions = setDefaultRenderOptions(renderOptions)
         val tileOptions = setDefaultTileOptions(tileOptions)

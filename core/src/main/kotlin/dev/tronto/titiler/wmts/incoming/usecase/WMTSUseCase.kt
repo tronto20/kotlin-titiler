@@ -5,13 +5,13 @@ import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import dev.tronto.titiler.document.domain.Document
 import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
-import dev.tronto.titiler.wmts.incoming.controller.option.WMTSOption
+import dev.tronto.titiler.wmts.incoming.controller.option.WmtsOption
 
 interface WmtsUseCase {
     suspend fun wmts(
         openOptions: OptionProvider<OpenOption>,
         renderOptions: OptionProvider<RenderOption>,
         tileOptions: OptionProvider<TileOption>,
-        wmtsOptions: OptionProvider<WMTSOption>,
+        wmtsOptions: OptionProvider<WmtsOption>,
     ): Document
 }
