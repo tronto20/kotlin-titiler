@@ -5,6 +5,7 @@ import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
 import dev.tronto.titiler.spring.application.core.GET
 import dev.tronto.titiler.spring.application.core.adaptor.WebFluxOptionParserAdaptor
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
+import dev.tronto.titiler.tile.incoming.usecase.TileMatrixSetUseCase
 import dev.tronto.titiler.tile.incoming.usecase.TileUseCase
 import org.springframework.stereotype.Controller
 import org.springframework.web.reactive.function.server.RouterFunction
@@ -19,6 +20,7 @@ class TileController(
     private val infoUseCase: TileInfoUseCase,
     private val tileUseCase: TileUseCase,
     private val renderUseCase: ImageRenderUseCase,
+    private val tileMatrixSetUseCase: TileMatrixSetUseCase,
 ) : RouterFunction<ServerResponse> by coRouter({
     GET(pathProperties.info) {
         val options = optionParser.parse(it)
@@ -31,5 +33,14 @@ class TileController(
         val tile = tileUseCase.tile(options.filter(), options.filter())
         val image = renderUseCase.renderImage(tile, options.filter())
         ok().bodyValueAndAwait(image)
+    }
+
+    GET(pathProperties.tileMatrixSets) {
+        ok().bodyValueAndAwait(tileMatrixSetUseCase.tileMatrixSets())
+    }
+
+    GET(pathProperties.tileMatrixSet) {
+        val options = optionParser.parse(it)
+        ok().bodyValueAndAwait(tileMatrixSetUseCase.tileMatrixSet(options.filter()))
     }
 })

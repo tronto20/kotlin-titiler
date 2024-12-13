@@ -6,6 +6,7 @@ import dev.tronto.titiler.core.outgoing.port.RasterFactory
 import dev.tronto.titiler.image.incoming.usecase.ImageReadUseCase
 import dev.tronto.titiler.tile.outgoing.adaptor.resource.ResourceTileMatrixSetFactory
 import dev.tronto.titiler.tile.outgoing.port.TileMatrixSetFactory
+import dev.tronto.titiler.tile.service.TileMatrixSetService
 import dev.tronto.titiler.tile.service.TileService
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -32,5 +33,10 @@ class TileConfiguration {
         rasterFactory,
         imageReadUseCase,
         infoUseCase
+    )
+
+    @Bean
+    fun tileMatrixSetService(tileMatrixSetFactory: TileMatrixSetFactory) = TileMatrixSetService(
+        tileMatrixSetFactory
     )
 }

@@ -81,6 +81,7 @@ fun WebTestClient.testAndDocument(
     requestFields: List<FieldDescriptor> = emptyList(),
     relaxedResponseFields: Boolean = false,
     responseFields: List<FieldDescriptor> = emptyList(),
+    tags: List<String> = listOf(id),
 ) {
     val options = parsers.filter { parser ->
         optionType.any { parser.type.isSubtypeOf(it) }
@@ -106,7 +107,7 @@ fun WebTestClient.testAndDocument(
             .pathParameters(pathParameters.map { it.second })
             .queryParameters(queryParameters.map { it.second })
             .responseSchema(Schema.schema(responseSchema))
-            .tags(id)
+            .tags(*tags.toTypedArray())
         val snippets: MutableList<Snippet> = mutableListOf(
             RequestDocumentation.pathParameters(pathParameters.map { it.first }),
             RequestDocumentation.relaxedQueryParameters(queryParameters.map { it.first })
