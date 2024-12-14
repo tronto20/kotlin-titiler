@@ -35,14 +35,14 @@ abstract class PathExec : Exec() {
         args: List<Any?>
     ): List<Any?> {
         if (args.isEmpty()) return args
-        val args = args.toMutableList()
-        val executable = args[0]
+        val transformedArgs = args.toMutableList()
+        val executable = transformedArgs[0]
         if (executable is String) {
             getExecutableAbsolutePath(executable)?.let {
-                args[0] = it
+                transformedArgs[0] = it
             }
         }
-        return args
+        return transformedArgs
     }
 
     override fun commandLine(vararg arguments: Any?): Exec {
@@ -51,23 +51,19 @@ abstract class PathExec : Exec() {
     }
 
     override fun commandLine(args: Iterable<*>): Exec {
-        val args = transformCommandLine(args.toList())
-        return super.commandLine(args)
+        return super.commandLine(transformCommandLine(args.toList()))
     }
 
     override fun setCommandLine(args: List<String?>) {
-        val args = transformCommandLine(args.toList())
-        return super.setCommandLine(args)
+        return super.setCommandLine(transformCommandLine(args.toList()))
     }
 
     override fun setCommandLine(args: Iterable<*>) {
-        val args = transformCommandLine(args.toList())
-        return super.setCommandLine(args)
+        return super.setCommandLine(transformCommandLine(args.toList()))
     }
 
     override fun setCommandLine(vararg args: Any?) {
-        val args = transformCommandLine(args.toList())
-        return super.setCommandLine(*args.toTypedArray())
+        return super.setCommandLine(*transformCommandLine(args.toList()).toTypedArray())
     }
 
 }
