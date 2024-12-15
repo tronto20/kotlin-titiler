@@ -4,6 +4,7 @@ pluginManagement {
     val springBootVersion = extra["spring.boot.version"].toString()
     val graalvmNativeVersion = extra["graalvm.native.version"].toString()
     val springRestDocsApiSpecVersion = extra["spring.restdocs-api-spec.version"].toString()
+    val mavenPublishVersion = extra["publish.maven-central.plugin.version"].toString()
 
     plugins {
         kotlin("jvm") version kotlinVersion
@@ -13,6 +14,7 @@ pluginManagement {
         id("org.springframework.boot") version springBootVersion
         id("org.graalvm.buildtools.native") version graalvmNativeVersion
         id("com.epages.restdocs-api-spec") version springRestDocsApiSpecVersion
+        id("com.vanniktech.maven.publish") version mavenPublishVersion
     }
 
     repositories {

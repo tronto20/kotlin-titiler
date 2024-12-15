@@ -1,8 +1,10 @@
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jmailen.gradle.kotlinter.tasks.InstallPreCommitHookTask
 
 plugins {
     kotlin("jvm")
     id("org.jmailen.kotlinter")
+    id("com.vanniktech.maven.publish") apply false
 }
 
 repositories {
@@ -12,6 +14,7 @@ repositories {
 allprojects {
     group = "dev.tronto"
 }
+
 
 tasks.register("installKotlinterPreCommitHook", InstallPreCommitHookTask::class.java) {
     this.group = "build setup"
