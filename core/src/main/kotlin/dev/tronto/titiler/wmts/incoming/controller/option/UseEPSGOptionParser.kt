@@ -17,7 +17,7 @@ class UseEPSGOptionParser : OptionParser<UseEPSGOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override fun parse(request: Request): UseEPSGOption? {
+    override suspend fun parse(request: Request): UseEPSGOption? {
         return request.parameter(PARAM).firstOrNull()?.let {
             it.lowercase().toBooleanStrictOrNull() ?: throw IllegalParameterException("$PARAM must be a boolean.")
         }?.let {

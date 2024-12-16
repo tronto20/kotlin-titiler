@@ -3,7 +3,7 @@ package dev.tronto.titiler.core.incoming.controller.option
 interface OptionProvider<O : Option> {
     companion object {
         inline fun <reified T : Option> empty(): OptionProvider<T> {
-            return OptionProviderImpl(Request.Empty, ArgumentType<T>(), emptyMap())
+            return OptionProviderImpl(ArgumentType<T>(), emptyMap())
         }
     }
 

@@ -148,7 +148,7 @@ class GdalRasterFactory(
         GdalInit
         val uriOption: URIOption = openOptions.get()
         val uri = uriOption.uri
-        val gdalPath = uri.tryToGdalPath()
+        val gdalPath = uri.tryToGdalPath(openOptions)
 
         val newOpenOptions = if (gdalPath != null) {
             openOptions + gdalPath.openOptions

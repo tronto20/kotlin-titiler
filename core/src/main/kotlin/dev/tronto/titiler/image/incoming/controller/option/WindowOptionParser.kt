@@ -22,7 +22,7 @@ class WindowOptionParser : OptionParser<WindowOption> {
         return RequiredParameterMissingException(MIN_X, MAX_X, MIN_Y, MAX_Y)
     }
 
-    override fun parse(request: Request): WindowOption? {
+    override suspend fun parse(request: Request): WindowOption? {
         val minxString = request.parameter(MIN_X).firstOrNull() ?: return null
         val maxxString = request.parameter(MAX_X).firstOrNull() ?: return null
         val minyString = request.parameter(MIN_Y).firstOrNull() ?: return null

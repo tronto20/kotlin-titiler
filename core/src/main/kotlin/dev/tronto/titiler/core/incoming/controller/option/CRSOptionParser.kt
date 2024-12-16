@@ -13,7 +13,7 @@ class CRSOptionParser : OptionParser<CRSOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override fun parse(request: Request): CRSOption? {
+    override suspend fun parse(request: Request): CRSOption? {
         return request.parameter(PARAM).firstOrNull()?.let { CRSOption(it) }
     }
 

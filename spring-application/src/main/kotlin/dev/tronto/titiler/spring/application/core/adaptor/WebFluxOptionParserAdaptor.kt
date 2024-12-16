@@ -22,10 +22,6 @@ class WebFluxOptionParserAdaptor(
             bodyKey,
             bodyValue
         )
-        return OptionProviderImpl<Option>(
-            adaptor,
-            ArgumentType<Option>(),
-            optionParserMap
-        )
+        return OptionProviderImpl.create(adaptor, optionParserMap)
     }
 }

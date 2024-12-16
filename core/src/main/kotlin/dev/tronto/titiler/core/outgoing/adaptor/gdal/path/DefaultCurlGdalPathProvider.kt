@@ -1,6 +1,8 @@
 package dev.tronto.titiler.core.outgoing.adaptor.gdal.path
 
 import dev.tronto.titiler.core.domain.Ordered
+import dev.tronto.titiler.core.incoming.controller.option.OpenOption
+import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import java.net.URI
 
 class DefaultCurlGdalPathProvider : GdalPathProvider, Ordered {
@@ -15,11 +17,11 @@ class DefaultCurlGdalPathProvider : GdalPathProvider, Ordered {
         return Int.MAX_VALUE
     }
 
-    override fun supports(uri: URI): Boolean {
+    override suspend fun supports(uri: URI, openOptions: OptionProvider<OpenOption>): Boolean {
         return ENABLED && uri.scheme in CurlGdalPath.SCHEME_LIST
     }
 
-    override fun toGdalPath(uri: URI): GdalPath {
+    override suspend fun toGdalPath(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath {
         return CurlGdalPath(uri)
     }
 }

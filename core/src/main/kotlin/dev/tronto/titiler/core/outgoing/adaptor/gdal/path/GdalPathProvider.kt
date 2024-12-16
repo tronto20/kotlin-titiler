@@ -1,12 +1,14 @@
 package dev.tronto.titiler.core.outgoing.adaptor.gdal.path
 
 import dev.tronto.titiler.core.domain.Ordered
+import dev.tronto.titiler.core.incoming.controller.option.OpenOption
+import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import java.net.URI
 import java.util.*
 
 interface GdalPathProvider {
-    fun supports(uri: URI): Boolean
-    fun toGdalPath(uri: URI): GdalPath
+    suspend fun supports(uri: URI, openOptions: OptionProvider<OpenOption>): Boolean
+    suspend fun toGdalPath(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath
 
     companion object {
         @JvmStatic
@@ -15,8 +17,8 @@ interface GdalPathProvider {
                 .toList().sortedBy { if (it is Ordered) it.order else 0 }
         }
 
-        fun of(uri: URI): GdalPath? {
-            return services.find { it.supports(uri) }?.toGdalPath(uri)
+        suspend fun of(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath? {
+            return services.find { it.supports(uri, openOptions) }?.toGdalPath(uri, openOptions)
         }
     }
 }
