@@ -20,11 +20,11 @@ class PublicS3GdalPathProvider : GdalPathProvider, Ordered {
         return Int.MAX_VALUE
     }
 
-    override fun supports(uri: URI): Boolean {
+    override suspend fun supports(uri: URI, openOptions: OptionProvider<OpenOption>): Boolean {
         return ENABLED && uri.scheme == S3GdalPath.SCHEME
     }
 
-    override fun toGdalPath(uri: URI): GdalPath {
+    override suspend fun toGdalPath(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath {
         return S3GdalPath(uri, OptionProvider.empty<OpenOption>().plus(EnvOption("AWS_NO_SIGN_REQUEST", "YES")))
     }
 }

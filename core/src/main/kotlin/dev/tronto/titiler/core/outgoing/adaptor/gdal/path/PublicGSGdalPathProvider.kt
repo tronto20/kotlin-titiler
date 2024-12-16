@@ -20,11 +20,11 @@ class PublicGSGdalPathProvider : GdalPathProvider, Ordered {
         return Int.MAX_VALUE
     }
 
-    override fun supports(uri: URI): Boolean {
+    override suspend fun supports(uri: URI, openOptions: OptionProvider<OpenOption>): Boolean {
         return ENABLED && uri.scheme == GSGdalPath.SCHEME
     }
 
-    override fun toGdalPath(uri: URI): GdalPath {
+    override suspend fun toGdalPath(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath {
         return GSGdalPath(uri, OptionProvider.empty<OpenOption>().plus(EnvOption("GS_NO_SIGN_REQUEST", "YES")))
     }
 }
