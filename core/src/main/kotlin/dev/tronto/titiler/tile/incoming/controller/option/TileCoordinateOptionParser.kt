@@ -14,7 +14,7 @@ class TileCoordinateOptionParser : OptionParser<TileCoordinateOption> {
         return RequiredParameterMissingException("x", "y", "z")
     }
 
-    override fun parse(request: Request): TileCoordinateOption? {
+    override suspend fun parse(request: Request): TileCoordinateOption? {
         val valueX = request.parameter("x").firstOrNull() ?: return null
         val valueY = request.parameter("y").firstOrNull() ?: return null
         val valueZ = request.parameter("z").firstOrNull() ?: return null

@@ -7,7 +7,7 @@ interface OptionParser<T : Option> {
     val type: ArgumentType<T>
     fun generateMissingException(): Exception
 
-    fun parse(request: Request): T?
+    suspend fun parse(request: Request): T?
     fun box(option: T): Map<String, List<String>>
     fun descriptions(): List<OptionDescription<*>>
 

@@ -18,7 +18,7 @@ class MaxSizeOptionParser : OptionParser<MaxSizeOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override fun parse(request: Request): MaxSizeOption? {
+    override suspend fun parse(request: Request): MaxSizeOption? {
         return request.parameter(PARAM).firstOrNull()?.let {
             val value = it.toIntOrNull() ?: throw IllegalParameterException("maxSize must be an integer: $it.")
             MaxSizeOption(value)

@@ -19,8 +19,10 @@ class PercentileOptionParser() : OptionParser<PercentileOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override fun parse(request: Request): PercentileOption? {
-        val percentiles = request.parameter(PARAM).map {
+    override suspend fun parse(request: Request): PercentileOption? {
+        val percentiles = request.parameter(PARAM).flatMap {
+            it.split(',')
+        }.map {
             it.toIntOrNull() ?: throw IllegalParameterException("$PARAM must be integer.")
         }
         return if (percentiles.isEmpty()) {

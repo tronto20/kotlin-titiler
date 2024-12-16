@@ -1,24 +1,55 @@
 package dev.tronto.titiler.core.incoming.controller.option
 
 class OptionProviderImpl<O : Option>(
-    private val request: Request,
     override val argumentType: ArgumentType<O>,
     private val parserMap: Map<ArgumentType<out O>, List<OptionParser<out O>>>,
-    private val parseCache: MutableMap<ArgumentType<out O>, O?> = mutableMapOf(),
+    private val parseCache: Map<ArgumentType<out O>, O?> = mapOf(),
 ) : OptionProvider<O> {
+    companion object {
+        suspend fun create(request: Request, parsers: List<OptionParser<out Option>>): OptionProviderImpl<Option> {
+            val parserMap = parsers.groupBy { it.type }
+            return create(request, parserMap)
+        }
+
+        suspend fun create(
+            request: Request,
+            parserMap: Map<ArgumentType<out Option>, List<OptionParser<out Option>>>,
+        ): OptionProviderImpl<Option> {
+            val parseValues = parserMap.mapValues {
+                it.value.asReversed().firstNotNullOfOrNull { it.parse(request) }
+            }
+            return OptionProviderImpl<Option>(
+                ArgumentType<Option>(),
+                parserMap,
+                parseValues
+            )
+        }
+    }
+
     override fun <T : O> filter(argumentType: ArgumentType<T>): OptionProvider<T> {
         return OptionProviderImpl<T>(
-            request,
             argumentType,
             parserMap
                 .filter { it.key.isSubtypeOf(argumentType) }
-                .mapKeys { it.key as ArgumentType<out T> }
-                .mapValues { it.value as List<OptionParser<out T>> },
+                .mapKeys {
+                    @Suppress("UNCHECKED_CAST")
+                    it.key as ArgumentType<out T>
+                }
+                .mapValues {
+                    @Suppress("UNCHECKED_CAST")
+                    it.value as List<OptionParser<out T>>
+                },
             mutableMapOf<ArgumentType<out T>, T?>().apply {
                 putAll(
                     parseCache.filter { it.key.isSubtypeOf(argumentType) }
-                        .mapKeys { it.key as ArgumentType<out T> }
-                        .mapValues { it.value as T? }
+                        .mapKeys {
+                            @Suppress("UNCHECKED_CAST")
+                            it.key as ArgumentType<out T>
+                        }
+                        .mapValues {
+                            @Suppress("UNCHECKED_CAST")
+                            it.value as T?
+                        }
                 )
             }
         )
@@ -26,7 +57,6 @@ class OptionProviderImpl<O : Option>(
 
     override fun <T : O> filterNot(argumentType: ArgumentType<T>): OptionProvider<O> {
         return OptionProviderImpl<O>(
-            request,
             this.argumentType,
             parserMap.filterNot { it.key.isSubtypeOf(argumentType) },
             parseCache.filterNot { it.key.isSubtypeOf(argumentType) }.toMutableMap()
@@ -35,14 +65,16 @@ class OptionProviderImpl<O : Option>(
 
     override fun <T : O> getAll(argumentType: ArgumentType<T>): List<T> {
         val cachedType = mutableSetOf<ArgumentType<out T>>()
-        val cachedValues = parseCache.entries
+        return parseCache.entries
             .filter { it.key.isSubtypeOf(argumentType) }
-            .onEach { cachedType.add(it.key as ArgumentType<out T>) }
-            .mapNotNull { it.value as T? }
-        return cachedValues + parserMap
-            .filterNot { it.key in cachedType }
-            .filter { it.key.isSubtypeOf(argumentType) }
-            .mapNotNull { getOrNull(it.key as ArgumentType<out T>) }
+            .onEach {
+                @Suppress("UNCHECKED_CAST")
+                cachedType.add(it.key as ArgumentType<out T>)
+            }
+            .mapNotNull {
+                @Suppress("UNCHECKED_CAST")
+                it.value as T?
+            }
     }
 
     override fun <T : O> get(argumentType: ArgumentType<T>): T {
@@ -53,19 +85,16 @@ class OptionProviderImpl<O : Option>(
     }
 
     override fun <T : O> getOrNull(argumentType: ArgumentType<T>): T? {
-        if (parseCache.containsKey(argumentType)) {
-            return parseCache[argumentType] as T?
-        }
-        return parserMap[argumentType]?.asReversed()?.firstNotNullOfOrNull {
-            it.parse(request) as T?
-        }.also {
-            parseCache[argumentType] = it
+        return if (parseCache.containsKey(argumentType)) {
+            @Suppress("UNCHECKED_CAST")
+            parseCache[argumentType] as T?
+        } else {
+            null
         }
     }
 
     override fun <T : O> plus(option: T, argumentType: ArgumentType<T>): OptionProvider<O> {
         return OptionProviderImpl<O>(
-            request,
             this.argumentType,
             parserMap,
             mutableMapOf<ArgumentType<out O>, O?>().apply {
@@ -83,8 +112,10 @@ class OptionProviderImpl<O : Option>(
         val targetParsers = parserMap.filter {
             it.key.isSubtypeOf(argumentType)
         }.mapKeys {
+            @Suppress("UNCHECKED_CAST")
             it.key as ArgumentType<T>
         }.mapValues {
+            @Suppress("UNCHECKED_CAST")
             it.value as List<OptionParser<out T>>
         }
 
@@ -93,6 +124,8 @@ class OptionProviderImpl<O : Option>(
             val value = getOrNull(type) ?: return@forEach
             val boxParser = parsers.firstOrNull()
                 ?: throw IllegalStateException("Parameter parser for $argumentType not defined.")
+
+            @Suppress("UNCHECKED_CAST")
             val box = (boxParser as OptionParser<T>).box(value)
             resultMap.putAll(box)
         }

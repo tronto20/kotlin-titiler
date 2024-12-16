@@ -18,7 +18,7 @@ class MinZoomOptionParser : OptionParser<MinZoomOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override fun parse(request: Request): MinZoomOption? {
+    override suspend fun parse(request: Request): MinZoomOption? {
         return request.parameter(PARAM).firstOrNull()?.let {
             MinZoomOption(it.toIntOrNull() ?: throw IllegalParameterException("$PARAM must be an integer."))
         }

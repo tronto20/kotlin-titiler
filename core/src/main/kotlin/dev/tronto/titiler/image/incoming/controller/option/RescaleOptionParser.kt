@@ -18,11 +18,13 @@ class RescaleOptionParser : OptionParser<RescaleOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override fun parse(request: Request): RescaleOption? {
-        val rescales = request.parameter(PARAM).map {
-            val (min, max) = it.split(',').also {
+    override suspend fun parse(request: Request): RescaleOption? {
+        val rescales = request.parameter(PARAM).flatMap {
+            it.split(',')
+        }.map {
+            val (min, max) = it.split(':').also {
                 if (it.size != 2) {
-                    throw IllegalParameterException("$PARAM must be shape of 'start,end'.")
+                    throw IllegalParameterException("$PARAM must be shape of 'start:end'.")
                 }
             }
             min.toDouble()..max.toDouble()
@@ -31,15 +33,15 @@ class RescaleOptionParser : OptionParser<RescaleOption> {
     }
 
     override fun box(option: RescaleOption): Map<String, List<String>> {
-        return mapOf(PARAM to option.rescale.map { "${it.start},${it.endInclusive}" })
+        return mapOf(PARAM to option.rescale.map { "${it.start}:${it.endInclusive}" })
     }
 
     override fun descriptions(): List<OptionDescription<*>> {
         return listOf(
             OptionDescription<Array<String>>(
                 PARAM,
-                "comma (',') delimited Min,Max range. Can set multiple time for multiple bands.",
-                sample = arrayOf("10,90", "30,70")
+                "colon (':') delimited Min:Max range. Can set multiple time for multiple bands.",
+                sample = arrayOf("10:90", "20:100", "15:95")
             )
         )
     }

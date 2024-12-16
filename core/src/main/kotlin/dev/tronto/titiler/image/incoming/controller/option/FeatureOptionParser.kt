@@ -19,7 +19,7 @@ class FeatureOptionParser : OptionParser<FeatureOption> {
         return RequiredParameterMissingException(PARAM)
     }
 
-    override fun parse(request: Request): FeatureOption? {
+    override suspend fun parse(request: Request): FeatureOption? {
         return request.parameter(PARAM).firstOrNull()?.let {
             val crs = request.parameter("featureCrs").firstOrNull()
 //            FeatureOption(it, crs ?: DEFAULT_CRS)
