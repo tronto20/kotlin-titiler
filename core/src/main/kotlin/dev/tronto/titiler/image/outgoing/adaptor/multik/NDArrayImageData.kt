@@ -15,9 +15,9 @@ import org.jetbrains.kotlinx.multik.ndarray.data.D2
 import org.jetbrains.kotlinx.multik.ndarray.data.D2Array
 import org.jetbrains.kotlinx.multik.ndarray.data.D3Array
 import org.jetbrains.kotlinx.multik.ndarray.data.view
-import org.jetbrains.kotlinx.multik.ndarray.operations.all
 import org.jetbrains.kotlinx.multik.ndarray.operations.mapMultiIndexed
 import org.jetbrains.kotlinx.multik.ndarray.operations.stack
+import org.jetbrains.kotlinx.multik.ndarray.operations.toIntArray
 import org.locationtech.jts.algorithm.locate.IndexedPointInAreaLocator
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
@@ -46,7 +46,15 @@ sealed class NDArrayImageData<T>(
     final override val height
         get() = data.shape[1]
 
-    final override val masked: Boolean by lazy { mask.all { true } }
+    final override val masked: Boolean by lazy {
+        val maskArray = mask.toIntArray()
+        for (i in maskArray.indices) {
+            if (maskArray[i] == 0) {
+                return@lazy true
+            }
+        }
+        return@lazy false
+    }
 
     init {
         val maskShape = mask.shape
