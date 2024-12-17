@@ -14,6 +14,7 @@ plugins {
     id("com.epages.restdocs-api-spec")
 }
 
+val jvmVersion = (properties["jvm.version"] as? String)?.toIntOrNull() ?: 21
 
 if (properties["image.native.enabled"].toString().toBoolean()) {
     apply(plugin = "org.graalvm.buildtools.native")
@@ -145,12 +146,14 @@ tasks.bootBuildImage {
     this.tags.set((tags + versionTags + defaultTags).map { "$baseName:$it" })
     this.imageName.set(this.tags.get().firstOrNull() ?: "$baseName:$version")
 
-
     (properties["image.push"] as? String?)?.let { publish.set(it.toBoolean()) }
+    val envs = environment.get().toMutableMap()
+    envs["BP_JVM_VERSION"] = jvmVersion.toString()
+    environment.set(envs)
 }
 
 kotlin {
-    jvmToolchain((properties["jvm.version"] as? String)?.toIntOrNull() ?: 21)
+    jvmToolchain(jvmVersion)
 }
 
 tasks.register("buildImage") {
