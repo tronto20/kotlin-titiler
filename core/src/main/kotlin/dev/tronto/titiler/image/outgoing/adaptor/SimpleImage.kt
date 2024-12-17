@@ -1,4 +1,4 @@
-package dev.tronto.titiler.image.outgoing.adaptor.imageio
+package dev.tronto.titiler.image.outgoing.adaptor
 
 import dev.tronto.titiler.core.domain.OptionContext
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider

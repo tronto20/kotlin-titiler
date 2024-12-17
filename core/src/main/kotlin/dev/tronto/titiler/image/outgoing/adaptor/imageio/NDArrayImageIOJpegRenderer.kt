@@ -16,6 +16,11 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
+/**
+ *  NDArray 를 사용하는 ImageData 를 Jpeg 포맷으로 렌더링.
+ *
+ *  ** native-image 에서 동작하지 않음. (jvm 21 기준) **
+ */
 class NDArrayImageIOJpegRenderer : ImageRenderer, Ordered {
     companion object {
         @JvmStatic
@@ -26,6 +31,9 @@ class NDArrayImageIOJpegRenderer : ImageRenderer, Ordered {
 
         @JvmStatic
         private val logger = KotlinLogging.logger { }
+        init {
+            ImageIORegistrar
+        }
     }
 
     override fun getOrder(): Int {
