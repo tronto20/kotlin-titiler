@@ -386,7 +386,12 @@ open class GdalReadableRaster(
     }
 
     private abstract inner class Reader<T : Number> {
-        abstract fun readData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<T>
+        fun readData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<T> =
+            logger.logTrace("read gdal") {
+                read(bandList, width, height, window)
+            }
+
+        abstract fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<T>
     }
 
     private inner class IntDataReader : Reader<Int>() {
@@ -409,7 +414,7 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun readData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Int> {
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Int> {
             return readIntData(bandList, width, height, window)
         }
     }
@@ -434,7 +439,7 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun readData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Long> {
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Long> {
             return readLongData(bandList, width, height, window)
         }
     }
@@ -459,7 +464,7 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun readData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Float> {
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Float> {
             return readFloatData(bandList, width, height, window)
         }
     }
@@ -484,7 +489,7 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun readData(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Double> {
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Double> {
             return readDoubleData(bandList, width, height, window)
         }
     }

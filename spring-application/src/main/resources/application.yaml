@@ -1,6 +1,11 @@
 server:
   shutdown: graceful
+  compression:
+    enabled: true
+  http2:
+    enabled: true
 
 logging:
   level:
     dev.tronto.titiler: info
+
