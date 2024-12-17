@@ -11,11 +11,10 @@ import dev.tronto.titiler.image.incoming.controller.option.ImageFormatOption
 import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.image.incoming.controller.option.RescaleOption
 import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
-import dev.tronto.titiler.image.outgoing.adaptor.imageio.SimpleImage
+import dev.tronto.titiler.image.outgoing.adaptor.SimpleImage
 import dev.tronto.titiler.image.outgoing.port.ImageDataAutoRescale
 import dev.tronto.titiler.image.outgoing.port.ImageRenderer
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.util.*
 
 class ImageRenderService(
     private val imageRenderers: List<ImageRenderer> = ImageRenderer.services,

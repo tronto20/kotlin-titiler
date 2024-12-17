@@ -13,6 +13,9 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
+/**
+ *  NDArray 를 사용하는 ImageData 를 Png 포맷으로 렌더링.
+ */
 class NDArrayImageIOPNGRenderer : ImageRenderer, Ordered {
     companion object {
         @JvmStatic
@@ -26,6 +29,9 @@ class NDArrayImageIOPNGRenderer : ImageRenderer, Ordered {
 
         @JvmStatic
         private val ALPHA_VALUE = 255
+        init {
+            ImageIORegistrar
+        }
     }
 
     override fun getOrder(): Int {
