@@ -53,6 +53,7 @@ class WmtsService(
             }
         )
         templateEngine.addDialect(FormatsExpressionDialect())
+        templateEngine.configuration // initialize
     }
 
     private suspend fun setDefaultTileOptions(tileOptions: OptionProvider<TileOption>): OptionProvider<TileOption> {
