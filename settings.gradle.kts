@@ -32,4 +32,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":dependencies")
 include(":core")
+include(":spring-boot-titiler-autoconfigure")
+include(":spring-boot-titiler-starter-core")
 include(":spring-application")
