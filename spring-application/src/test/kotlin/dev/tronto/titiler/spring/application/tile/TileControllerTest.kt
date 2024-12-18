@@ -6,12 +6,16 @@ import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
-import dev.tronto.titiler.spring.application.core.CoreConfiguration
-import dev.tronto.titiler.spring.application.core.sortedByOrdered
-import dev.tronto.titiler.spring.application.image.ImageRenderConfiguration
 import dev.tronto.titiler.spring.application.image.testImage
 import dev.tronto.titiler.spring.application.image.testImageData
 import dev.tronto.titiler.spring.application.testAndDocument
+import dev.tronto.titiler.spring.autoconfigure.core.TitilerCoreAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.image.TitilerImageRenderAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.tile.TitilerTileAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.tile.TitilerTileController
+import dev.tronto.titiler.spring.autoconfigure.tile.TitilerTilePathProperties
+import dev.tronto.titiler.spring.autoconfigure.utils.sortedByOrdered
+import dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebAutoConfiguration
 import dev.tronto.titiler.tile.incoming.controller.option.TileMatrixSetOption
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
@@ -27,16 +31,21 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.aot.DisabledInAotMode
 import org.springframework.test.web.reactive.server.WebTestClient
 
-@Import(CoreConfiguration::class, TileConfiguration::class, ImageRenderConfiguration::class)
+@Import(
+    TitilerWebAutoConfiguration::class,
+    TitilerCoreAutoConfiguration::class,
+    TitilerTileAutoConfiguration::class,
+    TitilerImageRenderAutoConfiguration::class
+)
 @DisabledInAotMode
 @DisabledInNativeImage
 @AutoConfigureRestDocs
-@WebFluxTest(controllers = [TileController::class])
+@WebFluxTest(controllers = [TitilerTileController::class])
 @MockkBean(TileInfoUseCase::class, TileUseCase::class, ImageRenderUseCase::class, TileMatrixSetUseCase::class)
 class TileControllerTest(
     private val webTestClient: WebTestClient,
     private val optionParsers: ObjectProvider<OptionParser<*>>,
-    private val pathProperties: TilePathProperties,
+    private val pathProperties: TitilerTilePathProperties,
     private val infoUseCase: TileInfoUseCase,
     private val tileUseCase: TileUseCase,
     private val renderUseCase: ImageRenderUseCase,

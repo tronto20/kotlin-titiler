@@ -12,9 +12,13 @@ repositories {
 
 dependencies {
     implementation(platform(projects.dependencies))
-    implementation(kotlin("reflect"))
+    api(kotlin("reflect"))
     api(projects.core)
     api(projects.springBootTitilerAutoconfigure)
+    api("org.thymeleaf:thymeleaf")
+    api("org.springframework:spring-webflux")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-core")
+    api("io.swagger.parser.v3:swagger-parser")
 }
 
 kotlin {

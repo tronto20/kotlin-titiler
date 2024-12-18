@@ -2,6 +2,7 @@ package dev.tronto.titiler.spring.autoconfigure.wmts
 
 import dev.tronto.titiler.core.outgoing.port.CRSFactory
 import dev.tronto.titiler.spring.autoconfigure.document.TitilerDocumentAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.tile.TitilerTileAutoConfiguration
 import dev.tronto.titiler.spring.autoconfigure.tile.TitilerTilePathProperties
 import dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebProperties
 import dev.tronto.titiler.tile.incoming.usecase.TileInfoUseCase
@@ -16,12 +17,18 @@ import org.springframework.context.annotation.ComponentScan
 import org.thymeleaf.TemplateEngine
 
 @ComponentScan
-@AutoConfiguration(after = [TitilerDocumentAutoConfiguration::class])
+@AutoConfiguration(after = [TitilerDocumentAutoConfiguration::class, TitilerTileAutoConfiguration::class])
 @EnableConfigurationProperties(TitilerWmtsPathProperties::class)
 class TitilerWmtsAutoConfiguration {
 
     @Bean
-    @ConditionalOnBean
+    @ConditionalOnBean(
+        TemplateEngine::class,
+        CRSFactory::class,
+        TileMatrixSetFactory::class,
+        TileInfoUseCase::class,
+        TitilerTilePathProperties::class
+    )
     fun wmtsService(
         templateEngine: TemplateEngine,
         crsFactory: CRSFactory,

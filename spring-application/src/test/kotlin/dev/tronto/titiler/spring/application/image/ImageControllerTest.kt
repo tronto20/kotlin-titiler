@@ -9,9 +9,14 @@ import dev.tronto.titiler.image.incoming.controller.option.RenderOption
 import dev.tronto.titiler.image.incoming.usecase.ImageBBoxUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImagePreviewUseCase
 import dev.tronto.titiler.image.incoming.usecase.ImageRenderUseCase
-import dev.tronto.titiler.spring.application.core.CoreConfiguration
-import dev.tronto.titiler.spring.application.core.sortedByOrdered
 import dev.tronto.titiler.spring.application.testAndDocument
+import dev.tronto.titiler.spring.autoconfigure.core.TitilerCoreAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.image.TitilerImageAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.image.TitilerImageController
+import dev.tronto.titiler.spring.autoconfigure.image.TitilerImagePathProperties
+import dev.tronto.titiler.spring.autoconfigure.image.TitilerImageRenderAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.utils.sortedByOrdered
+import dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebAutoConfiguration
 import io.kotest.core.spec.style.FeatureSpec
 import io.mockk.coEvery
 import org.junit.jupiter.api.condition.DisabledInNativeImage
@@ -22,16 +27,21 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.aot.DisabledInAotMode
 import org.springframework.test.web.reactive.server.WebTestClient
 
-@Import(CoreConfiguration::class, ImageConfiguration::class, ImageRenderConfiguration::class)
+@Import(
+    TitilerWebAutoConfiguration::class,
+    TitilerCoreAutoConfiguration::class,
+    TitilerImageAutoConfiguration::class,
+    TitilerImageRenderAutoConfiguration::class
+)
 @DisabledInAotMode
 @DisabledInNativeImage
 @AutoConfigureRestDocs
-@WebFluxTest(controllers = [ImageController::class])
+@WebFluxTest(controllers = [TitilerImageController::class])
 @MockkBean(ImageBBoxUseCase::class, ImagePreviewUseCase::class, ImageRenderUseCase::class)
 class ImageControllerTest(
     private val webTestClient: WebTestClient,
     private val optionParsers: ObjectProvider<OptionParser<*>>,
-    private val pathProperties: ImagePathProperties,
+    private val pathProperties: TitilerImagePathProperties,
     private val bBoxUseCase: ImageBBoxUseCase,
     private val previewUseCase: ImagePreviewUseCase,
     private val renderUseCase: ImageRenderUseCase,

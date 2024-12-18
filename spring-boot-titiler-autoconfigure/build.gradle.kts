@@ -1,10 +1,14 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import org.gradle.api.internal.artifacts.configurations.RoleBasedConfigurationContainerInternal
+import org.gradle.api.plugins.jvm.internal.JvmFeatureInternal
+import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 
 plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
     id("org.jmailen.kotlinter")
     id("com.vanniktech.maven.publish")
+    id("com.epages.restdocs-api-spec")
 }
 
 repositories {
@@ -18,6 +22,7 @@ dependencies {
     compileOnly("org.thymeleaf:thymeleaf")
     compileOnly("org.springframework:spring-webflux")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core")
+    compileOnly("io.swagger.parser.v3:swagger-parser")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
 }
 

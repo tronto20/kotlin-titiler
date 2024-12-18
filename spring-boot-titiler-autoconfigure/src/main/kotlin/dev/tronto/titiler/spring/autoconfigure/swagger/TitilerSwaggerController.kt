@@ -1,6 +1,6 @@
-package dev.tronto.titiler.spring.application.swagger
+package dev.tronto.titiler.spring.autoconfigure.swagger
 
-import dev.tronto.titiler.spring.application.core.WebProperties
+import dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebProperties
 import io.swagger.v3.core.util.Json
 import io.swagger.v3.oas.models.servers.Server
 import io.swagger.v3.parser.OpenAPIV3Parser
@@ -16,12 +16,13 @@ import org.springframework.web.reactive.resource.TransformedResource
 import java.net.URI
 
 @Controller
-class SwaggerController(
-    private val webProperties: WebProperties,
+class TitilerSwaggerController(
+    private val webProperties: TitilerWebProperties,
 ) : RouterFunction<ServerResponse> by coRouter({
     val openapi3Resource by lazy {
         val resolver = PathMatchingResourcePatternResolver()
-        val openapi3Resource = resolver.getResources("classpath*:/swagger/openapi3.json").first()
+        val openapi3Resource =
+            resolver.getResources("classpath*:/swagger/openapi3.json").firstOrNull() ?: return@lazy null
 
         val parser = OpenAPIV3Parser()
         val openapi3 = parser.readContents(openapi3Resource.getContentAsString(Charsets.UTF_8)).openAPI
@@ -41,6 +42,6 @@ class SwaggerController(
         ok().bodyValueAndAwait(ClassPathResource("swagger/swagger.html"))
     }
     GET("swagger/api.json") {
-        ok().bodyValueAndAwait(openapi3Resource)
+        openapi3Resource?.let { ok().bodyValueAndAwait(it) } ?: notFound().buildAndAwait()
     }
 })
