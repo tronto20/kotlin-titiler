@@ -1,4 +1,4 @@
-package dev.tronto.titiler.spring.autoconfigure.hints
+package dev.tronto.titiler.spring.application.swagger
 
 import org.springframework.aot.hint.MemberCategory
 import org.springframework.aot.hint.RuntimeHints

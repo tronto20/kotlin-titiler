@@ -1,4 +1,4 @@
-package dev.tronto.titiler.spring.autoconfigure.swagger
+package dev.tronto.titiler.spring.application.swagger
 
 import dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebProperties
 import io.swagger.v3.core.util.Json
