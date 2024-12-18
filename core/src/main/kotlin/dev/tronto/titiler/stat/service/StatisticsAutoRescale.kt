@@ -23,17 +23,15 @@ import dev.tronto.titiler.stat.incoming.controller.option.StatisticsOption
 import dev.tronto.titiler.stat.incoming.usecase.StatisticsUseCase
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-class StatisticsAutoRescale(
-    private val statisticsUseCase: StatisticsUseCase = StatisticsService(),
-) : ImageDataAutoRescale {
+class StatisticsAutoRescale(private val statisticsUseCase: StatisticsUseCase = StatisticsService()) :
+    ImageDataAutoRescale {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger {}
     }
 
-    override fun supports(imageData: ImageData, format: ImageFormat): Boolean {
-        return (format == ImageFormat.PNG || format == ImageFormat.JPEG) && (imageData is OptionContext)
-    }
+    override fun supports(imageData: ImageData, format: ImageFormat): Boolean =
+        (format == ImageFormat.PNG || format == ImageFormat.JPEG) && (imageData is OptionContext)
 
     override suspend fun rescale(imageData: ImageData, format: ImageFormat): ImageData = logger.logTrace("rescale") {
         require(supports(imageData, format) && imageData is OptionContext)

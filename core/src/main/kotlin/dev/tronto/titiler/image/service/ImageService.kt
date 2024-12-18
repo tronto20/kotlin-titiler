@@ -30,7 +30,9 @@ import org.locationtech.jts.geom.util.AffineTransformationFactory
 class ImageService(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
     private val readableRasterFactory: ReadableRasterFactory = GdalReadableRasterFactory(crsFactory),
-) : ImageReadUseCase, ImageBBoxUseCase, ImagePreviewUseCase {
+) : ImageReadUseCase,
+    ImageBBoxUseCase,
+    ImagePreviewUseCase {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }

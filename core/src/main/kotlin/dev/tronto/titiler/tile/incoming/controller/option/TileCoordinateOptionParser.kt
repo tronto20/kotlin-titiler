@@ -10,9 +10,7 @@ import dev.tronto.titiler.tile.exception.InvalidTileCoordinateException
 class TileCoordinateOptionParser : OptionParser<TileCoordinateOption> {
     override val type: ArgumentType<TileCoordinateOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException("x", "y", "z")
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException("x", "y", "z")
 
     override suspend fun parse(request: Request): TileCoordinateOption? {
         val valueX = request.parameter("x").firstOrNull() ?: return null
@@ -24,34 +22,30 @@ class TileCoordinateOptionParser : OptionParser<TileCoordinateOption> {
         return TileCoordinateOption(z, x, y)
     }
 
-    override fun box(option: TileCoordinateOption): Map<String, List<String>> {
-        return mapOf(
-            "x" to listOf(option.x.toString()),
-            "y" to listOf(option.y.toString()),
-            "z" to listOf(option.z.toString())
-        )
-    }
+    override fun box(option: TileCoordinateOption): Map<String, List<String>> = mapOf(
+        "x" to listOf(option.x.toString()),
+        "y" to listOf(option.y.toString()),
+        "z" to listOf(option.z.toString())
+    )
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(
-            OptionDescription<Int>(
-                "z",
-                "Identifier (Z) selecting one of the scales defined " +
-                    "in the TileMatrixSet and representing the scaleDenominator the tile.",
-                14
-            ),
-            OptionDescription<Int>(
-                "x",
-                "Column (X) index of the tile on the selected TileMatrix. " +
-                    "It cannot exceed the MatrixHeight-1 for the selected TileMatrix.",
-                3333
-            ),
-            OptionDescription<Int>(
-                "y",
-                "Row (Y) index of the tile on the selected TileMatrix. " +
-                    "It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
-                3333
-            )
+    override fun descriptions(): List<OptionDescription<*>> = listOf(
+        OptionDescription<Int>(
+            "z",
+            "Identifier (Z) selecting one of the scales defined " +
+                "in the TileMatrixSet and representing the scaleDenominator the tile.",
+            14
+        ),
+        OptionDescription<Int>(
+            "x",
+            "Column (X) index of the tile on the selected TileMatrix. " +
+                "It cannot exceed the MatrixHeight-1 for the selected TileMatrix.",
+            3333
+        ),
+        OptionDescription<Int>(
+            "y",
+            "Row (Y) index of the tile on the selected TileMatrix. " +
+                "It cannot exceed the MatrixWidth-1 for the selected TileMatrix.",
+            3333
         )
-    }
+    )
 }

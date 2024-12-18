@@ -51,7 +51,8 @@ class TileService(
     private val rasterFactory: RasterFactory = GdalRasterFactory(crsFactory),
     private val imageReadUseCase: ImageReadUseCase = ImageService(crsFactory),
     private val infoUseCase: InfoUseCase = CoreService(rasterFactory),
-) : TileUseCase, TileInfoUseCase {
+) : TileUseCase,
+    TileInfoUseCase {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -59,13 +60,12 @@ class TileService(
 
     private val crsTileMatrixSetCache = mutableMapOf<String, CRSTileMatrixSet>()
 
-    private fun crsTileMatrixSet(tileMatrixSet: TileMatrixSet): CRSTileMatrixSet {
-        return crsTileMatrixSetCache.getOrPut(tileMatrixSet.id) {
+    private fun crsTileMatrixSet(tileMatrixSet: TileMatrixSet): CRSTileMatrixSet =
+        crsTileMatrixSetCache.getOrPut(tileMatrixSet.id) {
             val crs = tileMatrixSet.crs?.let { crsFactory.create(it) }
                 ?: throw UnsupportedCrsStringException("null")
             CRSTileMatrixSet(tileMatrixSet, crs)
         }
-    }
 
     private fun getMaximumOverviewLevel(width: Int, height: Int, minsize: Int = 256): Int {
         var overviewLevel = 0

@@ -10,29 +10,22 @@ class ResamplingOptionParser : OptionParser<ResamplingOption> {
 
     override val type: ArgumentType<ResamplingOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
 
-    override suspend fun parse(request: Request): ResamplingOption {
-        return request.parameter(PARAM).firstOrNull()
-            ?.let { ResamplingOption(ResamplingAlgorithm(it)) }
-            ?: ResamplingOption(ResamplingAlgorithm.NEAREST)
-    }
+    override suspend fun parse(request: Request): ResamplingOption = request.parameter(PARAM).firstOrNull()
+        ?.let { ResamplingOption(ResamplingAlgorithm(it)) }
+        ?: ResamplingOption(ResamplingAlgorithm.NEAREST)
 
-    override fun box(option: ResamplingOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.algorithm.name.lowercase()))
-    }
+    override fun box(option: ResamplingOption): Map<String, List<String>> =
+        mapOf(PARAM to listOf(option.algorithm.name.lowercase()))
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(
-            OptionDescription<String>(
-                PARAM,
-                "resampling algorithm.",
-                ResamplingAlgorithm.NEAREST.name,
-                enums = ResamplingAlgorithm.entries.map { it.name },
-                default = ResamplingAlgorithm.NEAREST.name
-            )
+    override fun descriptions(): List<OptionDescription<*>> = listOf(
+        OptionDescription<String>(
+            PARAM,
+            "resampling algorithm.",
+            ResamplingAlgorithm.NEAREST.name,
+            enums = ResamplingAlgorithm.entries.map { it.name },
+            default = ResamplingAlgorithm.NEAREST.name
         )
-    }
+    )
 }

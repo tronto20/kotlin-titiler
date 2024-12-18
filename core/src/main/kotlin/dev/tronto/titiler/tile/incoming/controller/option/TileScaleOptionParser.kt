@@ -14,22 +14,16 @@ class TileScaleOptionParser : OptionParser<TileScaleOption> {
 
     override val type: ArgumentType<TileScaleOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
+
+    override suspend fun parse(request: Request): TileScaleOption? = request.parameter(PARAM).firstOrNull()?.let {
+        val value = it.toIntOrNull() ?: throw IllegalParameterException("scale must be an integer: $it.")
+        TileScaleOption(value)
     }
 
-    override suspend fun parse(request: Request): TileScaleOption? {
-        return request.parameter(PARAM).firstOrNull()?.let {
-            val value = it.toIntOrNull() ?: throw IllegalParameterException("scale must be an integer: $it.")
-            TileScaleOption(value)
-        }
-    }
+    override fun box(option: TileScaleOption): Map<String, List<String>> =
+        mapOf(PARAM to listOf(option.scale.toString()))
 
-    override fun box(option: TileScaleOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.scale.toString()))
-    }
-
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Int>(PARAM, "Tile Scale", 1, enums = listOf(1, 2, 3, 4)))
-    }
+    override fun descriptions(): List<OptionDescription<*>> =
+        listOf(OptionDescription<Int>(PARAM, "Tile Scale", 1, enums = listOf(1, 2, 3, 4)))
 }

@@ -13,9 +13,7 @@ import org.springframework.context.support.GenericApplicationContext
 import java.util.function.Supplier
 
 @AutoConfiguration
-class TitilerImageRenderAutoConfiguration(
-    applicationContext: GenericApplicationContext,
-) {
+class TitilerImageRenderAutoConfiguration(applicationContext: GenericApplicationContext) {
     init {
         ImageDataAutoRescale.services.forEach {
             applicationContext.defaultListableBeanFactory.registerBeanDefinition(

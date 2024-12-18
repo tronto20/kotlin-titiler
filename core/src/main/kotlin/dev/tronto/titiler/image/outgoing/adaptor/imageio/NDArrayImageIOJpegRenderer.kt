@@ -21,7 +21,9 @@ import javax.imageio.ImageIO
  *
  *  ** native-image 에서 동작하지 않음. (jvm 21 기준) **
  */
-class NDArrayImageIOJpegRenderer : ImageRenderer, Ordered {
+class NDArrayImageIOJpegRenderer :
+    ImageRenderer,
+    Ordered {
     companion object {
         @JvmStatic
         private val SUPPORT_DATATYPE = listOf(DataType.UInt8)
@@ -36,16 +38,12 @@ class NDArrayImageIOJpegRenderer : ImageRenderer, Ordered {
         }
     }
 
-    override fun getOrder(): Int {
-        return Int.MAX_VALUE
-    }
+    override fun getOrder(): Int = Int.MAX_VALUE
 
-    override fun supports(imageData: ImageData, format: ImageFormat): Boolean {
-        return imageData is NDArrayImageData<*> &&
-            format == ImageFormat.JPEG &&
-            imageData.dataType in SUPPORT_DATATYPE &&
-            imageData.band in SUPPORT_BAND
-    }
+    override fun supports(imageData: ImageData, format: ImageFormat): Boolean = imageData is NDArrayImageData<*> &&
+        format == ImageFormat.JPEG &&
+        imageData.dataType in SUPPORT_DATATYPE &&
+        imageData.band in SUPPORT_BAND
 
     override suspend fun render(imageData: ImageData, format: ImageFormat): ByteArray {
         require(supports(imageData, format))

@@ -18,9 +18,7 @@ import java.util.function.Supplier
 @AutoConfiguration
 @ConditionalOnClass(CorsWebFilter::class)
 @EnableConfigurationProperties(TitilerWebProperties::class, TitilerCorsProperties::class)
-class TitilerWebAutoConfiguration(
-    applicationContext: GenericApplicationContext,
-) {
+class TitilerWebAutoConfiguration(applicationContext: GenericApplicationContext) {
     init {
         OptionParser.services.forEach {
             applicationContext.defaultListableBeanFactory.registerBeanDefinition(
@@ -34,9 +32,8 @@ class TitilerWebAutoConfiguration(
     }
 
     @Bean
-    fun webFluxOptionParserAdaptor(optionParsers: ObjectProvider<OptionParser<*>>): WebFluxOptionParserAdaptor {
-        return WebFluxOptionParserAdaptor(optionParsers.sortedByOrdered())
-    }
+    fun webFluxOptionParserAdaptor(optionParsers: ObjectProvider<OptionParser<*>>): WebFluxOptionParserAdaptor =
+        WebFluxOptionParserAdaptor(optionParsers.sortedByOrdered())
 
     @Bean
     fun corsWebFilter(

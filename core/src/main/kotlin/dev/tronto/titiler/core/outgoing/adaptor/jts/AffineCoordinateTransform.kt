@@ -5,9 +5,7 @@ import org.locationtech.jts.geom.CoordinateXY
 import org.locationtech.jts.geom.util.AffineTransformation
 
 @JvmInline
-value class AffineCoordinateTransform(
-    val affine: AffineTransformation,
-) : CoordinateTransform {
+value class AffineCoordinateTransform(val affine: AffineTransformation) : CoordinateTransform {
     override fun transformTo(coord: CoordinateXY): CoordinateXY {
         val dst = CoordinateXY(coord.x, coord.y)
         affine.transform(coord, dst)

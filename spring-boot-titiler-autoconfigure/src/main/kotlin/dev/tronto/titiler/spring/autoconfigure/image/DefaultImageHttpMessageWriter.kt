@@ -14,13 +14,10 @@ class DefaultImageHttpMessageWriter : HttpMessageWriter<Image> {
         private val imageType = ResolvableType.forClass(Image::class.java)
     }
 
-    override fun getWritableMediaTypes(): MutableList<MediaType> {
-        return emptyList<MediaType>().toMutableList()
-    }
+    override fun getWritableMediaTypes(): MutableList<MediaType> = emptyList<MediaType>().toMutableList()
 
-    override fun canWrite(elementType: ResolvableType, mediaType: MediaType?): Boolean {
-        return mediaType == null && imageType.isAssignableFrom(elementType)
-    }
+    override fun canWrite(elementType: ResolvableType, mediaType: MediaType?): Boolean =
+        mediaType == null && imageType.isAssignableFrom(elementType)
 
     override fun write(
         inputStream: Publisher<out Image>,
@@ -28,17 +25,15 @@ class DefaultImageHttpMessageWriter : HttpMessageWriter<Image> {
         mediaType: MediaType?,
         message: ReactiveHttpOutputMessage,
         hints: MutableMap<String, Any>,
-    ): Mono<Void> {
-        return if (inputStream is Mono<out Image>) {
-            inputStream.flatMap {
-                val mediaType = MediaType.parseMediaType(it.format.contentType)
-                message.headers.contentType = mediaType
-                message.writeWith(
-                    Mono.just(message.bufferFactory().wrap(it.data))
-                )
-            }
-        } else {
-            throw UnsupportedOperationException()
+    ): Mono<Void> = if (inputStream is Mono<out Image>) {
+        inputStream.flatMap {
+            val mediaType = MediaType.parseMediaType(it.format.contentType)
+            message.headers.contentType = mediaType
+            message.writeWith(
+                Mono.just(message.bufferFactory().wrap(it.data))
+            )
         }
+    } else {
+        throw UnsupportedOperationException()
     }
 }

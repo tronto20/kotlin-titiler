@@ -14,22 +14,16 @@ class MaxSizeOptionParser : OptionParser<MaxSizeOption> {
 
     override val type: ArgumentType<MaxSizeOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
+
+    override suspend fun parse(request: Request): MaxSizeOption? = request.parameter(PARAM).firstOrNull()?.let {
+        val value = it.toIntOrNull() ?: throw IllegalParameterException("maxSize must be an integer: $it.")
+        MaxSizeOption(value)
     }
 
-    override suspend fun parse(request: Request): MaxSizeOption? {
-        return request.parameter(PARAM).firstOrNull()?.let {
-            val value = it.toIntOrNull() ?: throw IllegalParameterException("maxSize must be an integer: $it.")
-            MaxSizeOption(value)
-        }
-    }
+    override fun box(option: MaxSizeOption): Map<String, List<String>> =
+        mapOf(PARAM to listOf(option.maxSize.toString()))
 
-    override fun box(option: MaxSizeOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.maxSize.toString()))
-    }
-
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Int>(PARAM, "image max size", default = 1024, sample = 1024))
-    }
+    override fun descriptions(): List<OptionDescription<*>> =
+        listOf(OptionDescription<Int>(PARAM, "image max size", default = 1024, sample = 1024))
 }

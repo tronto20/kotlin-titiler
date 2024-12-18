@@ -12,7 +12,8 @@ class DoubleImageData(
     mask: D2Array<Int>,
     override val dataType: DataType,
     vararg options: OptionProvider<*>,
-) : ImageData, NDArrayImageData<Double>(data, mask, *options) {
+) : NDArrayImageData<Double>(data, mask, *options),
+    ImageData {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -30,15 +31,11 @@ class DoubleImageData(
         }
     }
 
-    override fun Number.asType(): Double {
-        return toDouble()
-    }
+    override fun Number.asType(): Double = toDouble()
 
     override fun copy(
         data: D3Array<Double>,
         mask: D2Array<Int>,
         vararg options: OptionProvider<*>,
-    ): NDArrayImageData<Double> {
-        return DoubleImageData(data, mask, dataType, *options)
-    }
+    ): NDArrayImageData<Double> = DoubleImageData(data, mask, dataType, *options)
 }

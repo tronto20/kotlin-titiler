@@ -4,9 +4,7 @@ import dev.tronto.titiler.core.outgoing.port.CRSTransform
 import org.gdal.osr.CoordinateTransformation
 import org.locationtech.jts.geom.CoordinateXY
 
-class SpatialReferenceCRSTransform(
-    val transform: CoordinateTransformation,
-) : CRSTransform {
+class SpatialReferenceCRSTransform(val transform: CoordinateTransformation) : CRSTransform {
     val inverse = transform.GetInverse()
     override fun transformTo(coord: CoordinateXY): CoordinateXY {
         val (x, y) = transform.TransformPoint(coord.x, coord.y)

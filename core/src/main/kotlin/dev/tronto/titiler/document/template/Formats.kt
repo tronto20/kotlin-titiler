@@ -3,9 +3,7 @@ package dev.tronto.titiler.document.template
 import java.text.NumberFormat
 import java.util.*
 
-class Formats(
-    private val locale: Locale,
-) {
+class Formats(private val locale: Locale) {
     private val defaultFormat: NumberFormat = NumberFormat.getNumberInstance(Locale.ENGLISH).apply {
         isGroupingUsed = false
         maximumIntegerDigits = 40

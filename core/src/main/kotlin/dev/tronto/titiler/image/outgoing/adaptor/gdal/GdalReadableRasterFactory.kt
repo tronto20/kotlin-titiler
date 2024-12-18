@@ -12,13 +12,12 @@ import dev.tronto.titiler.image.outgoing.port.ReadableRasterFactory
 open class GdalReadableRasterFactory(
     private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
     private val gdalRasterFactory: GdalRasterFactory = GdalRasterFactory(crsFactory),
-) : ReadableRasterFactory, RasterFactory by gdalRasterFactory {
+) : ReadableRasterFactory,
+    RasterFactory by gdalRasterFactory {
     override suspend fun <T> withReadableRaster(
         openOptions: OptionProvider<OpenOption>,
         block: (dataset: ReadableRaster) -> T,
-    ): T {
-        return gdalRasterFactory.withGdalRaster(openOptions) { raster ->
-            GdalReadableRaster(raster).use(block)
-        }
+    ): T = gdalRasterFactory.withGdalRaster(openOptions) { raster ->
+        GdalReadableRaster(raster).use(block)
     }
 }

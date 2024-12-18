@@ -12,7 +12,8 @@ class IntImageData(
     mask: D2Array<Int>,
     override val dataType: DataType,
     vararg options: OptionProvider<*>,
-) : ImageData, NDArrayImageData<Int>(data, mask, *options) {
+) : NDArrayImageData<Int>(data, mask, *options),
+    ImageData {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -35,15 +36,11 @@ class IntImageData(
         }
     }
 
-    override fun Number.asType(): Int {
-        return toInt()
-    }
+    override fun Number.asType(): Int = toInt()
 
     override fun copy(
         data: D3Array<Int>,
         mask: D2Array<Int>,
         vararg options: OptionProvider<*>,
-    ): NDArrayImageData<Int> {
-        return IntImageData(data, mask, dataType, *options)
-    }
+    ): NDArrayImageData<Int> = IntImageData(data, mask, dataType, *options)
 }

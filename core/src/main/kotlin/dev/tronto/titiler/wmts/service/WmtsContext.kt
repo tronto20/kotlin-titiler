@@ -49,18 +49,9 @@ class WmtsContext private constructor(
         )
     )
 
-    data class Layer(
-        val title: String,
-        val name: String,
-        val bounds: DoubleArray,
-        val tilesUrl: String,
-    )
+    data class Layer(val title: String, val name: String, val bounds: DoubleArray, val tilesUrl: String)
 
-    data class TileMatrixSet(
-        val id: String,
-        val crs: String,
-        val tileMatrices: List<TileMatrix>,
-    )
+    data class TileMatrixSet(val id: String, val crs: String, val tileMatrices: List<TileMatrix>)
 
     data class TileMatrix(
         val id: String,

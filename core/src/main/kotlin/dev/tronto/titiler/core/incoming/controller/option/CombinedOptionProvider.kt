@@ -4,20 +4,15 @@ class CombinedOptionProvider<O : Option>(
     private val list: List<OptionProvider<O>>,
     override val argumentType: ArgumentType<O>,
 ) : OptionProvider<O> {
-    override fun <T : O> filter(argumentType: ArgumentType<T>): OptionProvider<T> {
-        return CombinedOptionProvider(list.map { it.filter(argumentType) }, argumentType)
-    }
+    override fun <T : O> filter(argumentType: ArgumentType<T>): OptionProvider<T> =
+        CombinedOptionProvider(list.map { it.filter(argumentType) }, argumentType)
 
-    override fun <T : O> filterNot(argumentType: ArgumentType<T>): OptionProvider<O> {
-        return CombinedOptionProvider(
-            list.map { it.filterNot(argumentType) },
-            this.argumentType
-        )
-    }
+    override fun <T : O> filterNot(argumentType: ArgumentType<T>): OptionProvider<O> = CombinedOptionProvider(
+        list.map { it.filterNot(argumentType) },
+        this.argumentType
+    )
 
-    override fun <T : O> getAll(argumentType: ArgumentType<T>): List<T> {
-        return list.flatMap { it.getAll(argumentType) }
-    }
+    override fun <T : O> getAll(argumentType: ArgumentType<T>): List<T> = list.flatMap { it.getAll(argumentType) }
 
     override fun <T : O> getOrNull(argumentType: ArgumentType<T>): T? {
         list.forEach {
@@ -38,12 +33,10 @@ class CombinedOptionProvider<O : Option>(
         throw IllegalStateException("Parameter parser for $argumentType not defined.")
     }
 
-    override fun <T : O> plus(option: T, argumentType: ArgumentType<T>): OptionProvider<O> {
-        return CombinedOptionProvider(
-            list.map { it.plus(option, argumentType) },
-            this.argumentType
-        )
-    }
+    override fun <T : O> plus(option: T, argumentType: ArgumentType<T>): OptionProvider<O> = CombinedOptionProvider(
+        list.map { it.plus(option, argumentType) },
+        this.argumentType
+    )
 
     override fun <T : O> boxAll(argumentType: ArgumentType<T>): Map<String, List<String>> {
         val result = mutableMapOf<String, List<String>>()
@@ -53,7 +46,5 @@ class CombinedOptionProvider<O : Option>(
         return result
     }
 
-    override fun plus(other: OptionProvider<O>): OptionProvider<O> {
-        return CombinedOptionProvider(list + other, argumentType)
-    }
+    override fun plus(other: OptionProvider<O>): OptionProvider<O> = CombinedOptionProvider(list + other, argumentType)
 }

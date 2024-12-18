@@ -5,7 +5,9 @@ import dev.tronto.titiler.core.incoming.controller.option.OpenOption
 import dev.tronto.titiler.core.incoming.controller.option.OptionProvider
 import java.net.URI
 
-class DefaultS3GdalPathProvider : GdalPathProvider, Ordered {
+class DefaultS3GdalPathProvider :
+    GdalPathProvider,
+    Ordered {
     companion object {
         private val ENABLED by lazy {
             System.getenv().run {
@@ -15,14 +17,9 @@ class DefaultS3GdalPathProvider : GdalPathProvider, Ordered {
             }
         }
     }
-    override fun getOrder(): Int {
-        return Int.MAX_VALUE - 1
-    }
-    override suspend fun supports(uri: URI, openOptions: OptionProvider<OpenOption>): Boolean {
-        return ENABLED && uri.scheme == S3GdalPath.SCHEME
-    }
+    override fun getOrder(): Int = Int.MAX_VALUE - 1
+    override suspend fun supports(uri: URI, openOptions: OptionProvider<OpenOption>): Boolean =
+        ENABLED && uri.scheme == S3GdalPath.SCHEME
 
-    override suspend fun toGdalPath(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath {
-        return S3GdalPath(uri)
-    }
+    override suspend fun toGdalPath(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath = S3GdalPath(uri)
 }

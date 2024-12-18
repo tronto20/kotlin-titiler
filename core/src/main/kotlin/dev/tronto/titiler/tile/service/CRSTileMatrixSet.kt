@@ -10,10 +10,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-internal class CRSTileMatrixSet(
-    val tileMatrixSet: TileMatrixSet,
-    val crs: CRS,
-) {
+internal class CRSTileMatrixSet(val tileMatrixSet: TileMatrixSet, val crs: CRS) {
     val minzoom get() = tileMatrixSet.minzoom
     val maxzoom get() = tileMatrixSet.maxzoom
     private val unitFactors: Map<String, Double> = mapOf(
@@ -78,9 +75,7 @@ internal class CRSTileMatrixSet(
     }
 
     private val resolutionCache = mutableMapOf<String, Double>()
-    fun resolution(matrix: TileMatrix): Double {
-        return resolutionCache.getOrPut(matrix.id) {
-            matrix.scaleDenominator * 0.28e-3 / metersPerUnit
-        }
+    fun resolution(matrix: TileMatrix): Double = resolutionCache.getOrPut(matrix.id) {
+        matrix.scaleDenominator * 0.28e-3 / metersPerUnit
     }
 }

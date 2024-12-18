@@ -14,21 +14,15 @@ class MinZoomOptionParser : OptionParser<MinZoomOption> {
 
     override val type: ArgumentType<MinZoomOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
+
+    override suspend fun parse(request: Request): MinZoomOption? = request.parameter(PARAM).firstOrNull()?.let {
+        MinZoomOption(it.toIntOrNull() ?: throw IllegalParameterException("$PARAM must be an integer."))
     }
 
-    override suspend fun parse(request: Request): MinZoomOption? {
-        return request.parameter(PARAM).firstOrNull()?.let {
-            MinZoomOption(it.toIntOrNull() ?: throw IllegalParameterException("$PARAM must be an integer."))
-        }
-    }
+    override fun box(option: MinZoomOption): Map<String, List<String>> =
+        mapOf(PARAM to listOf(option.minZoom.toString()))
 
-    override fun box(option: MinZoomOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.minZoom.toString()))
-    }
-
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Int>(PARAM, "Overwrite default minzoom.", 0))
-    }
+    override fun descriptions(): List<OptionDescription<*>> =
+        listOf(OptionDescription<Int>(PARAM, "Overwrite default minzoom.", 0))
 }

@@ -29,9 +29,7 @@ import org.gdal.osr.osr
 import java.util.*
 import kotlin.io.path.toPath
 
-class GdalRasterFactory(
-    private val crsFactory: CRSFactory = SpatialReferenceCRSFactory,
-) : RasterFactory {
+class GdalRasterFactory(private val crsFactory: CRSFactory = SpatialReferenceCRSFactory) : RasterFactory {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -175,9 +173,8 @@ class GdalRasterFactory(
     /**
      *  GdalDataset 사용을 하나의 쓰레드에서 진행하도록 강제
      */
-    override suspend fun <T> withRaster(openOptions: OptionProvider<OpenOption>, block: (raster: Raster) -> T): T {
-        return withGdalRaster(openOptions) {
+    override suspend fun <T> withRaster(openOptions: OptionProvider<OpenOption>, block: (raster: Raster) -> T): T =
+        withGdalRaster(openOptions) {
             block(it)
         }
-    }
 }

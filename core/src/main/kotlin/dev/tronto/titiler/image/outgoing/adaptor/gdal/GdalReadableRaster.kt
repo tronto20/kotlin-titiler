@@ -34,9 +34,9 @@ import org.jetbrains.kotlinx.multik.ndarray.operations.toIntArray
 import org.jetbrains.kotlinx.multik.ndarray.operations.toLongArray
 import kotlin.reflect.KClass
 
-open class GdalReadableRaster(
-    private val gdalRaster: GdalBaseRaster,
-) : ReadableRaster, GdalBaseRaster by gdalRaster {
+open class GdalReadableRaster(private val gdalRaster: GdalBaseRaster) :
+    ReadableRaster,
+    GdalBaseRaster by gdalRaster {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -414,9 +414,8 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Int> {
-            return readIntData(bandList, width, height, window)
-        }
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Int> =
+            readIntData(bandList, width, height, window)
     }
 
     private inner class LongDataReader : Reader<Long>() {
@@ -439,9 +438,8 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Long> {
-            return readLongData(bandList, width, height, window)
-        }
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Long> =
+            readLongData(bandList, width, height, window)
     }
 
     private inner class FloatDataReader : Reader<Float>() {
@@ -464,9 +462,8 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Float> {
-            return readFloatData(bandList, width, height, window)
-        }
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Float> =
+            readFloatData(bandList, width, height, window)
     }
 
     private inner class DoubleDataReader : Reader<Double>() {
@@ -489,8 +486,7 @@ open class GdalReadableRaster(
             return mk.ndarray(arr, bandList.size, height, width)
         }
 
-        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Double> {
-            return readDoubleData(bandList, width, height, window)
-        }
+        override fun read(bandList: IntArray, width: Int, height: Int, window: Window): D3Array<Double> =
+            readDoubleData(bandList, width, height, window)
     }
 }

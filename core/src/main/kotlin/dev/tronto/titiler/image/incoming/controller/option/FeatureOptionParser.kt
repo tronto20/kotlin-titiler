@@ -15,21 +15,15 @@ class FeatureOptionParser : OptionParser<FeatureOption> {
 
     override val type: ArgumentType<FeatureOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
 
-    override suspend fun parse(request: Request): FeatureOption? {
-        return request.parameter(PARAM).firstOrNull()?.let {
-            val crs = request.parameter("featureCrs").firstOrNull()
+    override suspend fun parse(request: Request): FeatureOption? = request.parameter(PARAM).firstOrNull()?.let {
+        val crs = request.parameter("featureCrs").firstOrNull()
 //            FeatureOption(it, crs ?: DEFAULT_CRS)
-            throw NotImplementedError("not implemented yet.")
-        }
+        throw NotImplementedError("not implemented yet.")
     }
 
-    override fun box(option: FeatureOption): Nothing {
-        throw IllegalParameterException("$PARAM is not supported.")
-    }
+    override fun box(option: FeatureOption): Nothing = throw IllegalParameterException("$PARAM is not supported.")
 
     override fun descriptions(): List<OptionDescription<*>> {
         // TODO

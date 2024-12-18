@@ -13,23 +13,17 @@ class UseEPSGOptionParser : OptionParser<UseEPSGOption> {
     }
     override val type: ArgumentType<UseEPSGOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
+
+    override suspend fun parse(request: Request): UseEPSGOption? = request.parameter(PARAM).firstOrNull()?.let {
+        it.lowercase().toBooleanStrictOrNull() ?: throw IllegalParameterException("$PARAM must be a boolean.")
+    }?.let {
+        UseEPSGOption(it)
     }
 
-    override suspend fun parse(request: Request): UseEPSGOption? {
-        return request.parameter(PARAM).firstOrNull()?.let {
-            it.lowercase().toBooleanStrictOrNull() ?: throw IllegalParameterException("$PARAM must be a boolean.")
-        }?.let {
-            UseEPSGOption(it)
-        }
-    }
+    override fun box(option: UseEPSGOption): Map<String, List<String>> =
+        mapOf(PARAM to listOf(option.useEpsg.toString()))
 
-    override fun box(option: UseEPSGOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.useEpsg.toString()))
-    }
-
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<Boolean>(PARAM, "force use epsg code.", false))
-    }
+    override fun descriptions(): List<OptionDescription<*>> =
+        listOf(OptionDescription<Boolean>(PARAM, "force use epsg code.", false))
 }

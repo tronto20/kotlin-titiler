@@ -1,8 +1,6 @@
 package dev.tronto.titiler.wmts.service
 
-class TemplateString(
-    val value: String,
-) {
+class TemplateString(val value: String) {
     companion object {
         val regex = Regex("\\{(.+?)\\}")
     }

@@ -6,9 +6,8 @@ import dev.tronto.titiler.tile.outgoing.port.TileMatrixSetFactory
 import kotlinx.serialization.json.Json
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
-class ResourceTileMatrixSetFactory(
-    resourcePattern: String = "classpath*:tile/matrixset/*.json",
-) : TileMatrixSetFactory {
+class ResourceTileMatrixSetFactory(resourcePattern: String = "classpath*:tile/matrixset/*.json") :
+    TileMatrixSetFactory {
     private fun loads(pattern: String): List<TileMatrixSet> {
         val resolver = PathMatchingResourcePatternResolver()
         return resolver.getResources(pattern).mapNotNull {
@@ -20,11 +19,8 @@ class ResourceTileMatrixSetFactory(
 
     private val tileMatrixSetMap = loads(resourcePattern).associateBy { it.id.lowercase() }
 
-    override suspend fun list(): Iterable<TileMatrixSet> {
-        return tileMatrixSetMap.values
-    }
+    override suspend fun list(): Iterable<TileMatrixSet> = tileMatrixSetMap.values
 
-    override suspend fun fromId(id: String): TileMatrixSet {
-        return tileMatrixSetMap[id.lowercase()] ?: throw UnsupportedTileMatrixSetException(id)
-    }
+    override suspend fun fromId(id: String): TileMatrixSet =
+        tileMatrixSetMap[id.lowercase()] ?: throw UnsupportedTileMatrixSetException(id)
 }

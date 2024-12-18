@@ -2,12 +2,9 @@ package dev.tronto.titiler.core.incoming.controller.option
 
 interface Option {
     companion object {
-        operator fun <T : Option> T.plus(other: T): Iterable<T> {
-            return listOf(this, other)
-        }
+        operator fun <T : Option> T.plus(other: T): Iterable<T> = listOf(this, other)
 
-        inline fun <reified T : Option> Iterable<Option>.getSingleOrNull(): T? {
-            return this.filterIsInstance<T>().firstOrNull()
-        }
+        inline fun <reified T : Option> Iterable<Option>.getSingleOrNull(): T? =
+            this.filterIsInstance<T>().firstOrNull()
     }
 }

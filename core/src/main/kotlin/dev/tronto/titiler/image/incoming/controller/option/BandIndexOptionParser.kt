@@ -13,20 +13,19 @@ class BandIndexOptionParser : OptionParser<BandIndexOption> {
     }
     override val type: ArgumentType<BandIndexOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
 
     override suspend fun parse(request: Request): BandIndexOption? {
         val indexes = request.parameter(PARAM).mapNotNull { it.toIntOrNull()?.let { BandIndex(it) } }
         return if (indexes.isNotEmpty()) BandIndexOption(indexes) else null
     }
 
-    override fun box(option: BandIndexOption): Map<String, List<String>> {
-        return mapOf(PARAM to option.bandIndexes.map { it.value.toString() })
-    }
+    override fun box(option: BandIndexOption): Map<String, List<String>> = mapOf(
+        PARAM to option.bandIndexes.map {
+            it.value.toString()
+        }
+    )
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<IntArray>(PARAM, "band indexes", intArrayOf(1, 2, 3)))
-    }
+    override fun descriptions(): List<OptionDescription<*>> =
+        listOf(OptionDescription<IntArray>(PARAM, "band indexes", intArrayOf(1, 2, 3)))
 }

@@ -33,34 +33,30 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @AutoConfigureRestDocs
 @WebFluxTest(controllers = [TitilerWmtsController::class])
 @MockkBean(WmtsUseCase::class)
-class WmtsControllerTest(
-    private val webTestClient: WebTestClient,
-    private val optionParsers: ObjectProvider<OptionParser<*>>,
-    private val pathProperties: TitilerWmtsPathProperties,
-    private val wmtsUseCase: WmtsUseCase,
-) : FeatureSpec({
-    val parsers = optionParsers.sortedByOrdered()
-    feature("wmts capabilities") {
-        scenario("Get WMTSCapabilities") {
-            coEvery { wmtsUseCase.wmts(any(), any(), any(), any()) } returns object : Document {
-                override val contents: String
-                    get() = "contents"
-                override val format: DocumentFormat
-                    get() = DocumentFormat.XML
-            }
+class WmtsControllerTest(private val webTestClient: WebTestClient, private val optionParsers: ObjectProvider<OptionParser<*>>, private val pathProperties: TitilerWmtsPathProperties, private val wmtsUseCase: WmtsUseCase) :
+    FeatureSpec({
+        val parsers = optionParsers.sortedByOrdered()
+        feature("wmts capabilities") {
+            scenario("Get WMTSCapabilities") {
+                coEvery { wmtsUseCase.wmts(any(), any(), any(), any()) } returns object : Document {
+                    override val contents: String
+                        get() = "contents"
+                    override val format: DocumentFormat
+                        get() = DocumentFormat.XML
+                }
 
-            webTestClient.testAndDocument(
-                "wmtsCapabilities",
-                "OGC WMTS endpoint.",
-                "Wmts",
-                "WMTSCapabilities",
-                pathProperties.capabilities,
-                parsers,
-                ArgumentType<OpenOption>(),
-                ArgumentType<TileOption>(),
-                ArgumentType<RenderOption>(),
-                ArgumentType<WmtsOption>()
-            )
+                webTestClient.testAndDocument(
+                    "wmtsCapabilities",
+                    "OGC WMTS endpoint.",
+                    "Wmts",
+                    "WMTSCapabilities",
+                    pathProperties.capabilities,
+                    parsers,
+                    ArgumentType<OpenOption>(),
+                    ArgumentType<TileOption>(),
+                    ArgumentType<RenderOption>(),
+                    ArgumentType<WmtsOption>()
+                )
+            }
         }
-    }
-})
+    })

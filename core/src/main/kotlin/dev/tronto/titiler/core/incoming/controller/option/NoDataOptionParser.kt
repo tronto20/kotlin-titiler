@@ -9,24 +9,16 @@ class NoDataOptionParser : OptionParser<NoDataOption> {
     }
     override val type: ArgumentType<NoDataOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
+
+    override suspend fun parse(request: Request): NoDataOption? = request.parameter(PARAM).firstOrNull()?.let {
+        val double = it.toDoubleOrNull() ?: throw IllegalParameterException("noData must be a number: $it.")
+        NoDataOption(double)
     }
 
-    override suspend fun parse(request: Request): NoDataOption? {
-        return request.parameter(PARAM).firstOrNull()?.let {
-            val double = it.toDoubleOrNull() ?: throw IllegalParameterException("noData must be a number: $it.")
-            NoDataOption(double)
-        }
-    }
+    override fun box(option: NoDataOption): Map<String, List<String>> = mapOf(PARAM to listOf(option.noData.toString()))
 
-    override fun box(option: NoDataOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.noData.toString()))
-    }
-
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(
-            OptionDescription<Double>(PARAM, "Overwrite internal Nodata value.", 0.0)
-        )
-    }
+    override fun descriptions(): List<OptionDescription<*>> = listOf(
+        OptionDescription<Double>(PARAM, "Overwrite internal Nodata value.", 0.0)
+    )
 }
