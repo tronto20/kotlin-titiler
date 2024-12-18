@@ -6,4 +6,3 @@ dev.tronto.titiler.spring.autoconfigure.image.TitilerImageAutoConfiguration
 dev.tronto.titiler.spring.autoconfigure.image.TitilerImageRenderAutoConfiguration
 dev.tronto.titiler.spring.autoconfigure.tile.TitilerTileAutoConfiguration
 dev.tronto.titiler.spring.autoconfigure.wmts.TitilerWmtsAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.swagger.TitilerSwaggerAutoConfiguration

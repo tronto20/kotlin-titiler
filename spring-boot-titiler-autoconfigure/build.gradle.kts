@@ -21,8 +21,7 @@ dependencies {
     compileOnly(projects.core)
     compileOnly("org.thymeleaf:thymeleaf")
     compileOnly("org.springframework:spring-webflux")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-core")
-    compileOnly("io.swagger.parser.v3:swagger-parser")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
 }
 
