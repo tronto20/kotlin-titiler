@@ -65,19 +65,14 @@ dependencies {
     implementation("org.slf4j:slf4j-api")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("org.locationtech.jts:jts-core")
-    implementation("org.locationtech.jts.io:jts-io-common")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation(kotlin("reflect"))
-    implementation(projects.core)
-    implementation("org.thymeleaf:thymeleaf")
-    implementation("io.swagger.parser.v3:swagger-parser")
+    implementation(projects.springBootTitilerStarterCore)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
     }
-
+    testImplementation("org.locationtech.jts:jts-core")
     testImplementation("io.kotest:kotest-runner-junit5")
     testImplementation("io.kotest:kotest-extensions-junit5")
     testImplementation("io.kotest:kotest-assertions-core")

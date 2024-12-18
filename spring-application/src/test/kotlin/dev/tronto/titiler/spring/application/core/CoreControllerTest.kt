@@ -7,6 +7,11 @@ import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.usecase.BoundsUseCase
 import dev.tronto.titiler.core.incoming.usecase.InfoUseCase
 import dev.tronto.titiler.spring.application.testAndDocument
+import dev.tronto.titiler.spring.autoconfigure.core.TitilerCoreAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.core.TitilerCoreController
+import dev.tronto.titiler.spring.autoconfigure.core.TitilerCorePathProperties
+import dev.tronto.titiler.spring.autoconfigure.utils.sortedByOrdered
+import dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebAutoConfiguration
 import io.kotest.core.spec.style.FeatureSpec
 import io.mockk.coEvery
 import org.junit.jupiter.api.condition.DisabledInNativeImage
@@ -17,9 +22,9 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.aot.DisabledInAotMode
 import org.springframework.test.web.reactive.server.WebTestClient
 
-@Import(CoreConfiguration::class)
+@Import(TitilerCoreAutoConfiguration::class, TitilerWebAutoConfiguration::class)
 @AutoConfigureRestDocs
-@WebFluxTest(controllers = [CoreController::class])
+@WebFluxTest(controllers = [TitilerCoreController::class])
 @DisabledInAotMode
 @DisabledInNativeImage
 @MockkBean(BoundsUseCase::class, InfoUseCase::class)
@@ -27,7 +32,7 @@ class CoreControllerTest(
     private val webTestClient: WebTestClient,
     private val boundsUseCase: BoundsUseCase,
     private val infoUseCase: InfoUseCase,
-    private val pathProperties: CorePathProperties,
+    private val pathProperties: TitilerCorePathProperties,
     private val optionParsers: ObjectProvider<OptionParser<*>>,
 ) : FeatureSpec({
     val parsers: List<OptionParser<*>> = optionParsers.sortedByOrdered()

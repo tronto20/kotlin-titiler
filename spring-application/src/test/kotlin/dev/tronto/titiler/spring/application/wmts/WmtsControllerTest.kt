@@ -7,9 +7,13 @@ import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.document.domain.Document
 import dev.tronto.titiler.document.domain.DocumentFormat
 import dev.tronto.titiler.image.incoming.controller.option.RenderOption
-import dev.tronto.titiler.spring.application.core.CoreConfiguration
-import dev.tronto.titiler.spring.application.core.sortedByOrdered
 import dev.tronto.titiler.spring.application.testAndDocument
+import dev.tronto.titiler.spring.autoconfigure.core.TitilerCoreAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.utils.sortedByOrdered
+import dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.wmts.TitilerWmtsAutoConfiguration
+import dev.tronto.titiler.spring.autoconfigure.wmts.TitilerWmtsController
+import dev.tronto.titiler.spring.autoconfigure.wmts.TitilerWmtsPathProperties
 import dev.tronto.titiler.tile.incoming.controller.option.TileOption
 import dev.tronto.titiler.wmts.incoming.controller.option.WmtsOption
 import dev.tronto.titiler.wmts.incoming.usecase.WmtsUseCase
@@ -23,16 +27,16 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.aot.DisabledInAotMode
 import org.springframework.test.web.reactive.server.WebTestClient
 
-@Import(CoreConfiguration::class, WmtsConfiguration::class)
+@Import(TitilerWebAutoConfiguration::class, TitilerCoreAutoConfiguration::class, TitilerWmtsAutoConfiguration::class)
 @DisabledInAotMode
 @DisabledInNativeImage
 @AutoConfigureRestDocs
-@WebFluxTest(controllers = [WmtsController::class])
+@WebFluxTest(controllers = [TitilerWmtsController::class])
 @MockkBean(WmtsUseCase::class)
 class WmtsControllerTest(
     private val webTestClient: WebTestClient,
     private val optionParsers: ObjectProvider<OptionParser<*>>,
-    private val pathProperties: WmtsPathProperties,
+    private val pathProperties: TitilerWmtsPathProperties,
     private val wmtsUseCase: WmtsUseCase,
 ) : FeatureSpec({
     val parsers = optionParsers.sortedByOrdered()

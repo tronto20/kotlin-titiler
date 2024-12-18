@@ -17,7 +17,7 @@ import java.util.function.Supplier
 
 @AutoConfiguration
 @ConditionalOnClass(CorsWebFilter::class)
-@EnableConfigurationProperties(TitilerWebProperties::class)
+@EnableConfigurationProperties(TitilerWebProperties::class, TitilerCorsProperties::class)
 class TitilerWebAutoConfiguration(
     applicationContext: GenericApplicationContext,
 ) {
@@ -39,15 +39,18 @@ class TitilerWebAutoConfiguration(
     }
 
     @Bean
-    fun corsWebFilter(titilerWebProperties: TitilerWebProperties): CorsWebFilter {
+    fun corsWebFilter(
+        titilerWebProperties: TitilerWebProperties,
+        titilerCorsProperties: TitilerCorsProperties,
+    ): CorsWebFilter {
         val config = CorsConfiguration().apply {
-            allowedOrigins = titilerWebProperties.cors.allowedOrigins
-            allowedOriginPatterns = titilerWebProperties.cors.allowedOriginPatterns
-            maxAge = titilerWebProperties.cors.maxAge
-            allowedMethods = titilerWebProperties.cors.allowedMethods
-            allowedHeaders = titilerWebProperties.cors.allowedHeaders
-            exposedHeaders = titilerWebProperties.cors.exposedHeaders
-            allowCredentials = titilerWebProperties.cors.allowCredentials
+            allowedOrigins = titilerCorsProperties.allowedOrigins
+            allowedOriginPatterns = titilerCorsProperties.allowedOriginPatterns
+            maxAge = titilerCorsProperties.maxAge
+            allowedMethods = titilerCorsProperties.allowedMethods
+            allowedHeaders = titilerCorsProperties.allowedHeaders
+            exposedHeaders = titilerCorsProperties.exposedHeaders
+            allowCredentials = titilerCorsProperties.allowCredentials
         }
         val source = UrlBasedCorsConfigurationSource().apply {
             val basePath = URI.create(titilerWebProperties.baseUri).path

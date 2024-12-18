@@ -1,5 +1,8 @@
 package dev.tronto.titiler.spring.autoconfigure.webflux
 
+import org.springframework.boot.context.properties.ConfigurationProperties
+
+@ConfigurationProperties(prefix = "titiler.web.cors")
 data class TitilerCorsProperties(
     val allowedOrigins: List<String> = listOf(),
     val allowedOriginPatterns: List<String> = listOf(),
