@@ -41,9 +41,7 @@ class NDArrayImageDataStatistics : ImageDataStatistics {
         private val logger = KotlinLogging.logger { }
     }
 
-    override fun supports(imageData: ImageData): Boolean {
-        return imageData is NDArrayImageData<*>
-    }
+    override fun supports(imageData: ImageData): Boolean = imageData is NDArrayImageData<*>
 
     override suspend fun statistics(imageData: ImageData, percentiles: List<Percentile>): List<BandStatistics> =
         logger.logTrace("do statistics") {

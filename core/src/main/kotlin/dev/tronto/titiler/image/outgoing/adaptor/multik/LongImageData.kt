@@ -12,7 +12,8 @@ class LongImageData(
     mask: D2Array<Int>,
     override val dataType: DataType,
     vararg options: OptionProvider<*>,
-) : ImageData, NDArrayImageData<Long>(data, mask, *options) {
+) : NDArrayImageData<Long>(data, mask, *options),
+    ImageData {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -30,15 +31,11 @@ class LongImageData(
         }
     }
 
-    override fun Number.asType(): Long {
-        return toLong()
-    }
+    override fun Number.asType(): Long = toLong()
 
     override fun copy(
         data: D3Array<Long>,
         mask: D2Array<Int>,
         vararg options: OptionProvider<*>,
-    ): NDArrayImageData<Long> {
-        return LongImageData(data, mask, dataType, *options)
-    }
+    ): NDArrayImageData<Long> = LongImageData(data, mask, dataType, *options)
 }

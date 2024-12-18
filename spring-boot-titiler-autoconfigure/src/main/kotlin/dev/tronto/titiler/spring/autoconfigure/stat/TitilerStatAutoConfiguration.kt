@@ -21,9 +21,7 @@ import java.util.function.Supplier
 @ComponentScan
 @AutoConfiguration(after = [TitilerImageAutoConfiguration::class])
 @EnableConfigurationProperties(TitilerStatPathProperties::class)
-class TitilerStatAutoConfiguration(
-    applicationContext: GenericApplicationContext,
-) {
+class TitilerStatAutoConfiguration(applicationContext: GenericApplicationContext) {
     init {
         ImageDataStatistics.services.forEach {
             applicationContext.defaultListableBeanFactory.registerBeanDefinition(

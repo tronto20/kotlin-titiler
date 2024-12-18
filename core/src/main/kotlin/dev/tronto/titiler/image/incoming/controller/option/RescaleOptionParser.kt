@@ -14,9 +14,7 @@ class RescaleOptionParser : OptionParser<RescaleOption> {
 
     override val type: ArgumentType<RescaleOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
 
     override suspend fun parse(request: Request): RescaleOption? {
         val rescales = request.parameter(PARAM).flatMap {
@@ -32,17 +30,17 @@ class RescaleOptionParser : OptionParser<RescaleOption> {
         return if (rescales.isNotEmpty()) RescaleOption(rescales) else null
     }
 
-    override fun box(option: RescaleOption): Map<String, List<String>> {
-        return mapOf(PARAM to option.rescale.map { "${it.start}:${it.endInclusive}" })
-    }
+    override fun box(option: RescaleOption): Map<String, List<String>> = mapOf(
+        PARAM to option.rescale.map {
+            "${it.start}:${it.endInclusive}"
+        }
+    )
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(
-            OptionDescription<Array<String>>(
-                PARAM,
-                "colon (':') delimited Min:Max range. Can set multiple time for multiple bands.",
-                sample = arrayOf("10:90", "20:100", "15:95")
-            )
+    override fun descriptions(): List<OptionDescription<*>> = listOf(
+        OptionDescription<Array<String>>(
+            PARAM,
+            "colon (':') delimited Min:Max range. Can set multiple time for multiple bands.",
+            sample = arrayOf("10:90", "20:100", "15:95")
         )
-    }
+    )
 }

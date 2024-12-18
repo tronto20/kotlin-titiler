@@ -22,8 +22,5 @@ data class BandStatistics(
     val percentiles: List<PercentileResult>,
 ) {
     @Serializable
-    data class PercentileResult(
-        val percentile: Percentile,
-        val value: Double,
-    )
+    data class PercentileResult(val percentile: Percentile, val value: Double)
 }

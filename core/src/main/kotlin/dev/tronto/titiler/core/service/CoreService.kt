@@ -11,9 +11,9 @@ import dev.tronto.titiler.core.outgoing.adaptor.gdal.GdalRasterFactory
 import dev.tronto.titiler.core.outgoing.port.RasterFactory
 import org.locationtech.jts.geom.Envelope
 
-class CoreService(
-    private val rasterFactory: RasterFactory = GdalRasterFactory(),
-) : BoundsUseCase, InfoUseCase {
+class CoreService(private val rasterFactory: RasterFactory = GdalRasterFactory()) :
+    BoundsUseCase,
+    InfoUseCase {
     private fun Envelope.toArray() = doubleArrayOf(minX, minY, maxX, maxY)
 
     override suspend fun getBounds(openOptions: OptionProvider<OpenOption>): Bounds {
@@ -25,8 +25,8 @@ class CoreService(
         )
     }
 
-    override suspend fun getInfo(openOptions: OptionProvider<OpenOption>): Info {
-        return rasterFactory.withRaster(openOptions) { raster ->
+    override suspend fun getInfo(openOptions: OptionProvider<OpenOption>): Info =
+        rasterFactory.withRaster(openOptions) { raster ->
             Info(
                 raster.name,
                 raster.bounds().toArray(),
@@ -40,5 +40,4 @@ class CoreService(
                 (1..raster.bandCount).map { raster.bandInfo(BandIndex(it)) }
             )
         }
-    }
 }

@@ -8,7 +8,5 @@ import io.mockk.junit5.MockKExtension
 
 object KoTestConfig : AbstractProjectConfig() {
 
-    override fun extensions(): List<Extension> {
-        return listOf(SpringExtension, JUnitExtensionAdapter(MockKExtension()))
-    }
+    override fun extensions(): List<Extension> = listOf(SpringExtension, JUnitExtensionAdapter(MockKExtension()))
 }

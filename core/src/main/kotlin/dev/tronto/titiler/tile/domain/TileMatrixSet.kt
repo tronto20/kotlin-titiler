@@ -15,17 +15,11 @@ class TileMatrixSet(
     val tileMatrices: List<TileMatrix>,
     // TODO :: add boundingBox
 ) {
-    override fun equals(other: Any?): Boolean {
-        return (other as? TileMatrixSet)?.id == id
-    }
+    override fun equals(other: Any?): Boolean = (other as? TileMatrixSet)?.id == id
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
-    override fun toString(): String {
-        return "TileMatrixSet($id)"
-    }
+    override fun toString(): String = "TileMatrixSet($id)"
 
     val minzoom: Int
         get() = sortedTileMatrices.firstOrNull()?.zoomLevel ?: 0

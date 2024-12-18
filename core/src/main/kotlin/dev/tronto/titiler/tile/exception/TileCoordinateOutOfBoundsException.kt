@@ -2,9 +2,7 @@ package dev.tronto.titiler.tile.exception
 
 import dev.tronto.titiler.core.exception.IllegalParameterException
 
-class TileCoordinateOutOfBoundsException(
-    message: String,
-) : IllegalParameterException(message) {
+class TileCoordinateOutOfBoundsException(message: String) : IllegalParameterException(message) {
     constructor(
         position: String,
         value: Int,

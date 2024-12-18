@@ -21,9 +21,7 @@ interface Raster : AutoCloseable {
     fun bounds(): Envelope
     fun bandInfo(bandIndex: BandIndex): BandInfo
 
-    fun hasAlphaBand(): Boolean {
-        return (1..this.bandCount).reversed().any {
-            bandInfo(BandIndex(it)).colorInterpolation == ColorInterpretation.AlphaBand
-        }
+    fun hasAlphaBand(): Boolean = (1..this.bandCount).reversed().any {
+        bandInfo(BandIndex(it)).colorInterpolation == ColorInterpretation.AlphaBand
     }
 }

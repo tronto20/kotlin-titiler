@@ -12,7 +12,5 @@ class ClasspathFileTemplateResolver : AbstractConfigurableTemplateResolver() {
         resourceName: String,
         characterEncoding: String?,
         templateResolutionAttributes: MutableMap<String, Any>?,
-    ): ITemplateResource {
-        return ClasspathFileTemplateResource(resourceName, characterEncoding)
-    }
+    ): ITemplateResource = ClasspathFileTemplateResource(resourceName, characterEncoding)
 }

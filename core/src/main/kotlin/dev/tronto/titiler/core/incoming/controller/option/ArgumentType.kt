@@ -6,10 +6,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.typeOf
 
-class ArgumentType<T : Any>(
-    val kType: KType,
-    val javaType: Type,
-) {
+class ArgumentType<T : Any>(val kType: KType, val javaType: Type) {
 
     companion object {
         inline operator fun <reified T : Any> invoke(): ArgumentType<T> {
@@ -28,14 +25,8 @@ class ArgumentType<T : Any>(
         return kType == other.kType
     }
 
-    override fun hashCode(): Int {
-        return kType.hashCode()
-    }
-    override fun toString(): String {
-        return kType.toString()
-    }
+    override fun hashCode(): Int = kType.hashCode()
+    override fun toString(): String = kType.toString()
 
-    fun isSubtypeOf(other: ArgumentType<*>): Boolean {
-        return kType.isSubtypeOf(other.kType)
-    }
+    fun isSubtypeOf(other: ArgumentType<*>): Boolean = kType.isSubtypeOf(other.kType)
 }

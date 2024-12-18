@@ -30,30 +30,26 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @AutoConfigureRestDocs
 @WebFluxTest(controllers = [TitilerStatController::class])
 @MockkBean(StatisticsUseCase::class)
-class StatControllerTest(
-    private val webTestClient: WebTestClient,
-    private val optionParsers: ObjectProvider<OptionParser<*>>,
-    private val pathProperties: TitilerStatPathProperties,
-    private val statisticsUseCase: StatisticsUseCase,
-) : FeatureSpec({
-    val parsers = optionParsers.sortedByOrdered()
-    feature("statistics") {
-        scenario("Get Statistics") {
+class StatControllerTest(private val webTestClient: WebTestClient, private val optionParsers: ObjectProvider<OptionParser<*>>, private val pathProperties: TitilerStatPathProperties, private val statisticsUseCase: StatisticsUseCase) :
+    FeatureSpec({
+        val parsers = optionParsers.sortedByOrdered()
+        feature("statistics") {
+            scenario("Get Statistics") {
 
-            coEvery { statisticsUseCase.statistics(any(), any(), any()) } returns testStatistics
+                coEvery { statisticsUseCase.statistics(any(), any(), any()) } returns testStatistics
 
-            webTestClient.testAndDocument(
-                "statistics",
-                "Get Dataset statistics.",
-                "Statistics",
-                "Statistics",
-                pathProperties.statistics,
-                parsers,
-                ArgumentType<OpenOption>(),
-                ArgumentType<ImageOption>(),
-                ArgumentType<StatisticsOption>(),
-                responseFields = statisticsFields
-            )
+                webTestClient.testAndDocument(
+                    "statistics",
+                    "Get Dataset statistics.",
+                    "Statistics",
+                    "Statistics",
+                    pathProperties.statistics,
+                    parsers,
+                    ArgumentType<OpenOption>(),
+                    ArgumentType<ImageOption>(),
+                    ArgumentType<StatisticsOption>(),
+                    responseFields = statisticsFields
+                )
+            }
         }
-    }
-})
+    })

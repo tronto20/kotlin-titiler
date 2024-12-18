@@ -14,9 +14,7 @@ class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
     }
     override val type: ArgumentType<ImageSizeOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(WIDTH, HEIGHT)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(WIDTH, HEIGHT)
 
     override suspend fun parse(request: Request): ImageSizeOption? {
         val widthString = request.parameter(WIDTH).firstOrNull() ?: return null
@@ -30,17 +28,13 @@ class ImageSizeOptionParser : OptionParser<ImageSizeOption> {
         return ImageSizeOption(width, height)
     }
 
-    override fun box(option: ImageSizeOption): Map<String, List<String>> {
-        return mapOf(
-            WIDTH to listOf(option.width.toString()),
-            HEIGHT to listOf(option.height.toString())
-        )
-    }
+    override fun box(option: ImageSizeOption): Map<String, List<String>> = mapOf(
+        WIDTH to listOf(option.width.toString()),
+        HEIGHT to listOf(option.height.toString())
+    )
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(
-            OptionDescription<Int>(WIDTH, "image width", sample = 256),
-            OptionDescription<Int>(HEIGHT, "image height", sample = 256)
-        )
-    }
+    override fun descriptions(): List<OptionDescription<*>> = listOf(
+        OptionDescription<Int>(WIDTH, "image width", sample = 256),
+        OptionDescription<Int>(HEIGHT, "image height", sample = 256)
+    )
 }

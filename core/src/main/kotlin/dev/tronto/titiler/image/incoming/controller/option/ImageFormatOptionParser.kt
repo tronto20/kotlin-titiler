@@ -9,9 +9,7 @@ import dev.tronto.titiler.core.incoming.controller.option.Request
 import dev.tronto.titiler.image.domain.ImageFormat
 import dev.tronto.titiler.image.spi.ImageFormatRegistrar
 
-class ImageFormatOptionParser(
-    imageFormats: Iterable<ImageFormat>,
-) : OptionParser<ImageFormatOption> {
+class ImageFormatOptionParser(imageFormats: Iterable<ImageFormat>) : OptionParser<ImageFormatOption> {
 
     constructor() : this(
         ImageFormatRegistrar.services.flatMap { it.imageFormats() }
@@ -28,9 +26,7 @@ class ImageFormatOptionParser(
 
     override val type: ArgumentType<ImageFormatOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
 
     override suspend fun parse(request: Request): ImageFormatOption? {
         request.option(CONTENT_TYPE).firstOrNull()?.let {
@@ -52,18 +48,14 @@ class ImageFormatOptionParser(
         }
     }
 
-    override fun box(option: ImageFormatOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.format.name))
-    }
+    override fun box(option: ImageFormatOption): Map<String, List<String>> = mapOf(PARAM to listOf(option.format.name))
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(
-            OptionDescription<String>(
-                PARAM,
-                "image formats.",
-                ImageFormat.PNG.name,
-                enums = imageFormatMap.keys
-            )
+    override fun descriptions(): List<OptionDescription<*>> = listOf(
+        OptionDescription<String>(
+            PARAM,
+            "image formats.",
+            ImageFormat.PNG.name,
+            enums = imageFormatMap.keys
         )
-    }
+    )
 }

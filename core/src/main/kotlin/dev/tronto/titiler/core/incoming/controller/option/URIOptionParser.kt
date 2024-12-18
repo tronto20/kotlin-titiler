@@ -11,9 +11,7 @@ class URIOptionParser : OptionParser<URIOption> {
 
     override val type: ArgumentType<URIOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
 
     override suspend fun parse(request: Request): URIOption? {
         val uriString = request.parameter(PARAM).firstOrNull() ?: return null
@@ -21,11 +19,8 @@ class URIOptionParser : OptionParser<URIOption> {
         return URIOption(uri)
     }
 
-    override fun box(option: URIOption): Map<String, List<String>> {
-        return mapOf(PARAM to listOf(option.uri.toString()))
-    }
+    override fun box(option: URIOption): Map<String, List<String>> = mapOf(PARAM to listOf(option.uri.toString()))
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription<String>(PARAM, "target uri.", "/path/to/dataset"))
-    }
+    override fun descriptions(): List<OptionDescription<*>> =
+        listOf(OptionDescription<String>(PARAM, "target uri.", "/path/to/dataset"))
 }

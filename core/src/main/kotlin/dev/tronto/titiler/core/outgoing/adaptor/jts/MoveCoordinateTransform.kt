@@ -4,6 +4,5 @@ import dev.tronto.titiler.core.outgoing.port.CoordinateTransform
 import org.locationtech.jts.geom.util.AffineTransformation
 
 @Suppress("FunctionName")
-fun MoveCoordinateTransform(x: Double, y: Double): CoordinateTransform {
-    return AffineCoordinateTransform(AffineTransformation.translationInstance(x, y))
-}
+fun MoveCoordinateTransform(x: Double, y: Double): CoordinateTransform =
+    AffineCoordinateTransform(AffineTransformation.translationInstance(x, y))

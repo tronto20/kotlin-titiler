@@ -5,10 +5,7 @@ import org.gdal.osr.SpatialReference
 import org.gdal.osr.osr
 import java.net.URI
 
-class SpatialReferenceCRS(
-    val srs: SpatialReference,
-    override val input: String,
-) : CRS {
+class SpatialReferenceCRS(val srs: SpatialReference, override val input: String) : CRS {
     override val name: String = srs.GetName()
     override val semiMajor: Double = srs.GetSemiMajor()
     override val semiMinor: Double = srs.GetSemiMinor()
@@ -63,11 +60,7 @@ class SpatialReferenceCRS(
         return false
     }
 
-    override fun hashCode(): Int {
-        return epsgCode.hashCode()
-    }
+    override fun hashCode(): Int = epsgCode.hashCode()
 
-    override fun toString(): String {
-        return "SpatialReferenceCRS(epsg=$epsgCode)"
-    }
+    override fun toString(): String = "SpatialReferenceCRS(epsg=$epsgCode)"
 }

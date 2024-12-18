@@ -17,8 +17,8 @@ interface GdalPathProvider {
                 .toList().sortedBy { if (it is Ordered) it.order else 0 }
         }
 
-        suspend fun of(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath? {
-            return services.find { it.supports(uri, openOptions) }?.toGdalPath(uri, openOptions)
-        }
+        suspend fun of(uri: URI, openOptions: OptionProvider<OpenOption>): GdalPath? = services.find {
+            it.supports(uri, openOptions)
+        }?.toGdalPath(uri, openOptions)
     }
 }

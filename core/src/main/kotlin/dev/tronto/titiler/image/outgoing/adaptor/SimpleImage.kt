@@ -9,4 +9,5 @@ class SimpleImage(
     override val data: ByteArray,
     override val format: ImageFormat,
     vararg val options: OptionProvider<*>,
-) : Image, OptionContext by OptionContext.wrap(*options)
+) : Image,
+    OptionContext by OptionContext.wrap(*options)

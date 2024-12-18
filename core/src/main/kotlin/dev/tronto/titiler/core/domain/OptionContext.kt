@@ -18,12 +18,10 @@ interface OptionContext {
     fun put(vararg options: OptionProvider<*>)
 
     companion object {
-        class SimpleWrap(
-            private val optionProviderMap: MutableMap<ArgumentType<*>, OptionProvider<*>>,
-        ) : OptionContext {
-            override fun <T : Option> getOptionProviderOrNull(argumentType: ArgumentType<T>): OptionProvider<T>? {
-                return optionProviderMap[argumentType] as OptionProvider<T>?
-            }
+        class SimpleWrap(private val optionProviderMap: MutableMap<ArgumentType<*>, OptionProvider<*>>) :
+            OptionContext {
+            override fun <T : Option> getOptionProviderOrNull(argumentType: ArgumentType<T>): OptionProvider<T>? =
+                optionProviderMap[argumentType] as OptionProvider<T>?
 
             override fun getAllOptionProviders(): Collection<OptionProvider<*>> = optionProviderMap.values
 

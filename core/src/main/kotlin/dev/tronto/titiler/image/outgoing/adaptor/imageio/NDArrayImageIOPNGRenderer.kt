@@ -16,7 +16,9 @@ import javax.imageio.ImageIO
 /**
  *  NDArray 를 사용하는 ImageData 를 Png 포맷으로 렌더링.
  */
-class NDArrayImageIOPNGRenderer : ImageRenderer, Ordered {
+class NDArrayImageIOPNGRenderer :
+    ImageRenderer,
+    Ordered {
     companion object {
         @JvmStatic
         private val SUPPORT_DATATYPE = listOf(DataType.UInt8)
@@ -34,17 +36,13 @@ class NDArrayImageIOPNGRenderer : ImageRenderer, Ordered {
         }
     }
 
-    override fun getOrder(): Int {
-        return Int.MAX_VALUE
-    }
+    override fun getOrder(): Int = Int.MAX_VALUE
 
-    override fun supports(imageData: ImageData, format: ImageFormat): Boolean {
-        return imageData is NDArrayImageData<*> &&
-            format == ImageFormat.PNG &&
-            imageData.data.shape.size == 3 &&
-            imageData.dataType in SUPPORT_DATATYPE &&
-            imageData.band in SUPPORT_BAND
-    }
+    override fun supports(imageData: ImageData, format: ImageFormat): Boolean = imageData is NDArrayImageData<*> &&
+        format == ImageFormat.PNG &&
+        imageData.data.shape.size == 3 &&
+        imageData.dataType in SUPPORT_DATATYPE &&
+        imageData.band in SUPPORT_BAND
 
     override suspend fun render(imageData: ImageData, format: ImageFormat): ByteArray {
         require(supports(imageData, format))

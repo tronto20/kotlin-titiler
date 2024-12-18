@@ -61,13 +61,9 @@ fun buildParameterDescriptors(desc: OptionDescription<*>, optional: Boolean = fa
     }
 }
 
-fun <T : AbstractDescriptor<T>> T.itemsType(type: JsonFieldType): T {
-    return this.attributes(Attributes.Attribute("itemsType", type))
-}
+fun <T : AbstractDescriptor<T>> T.itemsType(type: JsonFieldType): T = this.attributes(Attributes.Attribute("itemsType", type))
 
-fun <T : AbstractDescriptor<T>> T.enumValues(values: List<Any>): T {
-    return this.attributes(Attributes.Attribute("enumValues", values))
-}
+fun <T : AbstractDescriptor<T>> T.enumValues(values: List<Any>): T = this.attributes(Attributes.Attribute("enumValues", values))
 
 fun WebTestClient.testAndDocument(
     id: String,

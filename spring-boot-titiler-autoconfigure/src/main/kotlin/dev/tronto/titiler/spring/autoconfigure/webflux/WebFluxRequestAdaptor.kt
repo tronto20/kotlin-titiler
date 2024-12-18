@@ -22,12 +22,10 @@ class WebFluxRequestAdaptor(
         return pathParams[lowerKey]?.let { return it }
     }
 
-    private fun getFromBody(lowerKey: String): List<String>? {
-        return if (bodyKey?.lowercase() == lowerKey) {
-            listOf()
-        } else {
-            null
-        }
+    private fun getFromBody(lowerKey: String): List<String>? = if (bodyKey?.lowercase() == lowerKey) {
+        listOf()
+    } else {
+        null
     }
 
     override fun parameter(key: String): List<String> {
@@ -42,7 +40,5 @@ class WebFluxRequestAdaptor(
         .mapKeys { it.key.lowercase() }
         .mapValues { it.value.filter { it.isNotBlank() } }
 
-    override fun option(key: String): List<String> {
-        return headers[key.lowercase()] ?: emptyList()
-    }
+    override fun option(key: String): List<String> = headers[key.lowercase()] ?: emptyList()
 }

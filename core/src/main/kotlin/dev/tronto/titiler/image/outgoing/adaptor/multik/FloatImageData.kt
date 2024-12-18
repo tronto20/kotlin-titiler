@@ -12,7 +12,8 @@ class FloatImageData(
     mask: D2Array<Int>,
     override val dataType: DataType,
     vararg options: OptionProvider<*>,
-) : ImageData, NDArrayImageData<Float>(data, mask, *options) {
+) : NDArrayImageData<Float>(data, mask, *options),
+    ImageData {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }
@@ -30,15 +31,11 @@ class FloatImageData(
         }
     }
 
-    override fun Number.asType(): Float {
-        return toFloat()
-    }
+    override fun Number.asType(): Float = toFloat()
 
     override fun copy(
         data: D3Array<Float>,
         mask: D2Array<Int>,
         vararg options: OptionProvider<*>,
-    ): NDArrayImageData<Float> {
-        return FloatImageData(data, mask, dataType, *options)
-    }
+    ): NDArrayImageData<Float> = FloatImageData(data, mask, dataType, *options)
 }

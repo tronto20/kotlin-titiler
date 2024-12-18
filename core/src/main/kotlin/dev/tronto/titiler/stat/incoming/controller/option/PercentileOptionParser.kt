@@ -8,16 +8,14 @@ import dev.tronto.titiler.core.incoming.controller.option.OptionParser
 import dev.tronto.titiler.core.incoming.controller.option.Request
 import dev.tronto.titiler.stat.domain.Percentile
 
-class PercentileOptionParser() : OptionParser<PercentileOption> {
+class PercentileOptionParser : OptionParser<PercentileOption> {
     companion object {
         private const val PARAM = "percentile"
     }
 
     override val type: ArgumentType<PercentileOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(PARAM)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(PARAM)
 
     override suspend fun parse(request: Request): PercentileOption? {
         val percentiles = request.parameter(PARAM).flatMap {
@@ -40,11 +38,12 @@ class PercentileOptionParser() : OptionParser<PercentileOption> {
         }
     }
 
-    override fun box(option: PercentileOption): Map<String, List<String>> {
-        return mapOf(PARAM to option.percentiles.map { it.toString() })
-    }
+    override fun box(option: PercentileOption): Map<String, List<String>> = mapOf(
+        PARAM to option.percentiles.map {
+            it.toString()
+        }
+    )
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(OptionDescription(PARAM, "List of percentile values", arrayOf(2, 98), default = arrayOf(2, 98)))
-    }
+    override fun descriptions(): List<OptionDescription<*>> =
+        listOf(OptionDescription(PARAM, "List of percentile values", arrayOf(2, 98), default = arrayOf(2, 98)))
 }

@@ -3,10 +3,8 @@ package dev.tronto.titiler.core.outgoing.adaptor.gdal
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.gdal.gdal.gdal
 
-class GdalMemFileRaster internal constructor(
-    val gdalRaster: GdalRaster,
-    val memFilePath: String,
-) : GdalBaseRaster by gdalRaster {
+class GdalMemFileRaster internal constructor(val gdalRaster: GdalRaster, val memFilePath: String) :
+    GdalBaseRaster by gdalRaster {
     companion object {
         @JvmStatic
         private val logger = KotlinLogging.logger { }

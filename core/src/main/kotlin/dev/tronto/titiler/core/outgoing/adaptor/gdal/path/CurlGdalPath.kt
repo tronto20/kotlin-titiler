@@ -15,11 +15,7 @@ class CurlGdalPath(
     init {
         require(uri.scheme in SCHEME_LIST)
     }
-    override fun toURI(): URI {
-        return uri
-    }
+    override fun toURI(): URI = uri
 
-    override fun toPathString(): String {
-        return "/vsicurl/${this.uri}"
-    }
+    override fun toPathString(): String = "/vsicurl/${this.uri}"
 }

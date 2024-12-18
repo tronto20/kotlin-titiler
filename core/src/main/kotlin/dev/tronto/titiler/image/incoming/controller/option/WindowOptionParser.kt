@@ -18,9 +18,7 @@ class WindowOptionParser : OptionParser<WindowOption> {
 
     override val type: ArgumentType<WindowOption> = ArgumentType()
 
-    override fun generateMissingException(): Exception {
-        return RequiredParameterMissingException(MIN_X, MAX_X, MIN_Y, MAX_Y)
-    }
+    override fun generateMissingException(): Exception = RequiredParameterMissingException(MIN_X, MAX_X, MIN_Y, MAX_Y)
 
     override suspend fun parse(request: Request): WindowOption? {
         val minxString = request.parameter(MIN_X).firstOrNull() ?: return null
@@ -46,21 +44,17 @@ class WindowOptionParser : OptionParser<WindowOption> {
         )
     }
 
-    override fun box(option: WindowOption): Map<String, List<String>> {
-        return mapOf(
-            MIN_X to listOf((option.window.xOffset).toString()),
-            MIN_Y to listOf((option.window.yOffset).toString()),
-            MAX_X to listOf((option.window.xOffset + option.window.width).toString()),
-            MAX_Y to listOf((option.window.yOffset + option.window.height).toString())
-        )
-    }
+    override fun box(option: WindowOption): Map<String, List<String>> = mapOf(
+        MIN_X to listOf((option.window.xOffset).toString()),
+        MIN_Y to listOf((option.window.yOffset).toString()),
+        MAX_X to listOf((option.window.xOffset + option.window.width).toString()),
+        MAX_Y to listOf((option.window.yOffset + option.window.height).toString())
+    )
 
-    override fun descriptions(): List<OptionDescription<*>> {
-        return listOf(
-            OptionDescription<Int>(MIN_X, "Bounding box min X.", 0),
-            OptionDescription<Int>(MIN_Y, "Bounding box min Y.", 0),
-            OptionDescription<Int>(MAX_X, "Bounding box max X.", 3000),
-            OptionDescription<Int>(MAX_Y, "Bounding box max Y.", 3000)
-        )
-    }
+    override fun descriptions(): List<OptionDescription<*>> = listOf(
+        OptionDescription<Int>(MIN_X, "Bounding box min X.", 0),
+        OptionDescription<Int>(MIN_Y, "Bounding box min Y.", 0),
+        OptionDescription<Int>(MAX_X, "Bounding box max X.", 3000),
+        OptionDescription<Int>(MAX_Y, "Bounding box max Y.", 3000)
+    )
 }

@@ -6,24 +6,18 @@ import org.locationtech.jts.geom.Polygon
 
 interface CoordinateTransform {
     object Empty : CoordinateTransform {
-        override fun transformTo(coord: CoordinateXY): CoordinateXY {
-            return coord
-        }
+        override fun transformTo(coord: CoordinateXY): CoordinateXY = coord
 
-        override fun inverse(coord: CoordinateXY): CoordinateXY {
-            return coord
-        }
+        override fun inverse(coord: CoordinateXY): CoordinateXY = coord
     }
 
     fun transformTo(coord: CoordinateXY): CoordinateXY
 
-    fun transformTo(linearRing: LinearRing): LinearRing {
-        return linearRing.factory.createLinearRing(
-            linearRing.coordinates.map {
-                transformTo(CoordinateXY(it))
-            }.toTypedArray()
-        )
-    }
+    fun transformTo(linearRing: LinearRing): LinearRing = linearRing.factory.createLinearRing(
+        linearRing.coordinates.map {
+            transformTo(CoordinateXY(it))
+        }.toTypedArray()
+    )
 
     fun transformTo(polygon: Polygon): Polygon {
         val exteriorRing = transformTo(polygon.exteriorRing)
@@ -36,13 +30,11 @@ interface CoordinateTransform {
 
     fun inverse(coord: CoordinateXY): CoordinateXY
 
-    fun inverse(linearRing: LinearRing): LinearRing {
-        return linearRing.factory.createLinearRing(
-            linearRing.coordinates.map {
-                inverse(CoordinateXY(it))
-            }.toTypedArray()
-        )
-    }
+    fun inverse(linearRing: LinearRing): LinearRing = linearRing.factory.createLinearRing(
+        linearRing.coordinates.map {
+            inverse(CoordinateXY(it))
+        }.toTypedArray()
+    )
 
     fun inverse(polygon: Polygon): Polygon {
         val exteriorRing = inverse(polygon.exteriorRing)
