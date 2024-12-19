@@ -13,6 +13,8 @@ repositories {
 
 allprojects {
     group = "dev.tronto"
+    ext["GROUP"] = group
+    ext["VERSION_NAME"] = version.toString()
 }
 
 
