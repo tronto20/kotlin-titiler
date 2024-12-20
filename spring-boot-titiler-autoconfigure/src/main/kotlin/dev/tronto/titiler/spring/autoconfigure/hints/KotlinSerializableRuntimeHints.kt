@@ -1,6 +1,6 @@
 package dev.tronto.titiler.spring.autoconfigure.hints
 
-import dev.tronto.titiler.ApplicationContext
+import dev.tronto.titiler.spring.autoconfigure.ApplicationContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import org.springframework.aot.hint.ExecutableMode

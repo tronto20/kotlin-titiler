@@ -1,6 +1,6 @@
 package dev.tronto.titiler.spring.autoconfigure.hints
 
-import dev.tronto.titiler.ApplicationContext
+import dev.tronto.titiler.spring.autoconfigure.ApplicationContext
 import org.springframework.aot.hint.ExecutableMode
 import org.springframework.aot.hint.RuntimeHints
 import org.springframework.aot.hint.RuntimeHintsRegistrar
