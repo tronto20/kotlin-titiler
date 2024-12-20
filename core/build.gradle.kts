@@ -30,8 +30,9 @@ dependencies {
     implementation("org.thymeleaf:thymeleaf")
 }
 
+val jvmVersion = (properties["jvm.version"] as? String)?.toIntOrNull() ?: 21
 kotlin {
-    jvmToolchain((properties["jvm.version"] as? String)?.toIntOrNull() ?: 21)
+    jvmToolchain(jvmVersion)
 }
 
 mavenPublishing {

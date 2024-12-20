@@ -1,8 +1,0 @@
-dev.tronto.titiler.spring.autoconfigure.webflux.TitilerWebAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.core.TitilerCoreAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.document.TitilerDocumentAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.stat.TitilerStatAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.image.TitilerImageAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.image.TitilerImageRenderAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.tile.TitilerTileAutoConfiguration
-dev.tronto.titiler.spring.autoconfigure.wmts.TitilerWmtsAutoConfiguration

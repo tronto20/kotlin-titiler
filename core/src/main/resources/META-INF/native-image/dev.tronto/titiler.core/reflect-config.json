@@ -1,30 +1,30 @@
 [
   {
-    "name": "dev.tronto.titiler.wmts.service.WmtsContext",
+    "name": "dev.tronto.kitiler.wmts.service.WmtsContext",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredClasses": true
   },
   {
-    "name": "dev.tronto.titiler.wmts.service.WmtsContext$Layer",
+    "name": "dev.tronto.kitiler.wmts.service.WmtsContext$Layer",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredClasses": true
   },
   {
-    "name": "dev.tronto.titiler.wmts.service.WmtsContext$TileMatrix",
+    "name": "dev.tronto.kitiler.wmts.service.WmtsContext$TileMatrix",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredClasses": true
   },
   {
-    "name": "dev.tronto.titiler.wmts.service.WmtsContext$TileMatrixSet",
+    "name": "dev.tronto.kitiler.wmts.service.WmtsContext$TileMatrixSet",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredClasses": true
   },
   {
-    "name": "dev.tronto.titiler.document.template.Formats",
+    "name": "dev.tronto.kitiler.document.template.Formats",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
     "allDeclaredClasses": true

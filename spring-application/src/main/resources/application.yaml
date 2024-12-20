@@ -7,4 +7,4 @@ server:
 
 logging:
   level:
-    dev.tronto.titiler: info
+    dev.tronto.kitiler: info

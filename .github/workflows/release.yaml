@@ -55,7 +55,7 @@ jobs:
             -Pimage.native.enabled=false \
             -Pimage.registry.publish.username=${{github.actor}} \
             -Pimage.registry.publish.password=${{secrets.GITHUB_TOKEN}} \
-            -Pimage.name=ghcr.io/tronto20/kotlin-titiler \
+            -Pimage.name=ghcr.io/tronto20/kitiler \
             -Pimage.version-tags=spring \
             -Pimage.push=true
 
@@ -83,7 +83,7 @@ jobs:
             --continue \
             -Pimage.registry.publish.username=${{github.actor}} \
             -Pimage.registry.publish.password=${{secrets.GITHUB_TOKEN}} \
-            -Pimage.name=ghcr.io/tronto20/kotlin-titiler \
+            -Pimage.name=ghcr.io/tronto20/kitiler \
             -Pimage.version-tags=spring-native \
             -Pimage.default-tags=true \
             -Pimage.push=true
