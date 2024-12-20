@@ -61,11 +61,6 @@ repositories {
 dependencies {
     implementation(platform(projects.dependencies))
     implementation("io.github.oshai:kotlin-logging-jvm")
-    implementation("org.slf4j:slf4j-api")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.swagger.parser.v3:swagger-parser")
     implementation(projects.springBootKitilerStarterCore)
 

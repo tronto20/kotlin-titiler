@@ -16,8 +16,10 @@ dependencies {
     api(projects.core)
     api(projects.springBootKitilerAutoconfigure)
     api("org.thymeleaf:thymeleaf")
-    api("org.springframework:spring-webflux")
-    api("org.jetbrains.kotlinx:kotlinx-serialization-core")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json")
+    api("org.springframework.boot:spring-boot-starter-webflux")
 }
 
 val jvmVersion = (properties["jvm.version"] as? String)?.toIntOrNull() ?: 21

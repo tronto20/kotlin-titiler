@@ -18,7 +18,7 @@ val testImageData: ImageData = object : ImageData {
     override val masked: Boolean
         get() = true
 
-    override suspend fun <T : Number, R : Number> rescale(rangeFrom: List<ClosedRange<T>>, rangeTo: List<ClosedRange<R>>, dataType: DataType): ImageData where T : Comparable<T>, R : Comparable<R> = throw NotImplementedError()
+    override suspend fun <T, R> rescale(rangeFrom: List<ClosedRange<T>>, rangeTo: List<ClosedRange<R>>, dataType: DataType): ImageData where R : Number, T : Number, T : Comparable<T>, R : Comparable<R> = throw NotImplementedError()
 
     override fun mask(geom: Geometry): ImageData = throw NotImplementedError()
 }
