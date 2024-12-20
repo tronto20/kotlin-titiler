@@ -1,4 +1,4 @@
-# kotlin-titiler
+# kitiler
 
 [titiler](https://github.com/developmentseed/titiler) 의 기능을 kotlin (JVM) 으로 구현하는 것을 목표로 합니다.
 
@@ -58,3 +58,6 @@ dependencies {
     1. 타겟 영상의 raw data 를 응답
     2. 타겟 영상 제거
 
+
+## License
+[License](https://github.com/tronto20/kitiler/blob/main/LICENSE)

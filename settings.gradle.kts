@@ -27,11 +27,11 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
-rootProject.name = "kotlin-titler"
+rootProject.name = "kitiler"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":dependencies")
 include(":core")
-include(":spring-boot-titiler-autoconfigure")
-include(":spring-boot-titiler-starter-core")
+include(":spring-boot-kitiler-autoconfigure")
+include(":spring-boot-kitiler-starter-core")
 include(":spring-application")

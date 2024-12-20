@@ -1,4 +1,4 @@
-import dev.tronto.titiler.buildsrc.tasks.PathExec
+import dev.tronto.kitiler.buildsrc.tasks.PathExec
 import org.springframework.boot.buildpack.platform.build.PullPolicy
 import org.springframework.boot.gradle.tasks.bundling.BootArchive
 import org.springframework.boot.gradle.tasks.bundling.DockerSpec.DockerRegistrySpec
@@ -61,13 +61,8 @@ repositories {
 dependencies {
     implementation(platform(projects.dependencies))
     implementation("io.github.oshai:kotlin-logging-jvm")
-    implementation("org.slf4j:slf4j-api")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("io.swagger.parser.v3:swagger-parser")
-    implementation(projects.springBootTitilerStarterCore)
+    implementation(projects.springBootKitilerStarterCore)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
@@ -120,7 +115,7 @@ tasks.bootBuildImage {
         builderRegistry.configure("builder")
     }
 
-    val baseName = (properties["image.name"] as? String?)?.trimEnd('/') ?: "docker.io/kotlin-titiler"
+    val baseName = (properties["image.name"] as? String?)?.trimEnd('/') ?: "docker.io/kitiler"
     val tags = (properties["image.tags"] as? String?)
         ?.split(',')
         ?.map { it.trim() }
@@ -205,7 +200,7 @@ afterEvaluate {
 }
 
 openapi3 {
-    title = "titiler"
+    title = "kitiler"
     description = "dynamic tile server."
     outputDirectory = generatedResourceDir.get().asFile.resolve("swagger").absolutePath
 }
